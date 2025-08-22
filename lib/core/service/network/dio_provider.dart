@@ -1,0 +1,224 @@
+import 'package:clean_architutre_learn/core/constants/api_coonstants.dart/api_url.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
+
+final dioClientProvider = Provider<DioClient>((ref) {
+  final dio = ref.watch(dioProvider);
+  return DioClient(dio);
+});
+
+final dioProvider = Provider<Dio>((ref) {
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: ApiUrl.baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      headers: {'Content-Type': 'application/json'},
+    ),
+  );
+
+  dio.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (options, handler) {
+        // Add token if needed
+        return handler.next(options);
+      },
+      onError: (e, handler) {
+        if (e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.receiveTimeout ||
+            e.type == DioExceptionType.sendTimeout) {
+          print("⚠️ Network Error: Slow or No Internet Connection");
+        }
+        return handler.next(e);
+      },
+    ),
+  );
+
+  return dio;
+});
+
+class DioClient {
+  final Dio _dio;
+
+  DioClient(this._dio);
+
+  Future<dynamic> get(
+    String uri, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    void Function(int, int)? onReceiveProgress,
+  }) async {
+    try {
+      final response = await _dio.get(
+        uri,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> post(
+    String uri, {
+    dynamic data,
+    Options? options,
+    CancelToken? cancelToken,
+    void Function(int, int)? onSendProgress,
+    void Function(int, int)? onReceiveProgress,
+  }) async {
+    try {
+      final response = await _dio.post(
+        uri,
+        data: data,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+}
+
+// class DioClient{
+// final dioProvider = Provider<Dio>((ref) {
+// final   dio = Dio(
+//     BaseOptions(
+//       baseUrl: ApiUrl.baseUrl,
+//       connectTimeout: const Duration(seconds: 10),
+//       receiveTimeout: const Duration(seconds: 10),
+//       headers: {'Content-Type': 'application/json'},
+//     ),
+//   );
+//   dio.interceptors.add(
+//       InterceptorsWrapper(
+//             onRequest: (options, handler) async {
+//               // String autToken = LocalStorageService.getString(
+//               //   LocalStorageKey.USER_TOKEN_KEY,
+//               // );
+
+//               // if ((autToken.isNotEmpty) &&
+//               //     !options.path.contains('login') &&
+//               //     !options.path.contains('ClinicRegister')) {
+//               //   options.headers['Authorization'] = 'Bearer $autToken';
+//               //   options.headers['Accept'] = 'application/json';
+//               // }
+//               // return handler.next(options);
+//             },
+//             onError: (DioException e, handler) {
+//               if (e.type == DioExceptionType.connectionTimeout ||
+//                   e.type == DioExceptionType.receiveTimeout ||
+//                   e.type == DioExceptionType.sendTimeout) {
+//                 log("⚠️ Network Error: Slow or No Internet Connection");
+//               }
+//               return handler.next(e);
+//             },
+//           ),
+//     // LogInterceptor(responseBody: true,)
+//   );
+//   return dio;
+// });
+
+
+
+
+//   static Future<dynamic> get(
+//     String uri, {
+//     Map<String, dynamic>? queryParameters,
+//     Options? options,
+//     CancelToken? cancelToken,
+//     void Function(int, int)? onReceiveProgress,
+//   }) async {
+//     try {
+//       final Response response =  dioProvider.get(
+//         uri,
+//         queryParameters: queryParameters,
+//         options: options,
+//         cancelToken: cancelToken,
+//         onReceiveProgress: onReceiveProgress,
+//       );
+//       return response.data;
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   static Future<dynamic> post(
+//     String uri, {
+//     dynamic data,
+//     Map<String, dynamic>? queryParameters,
+//     Options? options,
+//     CancelToken? cancelToken,
+//     void Function(int, int)? onSendProgress,
+//     void Function(int, int)? onReceiveProgress,
+//   }) async {
+//     try {
+//       final Response response = await dioProvider.post(
+//         uri,
+//         data: data,
+//         queryParameters: queryParameters,
+//         options: options,
+//         cancelToken: cancelToken,
+//         onSendProgress: onSendProgress,
+//         onReceiveProgress: onReceiveProgress,
+//       );
+//       return response.data;
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   static Future<dynamic> put(
+//     String uri, {
+//     dynamic data,
+//     Map<String, dynamic>? queryParameters,
+//     Options? options,
+//     CancelToken? cancelToken,
+//     void Function(int, int)? onSendProgress,
+//     void Function(int, int)? onReceiveProgress,
+//   }) async {
+//     try {
+//       final Response response = await dioProvider.put(
+//         uri,
+//         data: data,
+//         queryParameters: queryParameters,
+//         options: options,
+//         cancelToken: cancelToken,
+//         onSendProgress: onSendProgress,
+//         onReceiveProgress: onReceiveProgress,
+//       );
+//       return response.data;
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   static Future<dynamic> delete(
+//     String uri, {
+//     dynamic data,
+//     Map<String, dynamic>? queryParameters,
+//     Options? options,
+//     CancelToken? cancelToken,
+//   }) async {
+//     try {
+//       final Response response = await dioProvider.delete(
+//         uri,
+//         data: data,
+//         queryParameters: queryParameters,
+//         options: options,
+//         cancelToken: cancelToken,
+//       );
+//       return response.data;
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+// }
+   
