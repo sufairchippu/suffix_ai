@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:clean_architutre_learn/core/constants/lottie_constant.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/router/route_names.dart';
@@ -8,6 +10,7 @@ import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/custom_textform_field.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
+import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/widgets/chat_bubble_painter.dart';
 import 'package:flutter/cupertino.dart';
@@ -337,16 +340,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   textInputAction: TextInputAction.search,
                   onTap: () {
                     final chat = Chatbubble(
-                      id: DateTime.now().toIso8601String(),
                       message: inputController.text,
                       time: DateTime.now().toFormattedString(),
                       msgtype: MessegeOwner.user,
                     );
+                    log('message of doinggggggg userrrr posting');
 
                     inputController.text.trim().isNotEmpty
                         ? ref
                               .read(chatListNotifierProvider.notifier)
                               .addchats(chat)
+                              .then((value) {
+                                ref
+                                    .read(chatListNotifierProvider.notifier)
+                                    .loadChats();
+
+                                log('message of doinggggggg ai api posting');
+                                return ref
+                                    .read(aiMessgeNotifierProvider.notifier)
+                                    .getAiReply(chat.message);
+                              })
                         : null;
                     ref.read(chatListNotifierProvider.notifier).loadChats();
                     inputController.clear();

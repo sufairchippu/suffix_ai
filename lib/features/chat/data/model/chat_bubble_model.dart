@@ -5,13 +5,13 @@ import '../../business/entities/chat_bubble.dart';
 class ChatBubbleModel {
   String message;
   String time;
-  String id;
+  String? id;
   MessegeOwner msgtype;
   List<String>? attachment;
   ChatBubbleModel({
     required this.message,
     required this.time,
-    required this.id,
+     this.id,
     required this.msgtype,
     this.attachment,
   });

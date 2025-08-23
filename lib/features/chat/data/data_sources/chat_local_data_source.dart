@@ -36,9 +36,9 @@ log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE $_tableName (
-            id TEXT PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             message TEXT NOT NULL,
-            time INTEGER NOT NULL,
+            time TEXT NOT NULL,
             msgtype INTEGER NOT NULL,
             attachment TEXT
           )
@@ -64,6 +64,21 @@ log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     final result = await db.query(_tableName, orderBy: "time ASC");
     return result.map((map) => ChatBubbleModel.fromMap(map)).toList();
   }
+
+  //   Future<List<ChatBubbleModel>> getSinglChat(String id) async {
+  //   final db = await database;
+  // final result = await db.query(
+  //   _tableName,
+  //   where: "id = ?",
+  //   whereArgs: [id],
+  //   limit: 1,
+  // );
+
+  // if (result.isNotEmpty) {
+  //   return ChatBubbleModel.fromMap(result.first);
+  // }
+  // return null;
+  // }
 
   // ✅ Update
   Future<int> updateChat(ChatBubbleModel chat) async {
