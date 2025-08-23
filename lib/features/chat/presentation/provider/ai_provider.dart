@@ -67,7 +67,7 @@ class AiMessgeNotifier extends StateNotifier<Content> {
           for (var message in content.parts!) {
             // Create your chat model
             final chat = Chatbubble(
-              message: message.toString(),
+              message: message.text.toString(),
               time: DateTime.now().toFormattedString(),
               // id: UniqueKey().hashCode, // or use any ID generator
               msgtype: MessegeOwner.ai,
@@ -75,7 +75,13 @@ class AiMessgeNotifier extends StateNotifier<Content> {
             );
 
             // Add to chat list via another provider
-            // ref.read(chatListNotifierProvider.notifier).addchats(chat);
+            ref
+                .read(chatListNotifierProvider.notifier)
+                .addchats(chat)
+                .then(
+                  (value) =>
+                      ref.read(chatListNotifierProvider.notifier).loadChats(),
+                );
 
             print('AI Reply: $message');
           }

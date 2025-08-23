@@ -3,7 +3,7 @@ enum MessegeOwner { user, ai, erorr }
 class Chatbubble {
   String message;
   String time;
-  String? id;
+  int? id;
   MessegeOwner msgtype;
   List<String>? attachment;
   Chatbubble({

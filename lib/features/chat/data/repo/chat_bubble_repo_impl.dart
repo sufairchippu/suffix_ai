@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:clean_architutre_learn/core/error/failures.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
@@ -15,15 +16,16 @@ class ChatBubbleRepoImpl implements ChatBubbleRepository {
     final data = ChatBubbleModel(
       message: chat.message,
       time: chat.time,
-      id: chat.id,
+ 
       msgtype: chat.msgtype,
       attachment: chat.attachment,
     );
 
     log('message.  has insertted db');
     localchat.insertChat(data);
+    
 
-
+// final dataaaaaa= localchat.getSinglChat(int.parse(data.id!));
   }
 
   @override

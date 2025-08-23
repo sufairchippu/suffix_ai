@@ -7,18 +7,17 @@ import 'package:sqflite/sqflite.dart';
 import '../model/chat_bubble_model.dart';
 
 class ChatLocalDataSource {
-  
- static const String _dbName = "chat.db";
+  static const String _dbName = "chat.db";
   static const String _tableName = "chat_bubbles";
   static const int _dbVersion = 1;
 
   Database? _db;
- final _controller = StreamController<List<ChatBubbleModel>>.broadcast();
+  final _controller = StreamController<List<ChatBubbleModel>>.broadcast();
   // // Singleton pattern
   // static final chatbuuble instance = ChatRepository._internal();
   // ChatRepository._internal();
 
-  Future<Database> get  database async {
+  Future<Database> get database async {
     if (_db != null) return _db!;
     _db = await _initDB();
     return _db!;
@@ -28,8 +27,7 @@ class ChatLocalDataSource {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _dbName);
 
-
-log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+    log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     return await openDatabase(
       path,
       version: _dbVersion,
@@ -44,12 +42,12 @@ log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
           )
         ''');
       },
-    
     );
-      }
+  }
 
   // ✅ Insert
   Future<int> insertChat(ChatBubbleModel chat) async {
+    log('message insertinnggg>>>>>>>>>>>>>>.');
     final db = await database;
     return await db.insert(
       _tableName,
@@ -65,20 +63,20 @@ log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     return result.map((map) => ChatBubbleModel.fromMap(map)).toList();
   }
 
-  //   Future<List<ChatBubbleModel>> getSinglChat(String id) async {
-  //   final db = await database;
-  // final result = await db.query(
-  //   _tableName,
-  //   where: "id = ?",
-  //   whereArgs: [id],
-  //   limit: 1,
-  // );
+  Future<ChatBubbleModel?> getSinglChat(int id) async {
+    final db = await database;
+    final result = await db.query(
+      _tableName,
+      where: "id = ?",
+      whereArgs: [id],
+      limit: 1,
+    );
 
-  // if (result.isNotEmpty) {
-  //   return ChatBubbleModel.fromMap(result.first);
-  // }
-  // return null;
-  // }
+    if (result.isNotEmpty) {
+      return ChatBubbleModel.fromMap(result.first);
+    }
+    return null;
+  }
 
   // ✅ Update
   Future<int> updateChat(ChatBubbleModel chat) async {
@@ -94,11 +92,7 @@ log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
   // ✅ Delete
   Future<int> deleteChat(int id) async {
     final db = await database;
-    return await db.delete(
-      _tableName,
-      where: "id = ?",
-      whereArgs: [id],
-    );
+    return await db.delete(_tableName, where: "id = ?", whereArgs: [id]);
   }
 
   // ✅ Clear table
@@ -107,8 +101,7 @@ log('Creating  data base>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     return await db.delete(_tableName);
   }
 
-
-    Stream<List<ChatBubbleModel>> watchChats() {
+  Stream<List<ChatBubbleModel>> watchChats() {
     _notifyListeners(); // initial emit
     return _controller.stream;
   }

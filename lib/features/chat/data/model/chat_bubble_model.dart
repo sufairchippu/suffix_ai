@@ -5,7 +5,7 @@ import '../../business/entities/chat_bubble.dart';
 class ChatBubbleModel {
   String message;
   String time;
-  String? id;
+  int? id;
   MessegeOwner msgtype;
   List<String>? attachment;
   ChatBubbleModel({

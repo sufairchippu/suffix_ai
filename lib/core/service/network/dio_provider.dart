@@ -1,3 +1,4 @@
+import 'package:clean_architutre_learn/app_config.dart';
 import 'package:clean_architutre_learn/core/constants/api_coonstants.dart/api_url.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -10,16 +11,25 @@ final dioClientProvider = Provider<DioClient>((ref) {
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: ApiUrl.baseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      headers: {'Content-Type': 'application/json'},
+      // baseUrl: ApiUrl.baseUrl,
+      connectTimeout: const Duration(milliseconds: 30000),
+      receiveTimeout: const Duration(milliseconds: 30000),
+
+      contentType: 'application/json',
+      // headers: {
+      //   'Content-Type': 'application/json',
+      //   'X-goog-api-key': AppConfig.aiApiKey,
+      // },
     ),
   );
 
   dio.interceptors.add(
     InterceptorsWrapper(
-      onRequest: (options, handler) {
+      onRequest: (options, handler) async {
+        options.headers['X-goog-api-key'] = AppConfig.aiApiKey;
+        // options.headers['Content-Type'] = 'application/json';
+        // options.contentType
+
         // Add token if needed
         return handler.next(options);
       },
