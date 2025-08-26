@@ -102,9 +102,27 @@ class ChatLocalDataSource {
   }
 
   Stream<List<ChatBubbleModel>> watchChats() {
-    _notifyListeners(); // initial emit
-    return _controller.stream;
+    // Example if using sqflite + StreamController
+    final controller = StreamController<List<ChatBubbleModel>>();
+
+    _loadAndEmit() async {
+      final chats = await getAllChats(); // fetch from DB
+      controller.add(chats);
+    }
+
+    // emit initially
+    _loadAndEmit();
+
+    // optional: re-emit on DB changes (if you have triggers or manual notify)
+    // Provide a method to notify controller.add()
+
+    return controller.stream;
   }
+
+  // Stream<List<ChatBubbleModel>> watchChats() {
+  //   _notifyListeners(); // initial emit
+  //   return _controller.stream;
+  // }
 
   Future<void> _notifyListeners() async {
     final chats = await getAllChats();

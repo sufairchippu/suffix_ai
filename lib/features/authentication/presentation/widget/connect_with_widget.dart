@@ -52,10 +52,10 @@ class CustomCircleImageWidget extends StatelessWidget {
     required this.onTap,
     this.height,
     this.width,
-    required this.icon,
+     this.icon,
     this.netwrkImage,
     this.assetImage,
-    required this.firstLetter,
+     this.firstLetter,
     this.boxColor,
   });
   final void Function()? onTap;
@@ -64,7 +64,7 @@ class CustomCircleImageWidget extends StatelessWidget {
   final String? icon;
   final String? netwrkImage;
   final String? assetImage;
-  final String firstLetter;
+  final String? firstLetter;
   final Color? boxColor;
 
   Widget _buildChild(BuildContext context) {
@@ -74,11 +74,15 @@ class CustomCircleImageWidget extends StatelessWidget {
       return Uiutils.getassetImage(assetImage!);
     } else if (netwrkImage != null) {
       return Uiutils.getNetworkImage(netwrkImage!);
-    } else {
+    } else if(firstLetter!=null){
       return Uiutils.getTextWidget(
         context,
-        firstLetter.characters.first.split('/').first.toUpperCase(),
+        firstLetter!.characters.first.split('/').first.toUpperCase(),
       );
+    }
+    else{
+      return Uiutils.getSvg(boxfit: BoxFit.contain,SvgConstants. profilUndefined);
+
     }
   }
 

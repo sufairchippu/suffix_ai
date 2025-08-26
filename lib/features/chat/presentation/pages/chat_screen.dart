@@ -15,11 +15,16 @@ import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_
 import 'package:clean_architutre_learn/features/chat/presentation/widgets/chat_bubble_painter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/constants/widgets/app_logo_widget.dart';
+import '../../../../core/service/speach/speech_service.dart';
 import '../../../../core/theme/theme_notifier.dart';
+import '../provider/tts_provider.dart';
+import '../widgets/custom_chat_bubble_widget.dart';
 import '../widgets/chat_bakground_screen.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -31,26 +36,81 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController inputController = TextEditingController();
-  @override
-  void initState() {
-    ref.read(chatListNotifierProvider.notifier).loadChats();
-    super.initState();
+  final SpeechService _speechService = SpeechService();
+  String _spokenText = "";
+  // bool _isListening = false;
+  Future<void> _initSpeech() async {
+    await Permission.microphone.request();
+    await Permission.speech.request();
+
+    bool available = await _speechService.initialize();
+    if (!available) {
+      print("Speech recognition not available");
+    }
   }
 
   @override
+  void initState() {
+    ref.read(chatListNotifierProvider.notifier).loadChats();
+    _initSpeech();
+    // _initializeTts();
+    super.initState();
+  }
+
+  // void _initializeTts() async {
+  //   // Optional: Check languages
+  //   var languages = await _flutterTts.getLanguages;
+  //   print("Languages available: $languages");
+
+  //   // Optional: Check voices
+  //   // var voices = await _flutterTts.getVoices;
+  //   // print("Voices available: $voices");
+
+  //   // Set default language
+  //   await _flutterTts.setLanguage("en-US");
+
+  //   // Set pitch (0.5 - 2.0)
+  //   await _flutterTts.setPitch(1.2);
+  //   await _flutterTts.setVoice({
+  //     "name": "com.apple.voice.compact.en-US.Samantha",
+  //     "locale": "en-US",
+  //   });
+
+  //   // Set speech rate (0.0 - 1.0)
+  //   await _flutterTts.setSpeechRate(0.5);
+
+  //   // Optional: Volume (0.0 - 1.0)
+  //   await _flutterTts.setVolume(1.0);
+  // }
+
+  // final FlutterTts _flutterTts = FlutterTts();
+
+  @override
   Widget build(BuildContext context) {
+    final loadingAiMsg = ref.watch(loadingmsgProvider);
+    final _isListening = ref.watch(voiceListenProvider);
+
     return CupertinoPageScaffold(
       child: Stack(
         children: [
           Positioned.fill(
             child: GradientMotionBackground(
-              colors: [
-                context.dynamicColor1,
-                context.dynamicColor2,
-                context.dynamicColor3,
-              ],
+              // colors: [
+              //   context.dynamicColor1,
+              //   context.dynamicColor2,
+              //   context.dynamicColor3,
+              // ],
             ),
           ),
+
+          // AnimatedPositioned(
+          //   left: 100, //change it
+          //   top: 0,
+          //   right: 0,
+          //   bottom: 0,
+          //   child: Container(height: 100,color: context.red,),
+          //   duration: Duration(milliseconds: 300),
+          // ),
           Padding(
             padding: EdgeInsets.only(
               bottom: 18.rh(context),
@@ -68,7 +128,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ref.read(themeProvider.notifier).toggleTheme();
                         //drawer like something opening
                       },
-                      firstLetter: "user first Letter",
+                      // firstLetter: "user first Letter",
                       // netwrkImage: 'avatar path',
                       icon: null,
                       boxColor: context.mainDarkShadeColor,
@@ -84,10 +144,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     Spacer(),
                     GestureDetector(
                       onTap: () {
-                        ref
-                            .read(chatListNotifierProvider.notifier)
-                            .clearChatts();
-                        ref.read(chatListNotifierProvider.notifier).loadChats();
+                        context.pop();
+                        // ref
+                        //     .read(chatListNotifierProvider.notifier)
+                        //     .clearChatts();
+                        // ref.read(chatListNotifierProvider.notifier).loadChats();
                       },
                       child: Icon(
                         CupertinoIcons.xmark_circle,
@@ -105,184 +166,59 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         .reversed
                         .toList();
 
-                    return Expanded(
-                      child: ListView.builder(
-                        reverse: true,
-                        padding: EdgeInsets.zero,
-                        // physics: NeverScrollableScrollPhysics(),
-                        // shrinkWrap: true,
-                        itemCount: chatlist.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == chatlist.length) {
-                            final hour = DateTime.now().hour;
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(28.rf(context)),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Uiutils.getLottie(
-                                            LottieConstant.chatScreen,
-                                            height: 60.rh(context),
-                                            width: 80,
-                                          ),
-                                          SizedBox(width: 15.rw(context)),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Uiutils.getTextWidget(
-                                                  context,
-                                                  hour < 12
-                                                      ? "Good Morning ☀️,"
-                                                      : hour < 17
-                                                      ? "Good Afternoon 🌤,"
-                                                      : "Good Evening 🌙,",
-                                                ),
-
-                                                if (chatlist.isEmpty) ...[
-                                                  Uiutils.getTextWidget(
-                                                    context,
-                                                    "How Can I Help Youh",
-                                                  ),
-                                                  SizedBox(
-                                                    height: 15.rh(context),
-                                                  ),
-                                                ],
-                                                Uiutils.getTextWidget(
-                                                  context,
-                                                  'Share Your thoughts ...',
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 100.rh(context)),
-                                // SizedBox.expand(),
-                              ],
-                            );
-                          }
-                          final chat = chatlist[index];
-
-                          return Row(
-                            mainAxisAlignment: chat.msgtype == MessegeOwner.user
-                                ? MainAxisAlignment.end
-                                : MainAxisAlignment.start,
-                            children: [
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * 0.6,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      chat.msgtype == MessegeOwner.user
-                                      ? CrossAxisAlignment.end
-                                      : CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                        8.rh(context),
-                                        10.rh(context),
-                                        0,
-                                        0,
-                                      ),
-                                      child: CustomPaint(
-                                        painter: ChatBubblePainter(
-                                          color:
-                                              chat.msgtype == MessegeOwner.user
-                                              ? context.secondaryColor
-                                              : context.primaryColor,
-                                          isSender:
-                                              chat.msgtype == MessegeOwner.user,
-                                        ),
-                                        child: Container(
-                                          // decoration: BoxDecoration(
-                                          //   color: chat.msgtype == MessegeOwner.user
-                                          //       ? context.primaryColor
-                                          //       : context.secondaryColor,
-                                          //   borderRadius: BorderRadius.circular(
-                                          //     20.rf(context),
-                                          //   ),
-                                          //   border: Border.all(
-                                          //     width: 1.5.rf(context),
-                                          //     color: CupertinoColors.transparent,
-                                          //   ),
-                                          // ),
-                                          padding: EdgeInsets.all(
-                                            14.rf(context),
-                                          ),
-                                          child:
-                                              chat.msgtype == MessegeOwner.user
-                                              ? Uiutils.getTextWidget(
-                                                  context,
-                                                  chat.message,
-                                                  color: context.textColor,
-                                                )
-                                              : Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Uiutils.getTextWidget(
-                                                          context,
-                                                          "Suffix Ai",
-                                                          textStyle: TextStyleType
-                                                              .extraSmallBold,
-                                                          color: context
-                                                              .buttnColor,
-                                                        ),
-                                                        Spacer(),
-                                                        LoadingAnimationWidget.staggeredDotsWave(
-                                                          color: context
-                                                              .subTextColor,
-                                                          size: 20.rf(context),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Uiutils.getTextWidget(
-                                                      context,
-                                                      chat.message,
-                                                      color: context.cardColor,
-                                                    ),
-                                                  ],
-                                                ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 6.rw(context),
-                                      ),
-                                      child: Uiutils.getTextWidget(
-                                        context,
-                                        Uiutils.timeAgo(
-                                          Uiutils.parseBackendDate(chat.time),
-                                        ),
-                                        textStyle:
-                                            TextStyleType.extraSmallsemiBold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    );
+                    return _buildChatList(chatlist, loadingAiMsg, ref);
                   },
                 ),
 
                 CustomTextFormField(
+                  onHold: () async {
+                    if (_isListening) {
+                      _speechService.stopListening();
+                      // setState(() => _isListening = false);
+                      ref.read(voiceListenProvider.notifier).state = false;
+                      _spokenText != ''
+                          ? () async {
+                              final chat = Chatbubble(
+                                message: _spokenText,
+                                time: DateTime.now().toFormattedString(),
+                                msgtype: MessegeOwner.user,
+                              );
+
+                              log('User message posting: $_spokenText');
+
+                              try {
+                                // Add user chat
+                                await ref
+                                    .read(chatListNotifierProvider.notifier)
+                                    .addchats(chat);
+
+                                // Reload chats
+                                await ref
+                                    .read(chatListNotifierProvider.notifier)
+                                    .loadChats();
+
+                                // Clear input field
+                                inputController.clear();
+
+                                log('Fetching AI response...');
+                                await ref
+                                    .read(aiMessgeNotifierProvider.notifier)
+                                    .getAiReply(chat.message);
+                              } catch (e) {
+                                log('Error while sending message: $e');
+                              }
+                            }
+                          : () {};
+                    } else {
+                      _speechService.startListening((text) {
+                        setState(() {
+                          _spokenText = text;
+                        });
+                      });
+                      ref.read(voiceListenProvider.notifier).state = true;
+                    }
+                  },
+                  // inputController.text=_spokenText;
                   prefixOntap: () {
                     // showCupertinoModalPopup(
                     //   context: context,
@@ -335,49 +271,134 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   icon: CupertinoIcons.add_circled,
                   hintText: "Ask Me Anything",
                   controller: inputController,
+                  loadingOnsomething: loadingAiMsg,
                   iconColor: context.subTextColor,
                   isWantsuffix: true,
-                  textInputAction: TextInputAction.search,
-                  onTap: () {
+                  maxline: null,
+                  textInputAction: TextInputAction.newline,
+                  onTap: () async {
+                    final text = inputController.text.trim();
+                    if (text.isEmpty) return;
+
                     final chat = Chatbubble(
-                      message: inputController.text,
+                      message: text,
                       time: DateTime.now().toFormattedString(),
                       msgtype: MessegeOwner.user,
                     );
-                    log('message of doinggggggg userrrr posting');
 
-                    inputController.text.trim().isNotEmpty
-                        ? ref
-                              .read(chatListNotifierProvider.notifier)
-                              .addchats(chat)
-                              .then((value) {
-                                ref
-                                    .read(chatListNotifierProvider.notifier)
-                                    .loadChats();
+                    log('User message posting: $text');
 
-                                log('message of doinggggggg ai api posting');
-                                return ref
-                                    .read(aiMessgeNotifierProvider.notifier)
-                                    .getAiReply(chat.message);
-                              })
-                        : null;
-                    ref.read(chatListNotifierProvider.notifier).loadChats();
-                    inputController.clear();
+                    try {
+                      // Add user chat
+                      await ref
+                          .read(chatListNotifierProvider.notifier)
+                          .addchats(chat);
+
+                      // Reload chats
+                      await ref
+                          .read(chatListNotifierProvider.notifier)
+                          .loadChats();
+
+                      // Clear input field
+                      inputController.clear();
+
+                      log('Fetching AI response...');
+                      await ref
+                          .read(aiMessgeNotifierProvider.notifier)
+                          .getAiReply(chat.message);
+                    } catch (e) {
+                      log('Error while sending message: $e');
+                    }
                   },
                   suffixIcon: CupertinoIcons.paperplane_fill,
                 ),
               ],
             ),
           ),
-
-          // SizedBox.expand(
-          //   child: ListView.builder(
-          //     itemBuilder: (context, index) {
-          //       return Container();
-          //     },
-          //   ),
-          // ),
         ],
+      ),
+    );
+  }
+
+  Expanded _buildChatList(
+    List<Chatbubble> chatlist,
+    bool loadingAiMsg,
+    WidgetRef ref,
+  ) {
+    return Expanded(
+      child: ListView.builder(
+        reverse: true,
+        padding: EdgeInsets.zero,
+        // physics: NeverScrollableScrollPhysics(),
+        // shrinkWrap: true,
+        itemCount: chatlist.length + 1,
+        itemBuilder: (context, index) {
+          if (index == chatlist.length) {
+            final hour = DateTime.now().hour;
+            return Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(28.rf(context)),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Uiutils.getLottie(
+                            LottieConstant.chatScreen,
+                            height: 60.rh(context),
+                            width: 80,
+                          ),
+                          SizedBox(width: 15.rw(context)),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Uiutils.getTextWidget(
+                                  context,
+                                  hour < 12
+                                      ? "Good Morning ☀️,User"
+                                      : hour < 17
+                                      ? "Good Afternoon 🌤,User"
+                                      : "Good Evening 🌙, User",
+                                ),
+
+                                if (chatlist.isEmpty) ...[
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    "How Can I Help Youh ,",
+                                  ),
+                                  SizedBox(height: 15.rh(context)),
+                                ],
+                                Uiutils.getTextWidget(
+                                  context,
+                                  'Share Your thoughts ...',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 100.rh(context)),
+              ],
+            );
+          }
+          if (index == 0 && loadingAiMsg) {
+            return Row(
+              children: [
+                LoadingAnimationWidget.fourRotatingDots(
+                  color: context.buttnColor,
+                  size: 40.rf(context),
+                ),
+              ],
+            );
+          }
+          final chat = chatlist[index];
+
+          return CustomChatBubbleWidget(chat: chat, loadingAiMsg: loadingAiMsg);
+        },
       ),
     );
   }

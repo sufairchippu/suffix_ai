@@ -25,6 +25,9 @@ class CustomTextFormField extends StatelessWidget {
     this.textInputAction,
     this.fillcolor,
     this.boxshadows,
+    this.loadingOnsomething = false,
+    this.maxline,
+    this.onHold,
   });
   final double? iconSize;
   final TextEditingController? controller;
@@ -41,6 +44,9 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final Color? fillcolor;
   final List<BoxShadow>? boxshadows;
+  final bool loadingOnsomething;
+  final int? maxline;
+  final void Function()? onHold;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -57,8 +63,14 @@ class CustomTextFormField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18.rf(context)),
               ),
               child: Padding(
-                padding: EdgeInsets.only(right: 8.rw(context)),
+                padding: EdgeInsets.only(
+                  right: isWantsuffix
+                      ? 45.rw(context)
+                      : 8.rw(context), // Extra space for suffix icon
+                ),
                 child: CupertinoTextFormFieldRow(
+                  maxLines: maxline,
+                  readOnly: loadingOnsomething,
                   keyboardAppearance: Brightness.dark,
                   textInputAction: textInputAction ?? TextInputAction.send,
                   selectionHeightStyle: BoxHeightStyle.max,
@@ -84,6 +96,9 @@ class CustomTextFormField extends StatelessWidget {
                   placeholderStyle: AppText.getStyle(
                     context,
                     TextStyleType.mediumRegular,
+                    color: loadingOnsomething
+                        ? context.cardColor2.withValues(alpha: .6)
+                        : null,
                   ),
                   validator: validator,
                   decoration: BoxDecoration(
@@ -96,7 +111,8 @@ class CustomTextFormField extends StatelessWidget {
 
             if (isWantsuffix)
               GestureDetector(
-                onTap: onTap,
+                onLongPress: onHold,
+                onTap: loadingOnsomething ? null : onTap,
                 child: Padding(
                   padding: EdgeInsets.all(15.rf(context)),
                   child: Icon(

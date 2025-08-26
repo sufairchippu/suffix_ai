@@ -1,0 +1,233 @@
+import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
+import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import '../../../../core/theme/text/app_text.dart';
+import '../../../../core/utils/ui_utils.dart';
+import '../../business/entities/chat_bubble.dart';
+import '../provider/chat_provider.dart';
+import '../provider/tts_provider.dart';
+import 'chat_bubble_painter.dart';
+
+class CustomChatBubbleWidget extends ConsumerStatefulWidget {
+  const CustomChatBubbleWidget({
+    super.key,
+    required this.chat,
+    required this.loadingAiMsg,
+  });
+
+  final Chatbubble chat;
+  final bool loadingAiMsg;
+
+  @override
+  ConsumerState<CustomChatBubbleWidget> createState() =>
+      _CustomChatBubbleWidgetState();
+}
+
+class _CustomChatBubbleWidgetState
+    extends ConsumerState<CustomChatBubbleWidget> {
+  @override
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: widget.chat.msgtype == MessegeOwner.user
+          ? MainAxisAlignment.end
+          : MainAxisAlignment.start,
+      children: [
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: double.infinity,
+            maxWidth: widget.chat.msgtype == MessegeOwner.user
+                ? MediaQuery.of(context).size.width * 0.65
+                : MediaQuery.of(context).size.width * 0.80,
+          ),
+          child: Column(
+            crossAxisAlignment: widget.chat.msgtype == MessegeOwner.user
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  8.rh(context),
+                  10.rh(context),
+                  0,
+                  0,
+                ),
+                child: CustomPaint(
+                  painter: ChatBubblePainter(
+                    color: widget.chat.msgtype == MessegeOwner.user
+                        ? context.secondaryColor
+                        : context.primaryColor,
+                    isSender: widget.chat.msgtype == MessegeOwner.user,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(14.rf(context)),
+                    child: widget.chat.msgtype == MessegeOwner.user
+                        ? Column(
+                            children: [
+                              Uiutils.getTextWidget(
+                                context,
+                                widget.chat.message,
+                                color: context.textColor,
+                              ),
+
+                              if (widget.chat.message.length > 100) ...[
+                                SizedBox(height: 6.rh(context)),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        ref
+                                            .read(chatReadMoreProvider.notifier)
+                                            .state = !ref
+                                            .read(chatReadMoreProvider.notifier)
+                                            .state;
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 4.rh(context),
+                                        ),
+                                        child: Uiutils.getTextWidget(
+                                          context,
+                                          ref.watch(chatReadMoreProvider)
+                                              ? 'readLess'
+                                              : 'readMore',
+                                          color: context.cardColor2,
+                                          textStyle:
+                                              TextStyleType.extraSmallBold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    "Suffix Ai",
+                                    textStyle: TextStyleType.extraSmallBold,
+                                    color: context.buttnColor,
+                                  ),
+                                  Spacer(),
+                                  widget.loadingAiMsg
+                                      ? LoadingAnimationWidget.staggeredDotsWave(
+                                          color: context.subTextColor,
+                                          size: 20.rf(context),
+                                        )
+                                      : SizedBox(),
+                                ],
+                              ),
+                              Uiutils.getTextWidget(
+                                maxline: ref.watch(chatReadMoreProvider)
+                                    ? null
+                                    : 3,
+                                overFlow: ref.watch(chatReadMoreProvider)
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                                context,
+                                widget.chat.message,
+                                color: context.cardColor,
+                              ),
+                              if (widget.chat.message.length > 100)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        ref
+                                            .read(chatReadMoreProvider.notifier)
+                                            .state = !ref
+                                            .read(chatReadMoreProvider.notifier)
+                                            .state;
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 4.rh(context),
+                                        ),
+                                        child: Uiutils.getTextWidget(
+                                          context,
+                                          ref.watch(chatReadMoreProvider)
+                                              ? 'readLess'
+                                              : 'readMore',
+                                          color: context.cardColor2,
+                                          textStyle:
+                                              TextStyleType.extraSmallBold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                              /// Show Read More / Read Less only if needed
+                              // conditionally show
+                            ],
+                          ),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: //widget.chat.msgtype == MessegeOwner.ai?
+                    MainAxisAlignment.end,
+                // : MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 19.rw(context),
+                      vertical: 3.rh(context),
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        final ttsState = ref.read(ttsProvider);
+                        final tts = ref.read(ttsProvider.notifier);
+
+                        if (ttsState == TtsState.playing) {
+                          tts.stop();
+                        } else {
+                          tts.speak(widget.chat.message);
+                        }
+                        //if its playing stop
+                        //if not playing play it
+                        // _speak(widget.chat.message);
+                      },
+                      child: Icon(
+                        CupertinoIcons.mic_fill,
+                        color: context.cardColor2,
+                        size: 18.rf(context),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    child: Icon(
+                      CupertinoIcons.doc_on_doc,
+                      color: context.cardColor2,
+                      size: 15.rf(context),
+                    ),
+                  ),
+                ],
+              ),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.rw(context)),
+                child: Uiutils.getTextWidget(
+                  context,
+                  Uiutils.timeAgo(Uiutils.parseBackendDate(widget.chat.time)),
+                  textStyle: TextStyleType.extraSmallsemiBold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

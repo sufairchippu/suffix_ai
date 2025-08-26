@@ -1,4 +1,4 @@
-class LocalKeys {
+class LocalServiceKeys {
   //!theme
   static const String THEME_KEY = "theme_key";
   static const String THEME_MODE_KEY = "theme_mode_key";
@@ -8,4 +8,5 @@ class LocalKeys {
   //* barrier token
 
   static const String USER_TOKEN_KEY = "user_token_key";
+  static const String USER_NAME = "user_name";
 }

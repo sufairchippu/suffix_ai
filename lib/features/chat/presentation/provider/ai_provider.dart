@@ -53,6 +53,9 @@ class AiMessgeNotifier extends StateNotifier<Content> {
   final GetMessage _messge;
 
   Future<void> getAiReply(String input) async {
+                    // ref.read(chatListNotifierProvider.notifier).loadChats();
+
+    ref.read(loadingmsgProvider.notifier).state = true;
     final reply = await _messge(input);
 
     reply.fold(
@@ -75,13 +78,11 @@ class AiMessgeNotifier extends StateNotifier<Content> {
             );
 
             // Add to chat list via another provider
-            ref
-                .read(chatListNotifierProvider.notifier)
-                .addchats(chat)
-                .then(
-                  (value) =>
-                      ref.read(chatListNotifierProvider.notifier).loadChats(),
-                );
+            ref.read(chatListNotifierProvider.notifier).addchats(chat).then((
+              value,
+            ) {
+              ref.read(loadingmsgProvider.notifier).state = false;
+            });
 
             print('AI Reply: $message');
           }
@@ -111,4 +112,7 @@ final aiDataSourceProvider = Provider<AiDataSource>((ref) {
   final dio = ref.read(dioProvider);
   final client = DioClient(dio);
   return AiDataSource(client);
+});
+final loadingmsgProvider = StateProvider<bool>((ref) {
+  return false;
 });

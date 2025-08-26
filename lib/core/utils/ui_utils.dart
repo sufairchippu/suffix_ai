@@ -85,7 +85,7 @@ class Uiutils {
         context,
         textStyle ?? TextStyleType.mediumRegular,
       ),
-      maxLines: maxline ?? 5,
+      maxLines: maxline ,
       overflow: overFlow ?? TextOverflow.ellipsis,
     );
   }

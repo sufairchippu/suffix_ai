@@ -1,5 +1,4 @@
 import 'package:clean_architutre_learn/app_config.dart';
-import 'package:clean_architutre_learn/core/constants/api_coonstants.dart/api_url.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 

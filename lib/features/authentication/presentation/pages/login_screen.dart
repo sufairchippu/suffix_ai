@@ -83,6 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 35.rf(context)),
                   child: CustomTextFormField(
+                    maxline: 1,
                     obscure: false,
                     controller: emailController,
                     icon: CupertinoIcons.mail,
@@ -99,6 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Consumer(
                     builder: (context, ref, child) {
                       return CustomTextFormField(
+                        maxline: 1,
                         controller: passwordController,
                         hintText: 'Enter Password',
                         text: 'Password',
@@ -126,6 +128,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: Consumer(
                           builder: (context, ref, child) {
                             return CustomTextFormField(
+                              maxline: 1,
                               controller: conformController,
                               hintText: 'Re-enter Password',
                               text: 'Password',
@@ -155,7 +158,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 SizedBox(height: 40.rh(context)),
                 GestureDetector(
                   onTap: () {
-                    context.pushReplacementNamed(RouteNames.chat);
+                    context.pushReplacementNamed(RouteNames.home);
                     emailController.clear();
                     passwordController.clear();
                     conformController.clear();

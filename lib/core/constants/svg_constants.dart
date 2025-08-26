@@ -9,4 +9,6 @@ class SvgConstants {
   static const String google = '${basePath}google.svg';
   static const String apple = '${basePath}apple.svg';
   static const String faceBokk = '${basePath}facebook.svg';
+
+  static const String profilUndefined = '${basePath}profile.svg';
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/business/repo/chat_bubble_repository.dart';
 import 'package:clean_architutre_learn/features/chat/business/usecases/add_chat.dart';
@@ -25,6 +27,8 @@ final getChatProvider = Provider<GetChats>((ref) {
 });
 // //!streamming chatt
 final chatLocalDataSourceProvider = Provider<ChatLocalDataSource>((ref) {
+  final dataSource = ChatLocalDataSource();
+  // ref.onDispose(() => dataSource.dispose());
   return ChatLocalDataSource();
 });
 
@@ -74,19 +78,27 @@ class ChatListNotifier extends StateNotifier<List<Chatbubble>> {
   }
 
   Future<void> addchats(Chatbubble chat) async {
+    log('addedd. to');
     await _addchats(chat);
+    await loadChats();
   }
 
   Future<void> removeChat(int chatId) async {
     await _deletChat(chatId);
+    await loadChats();
   }
 
   Future<void> clearChatts() async {
     await _clerachts();
+    await loadChats();
   }
 }
 
 
-// final timeSeeProvide = StateProvider<bool>((ref) {
-//   return false;
-// });
+final chatReadMoreProvider = StateProvider <bool>((ref) {
+  return false;
+});
+
+final chatDrawrProvider = StateProvider <bool>((ref) {
+  return false;
+});
