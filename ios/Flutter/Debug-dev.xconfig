@@ -1,0 +1,7 @@
+#include "Generated.xcconfig"
+FLAVOR=dev
+FLUTTER_TARGET=lib/main_dev.dart
+PRODUCT_BUNDLE_IDENTIFIER=com.yourcompany.myapp.dev
+APP_DISPLAY_NAME=MyApp Dev
+ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon-dev
+GOOGLE_SERVICE_INFO_PLIST=GoogleService-Info-Dev.plist
