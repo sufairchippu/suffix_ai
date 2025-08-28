@@ -26,6 +26,8 @@ extension CupertinoColorExtension on BuildContext {
 
   Color get containerGrayColor => AppColors.containerGray.resolveFrom(this);
   Color get cardColor => AppColors.card.resolveFrom(this);
+  Color get cardColor3 => AppColors.card3.resolveFrom(this);
+
   Color get cardColor2 => AppColors.card2.resolveFrom(this);
 
   Color get borderColor => AppColors.border.resolveFrom(this);

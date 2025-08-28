@@ -13,7 +13,7 @@ void main() async {
   await LocalStorageService.init();
   await dotenv.load(fileName: ".env");
   await ChatLocalDataSource().database;
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

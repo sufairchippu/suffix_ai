@@ -29,7 +29,7 @@ class HomeScreenSecotionWidget extends StatelessWidget {
             color: context.blue.withValues(alpha: 0.14), // Shadow color
             blurRadius: .7, // How soft the shadow is
             // How far it spreads
-            offset: Offset(0, 3), // X and Y offset
+            offset: const Offset(0, 3), // X and Y offset
           ),
         ],
       ),
@@ -46,8 +46,8 @@ class HomeScreenSecotionWidget extends StatelessWidget {
             ),
           ),
           Uiutils.getTextWidget(context, text),
-          Spacer(),
-          Icon(CupertinoIcons.right_chevron),
+          const Spacer(),
+          const Icon(CupertinoIcons.right_chevron),
           SizedBox(width: 9.rw(context)),
         ],
       ),

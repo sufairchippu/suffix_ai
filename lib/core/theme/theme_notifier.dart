@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_color/app_theme.dart';
 
 class ThemeNotifier extends StateNotifier<CupertinoThemeData> {
-  ThemeNotifier() : super(CupertinoThemeData(brightness: Brightness.light));
+  ThemeNotifier() : super(const CupertinoThemeData(brightness: Brightness.light));
   void toggleTheme() {
     if (state.brightness == Brightness.light) {
       state = AppTheme.dark;

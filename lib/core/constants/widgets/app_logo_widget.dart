@@ -35,7 +35,7 @@ class AppLogoWidget extends StatelessWidget {
                 height: logoheit,
                 width: logoheit / 7 * 6,
               )
-            : SizedBox(height: 0, width: 0),
+            : const SizedBox(height: 0, width: 0),
         Uiutils.getTextWidget(
           context,
           AppConstants.appName,

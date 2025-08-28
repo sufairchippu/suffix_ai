@@ -2,18 +2,17 @@ import 'package:clean_architutre_learn/core/constants/image_constants.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/app_logo_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/router/route_names.dart';
-import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
-import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/pages/camera_result_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../../core/constants/widgets/custom_button_widget.dart';
+import '../provider/home_screen_provider.dart';
 import '../widget/floating_action_item.dart';
 import '../widget/home_screen_section_widget.dart';
 
@@ -25,13 +24,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final imagePicker = ImagePicker();
+  late XFile _file;
+
   @override
   Widget build(BuildContext context) {
-    final String? userrr = LocalStorageService.getString(
-      LocalServiceKeys.USER_NAME,
-    );
-    final ImagePicker_picker = ImagePicker();
-    XFile _file;
+    // final String? userrr = LocalStorageService.getString(
+    //   LocalServiceKeys.USER_NAME,
+    // );
+
     bool topic = true;
     return CupertinoPageScaffold(
       child: SafeArea(
@@ -64,9 +65,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           context,
                           'use thes to help youhh',
                         ),
-                        HomeScreenSecotionWidget(text: 'test Your Knwoledge'),
+                        const HomeScreenSecotionWidget(
+                          text: 'test Your Knwoledge',
+                        ),
 
-                        HomeScreenSecotionWidget(
+                        const HomeScreenSecotionWidget(
                           text: 'Generate Question Paper',
                         ),
                         SizedBox(height: 12.rh(context)),
@@ -89,26 +92,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       child: Row(
                         children: [
-                          CustomButtonWIdget(
-                            onTap: () {
-                              topic = true;
-                            },
+                          Expanded(
+                            child: CustomButtonWIdget(
+                              onTap: () {
+                                topic = true;
+                              },
 
-                            boxshadowColor: topic
-                                ? context.primaryColor.withValues(alpha: .9)
-                                : CupertinoColors.transparent,
-                            titile: 'Topic',
+                              boxshadowColor: topic
+                                  ? context.primaryColor.withValues(alpha: .9)
+                                  : CupertinoColors.transparent,
+                              titile: 'Topic',
+                            ),
                           ),
                           SizedBox(width: 10.rw(context)),
-                          CustomButtonWIdget(
-                            onTap: () {
-                              topic = false;
-                            },
+                          Expanded(
+                            child: CustomButtonWIdget(
+                              onTap: () {
+                                topic = false;
+                              },
 
-                            boxshadowColor: topic
-                                ? CupertinoColors.transparent
-                                : context.primaryColor.withValues(alpha: .9),
-                            titile: 'Topic',
+                              boxshadowColor: topic
+                                  ? CupertinoColors.transparent
+                                  : context.primaryColor.withValues(alpha: .9),
+                              titile: 'Topic',
+                            ),
                           ),
                         ],
                       ),
@@ -137,11 +144,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               'Hi,  \n${'Guest'}',
               textStyle: TextStyleType.mediumBold,
             ),
-            AppLogoWidget(),
+            const AppLogoWidget(),
 
             GestureDetector(
               onTap: () {
                 // context.pushNamed(RouteNames.login);
+                // imagePicker.pickImage(source: ImageSource.gallery);
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => CameraResultScreen(),
+                  ),
+                );
 
                 ///change as camera setup
               },
@@ -184,13 +198,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
             ],
           );
         },
         childCount: 7, // number of items
       ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
         mainAxisSpacing: 10,
         crossAxisSpacing: 5,
@@ -213,7 +227,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   color: context.dynamicColor3,
                   blurRadius: 2.rf(context),
                   spreadRadius: 1.rf(context),
-                  offset: Offset(2, 4), // soft bottom shadow
+                  offset: const Offset(2, 4), // soft bottom shadow
                 ),
               ],
             ),
@@ -223,10 +237,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
+                  child: SizedBox(
                     height: 100.rh(context),
                     width: 80.rw(context),
-                    child: Uiutils.getassetImage('assetName'),
+                    child: Uiutils.getassetImage(ImageConstants.logo),
                   ),
                 ),
                 Uiutils.getTextWidget(context, '* hbdkjbhk'),
@@ -266,7 +280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               BoxShadow(
                 color: context.greyFirstColor.withValues(alpha: 0.15),
                 blurRadius: 10,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -297,11 +311,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           BoxShadow(
                             color: context.primaryColor.withValues(alpha: 0.3),
                             blurRadius: 8,
-                            offset: Offset(2, 4),
+                            offset: const Offset(2, 4),
                           ),
                         ],
                       ),
-                      child: Icon(
+                      child: const Icon(
                         CupertinoIcons.smallcircle_circle_fill,
                         color: CupertinoColors.white,
                         size: 30,

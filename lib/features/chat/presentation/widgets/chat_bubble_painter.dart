@@ -21,8 +21,8 @@ class ChatBubblePainter extends CustomPainter {
   ChatBubblePainter({required this.color, required this.isSender});
 
   static Path getBubblePath(Size size, bool isSender) {
-    final radius = 18.0;
-    final tailRadius = 6.0;
+    const radius = 18.0;
+    const tailRadius = 6.0;
     final path = Path();
 
     if (isSender) {

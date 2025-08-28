@@ -1,8 +1,8 @@
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/theme/text/app_text.dart';
@@ -17,10 +17,12 @@ class CustomChatBubbleWidget extends ConsumerStatefulWidget {
     super.key,
     required this.chat,
     required this.loadingAiMsg,
+    this.maxline,
   });
 
   final Chatbubble chat;
   final bool loadingAiMsg;
+  final int? maxline;
 
   @override
   ConsumerState<CustomChatBubbleWidget> createState() =>
@@ -118,19 +120,19 @@ class _CustomChatBubbleWidgetState
                                     textStyle: TextStyleType.extraSmallBold,
                                     color: context.buttnColor,
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   widget.loadingAiMsg
                                       ? LoadingAnimationWidget.staggeredDotsWave(
                                           color: context.subTextColor,
                                           size: 20.rf(context),
                                         )
-                                      : SizedBox(),
+                                      : const SizedBox(),
                                 ],
                               ),
                               Uiutils.getTextWidget(
                                 maxline: ref.watch(chatReadMoreProvider)
                                     ? null
-                                    : 3,
+                                    : widget.maxline ?? 6,
                                 overFlow: ref.watch(chatReadMoreProvider)
                                     ? TextOverflow.visible
                                     : TextOverflow.ellipsis,
@@ -207,6 +209,11 @@ class _CustomChatBubbleWidgetState
                     ),
                   ),
                   GestureDetector(
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(text: widget.chat.message),
+                      );
+                    },
                     child: Icon(
                       CupertinoIcons.doc_on_doc,
                       color: context.cardColor2,

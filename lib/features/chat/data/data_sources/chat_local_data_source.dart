@@ -12,7 +12,7 @@ class ChatLocalDataSource {
   static const int _dbVersion = 1;
 
   Database? _db;
-  final _controller = StreamController<List<ChatBubbleModel>>.broadcast();
+  // final _controller = StreamController<List<ChatBubbleModel>>.broadcast();
   // // Singleton pattern
   // static final chatbuuble instance = ChatRepository._internal();
   // ChatRepository._internal();
@@ -105,13 +105,13 @@ class ChatLocalDataSource {
     // Example if using sqflite + StreamController
     final controller = StreamController<List<ChatBubbleModel>>();
 
-    _loadAndEmit() async {
+    loadAndEmit() async {
       final chats = await getAllChats(); // fetch from DB
       controller.add(chats);
     }
 
     // emit initially
-    _loadAndEmit();
+    loadAndEmit();
 
     // optional: re-emit on DB changes (if you have triggers or manual notify)
     // Provide a method to notify controller.add()
@@ -124,8 +124,8 @@ class ChatLocalDataSource {
   //   return _controller.stream;
   // }
 
-  Future<void> _notifyListeners() async {
-    final chats = await getAllChats();
-    _controller.add(chats);
-  }
+  // Future<void> _notifyListeners() async {
+  //   final chats = await getAllChats();
+  //   _controller.add(chats);
+  // }
 }

@@ -88,7 +88,7 @@ class SimpleOpacityMotionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Simple dark background (customizable)
-    final backgroundColor = widget.backgroundColor ?? Color(0xFF1A1A2E);
+    final backgroundColor = widget.backgroundColor ?? const Color(0xFF1A1A2E);
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
       Paint()..color = backgroundColor,
@@ -113,7 +113,7 @@ class SimpleOpacityMotionPainter extends CustomPainter {
         primaryColor.withValues(alpha: currentOpacity * 0.3),
         primaryColor.withValues(alpha: 0.0),
       ],
-      stops: [0.0, 0.4, 0.7, 1.0],
+      stops: const [0.0, 0.4, 0.7, 1.0],
     );
 
     final blobPaint = Paint()
@@ -175,7 +175,7 @@ class _SimpleOpacityMotionBackgroundState
     // Initialize blobs
     _blobs = List.generate(
       widget.blobCount,
-      (index) => OpacityBlob(Size(400, 800)),
+      (index) => OpacityBlob(const Size(400, 800)),
     );
 
     _controller.addListener(() {

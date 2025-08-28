@@ -7,18 +7,16 @@
 //   return AiDataSource();
 // },);
 
-import 'package:clean_architutre_learn/core/service/network/dio_provider.dart';
+import 'package:clean_architutre_learn/core/service/network/dio/gemini_provider.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
 import 'package:clean_architutre_learn/features/chat/business/usecases/get_message.dart';
 import 'package:clean_architutre_learn/features/chat/data/data_sources/ai_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/ai_response_model.dart';
 import 'package:clean_architutre_learn/features/chat/data/repo/ai_response_repo_impl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/entities/chat_bubble.dart';
 import '../../business/repo/ai_responce_repository.dart';
-import '../../data/model/chat_bubble_model.dart';
 import 'chat_provider.dart';
 
 // class AiMessgeNotifier extends StateNotifier<Content> {
@@ -109,7 +107,7 @@ final aireposProvider = Provider<AiResponceRepository>((ref) {
 });
 
 final aiDataSourceProvider = Provider<AiDataSource>((ref) {
-  final dio = ref.read(dioProvider);
+  final dio = ref.read(dioProviderGemini);
   final client = DioClient(dio);
   return AiDataSource(client);
 });

@@ -1,10 +1,7 @@
 import 'dart:developer';
-
 import 'package:clean_architutre_learn/core/constants/lottie_constant.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
-import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
-import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
@@ -12,10 +9,8 @@ import 'package:clean_architutre_learn/features/authentication/presentation/widg
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
-import 'package:clean_architutre_learn/features/chat/presentation/widgets/chat_bubble_painter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -88,12 +83,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final loadingAiMsg = ref.watch(loadingmsgProvider);
-    final _isListening = ref.watch(voiceListenProvider);
+    final isListening = ref.watch(voiceListenProvider);
 
     return CupertinoPageScaffold(
       child: Stack(
         children: [
-          Positioned.fill(
+          const Positioned.fill(
             child: GradientMotionBackground(
               // colors: [
               //   context.dynamicColor1,
@@ -133,7 +128,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       icon: null,
                       boxColor: context.mainDarkShadeColor,
                     ),
-                    Spacer(),
+                    const Spacer(),
 
                     AppLogoWidget(
                       logoNeeded: true,
@@ -141,7 +136,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       textColor: context.cardColor,
                     ),
 
-                    Spacer(),
+                    const Spacer(),
                     GestureDetector(
                       onTap: () {
                         context.pop();
@@ -172,7 +167,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
                 CustomTextFormField(
                   onHold: () async {
-                    if (_isListening) {
+                    if (isListening) {
                       _speechService.stopListening();
                       // setState(() => _isListening = false);
                       ref.read(voiceListenProvider.notifier).state = false;

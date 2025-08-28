@@ -24,3 +24,4 @@ def chat(req: ChatRequest):
     # Generate response
     response = model.generate_content(messages)
     return {"response": response.text}
+    

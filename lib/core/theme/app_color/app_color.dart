@@ -73,6 +73,7 @@ Color kDarkScaffoldColor = const Color(0xFF282727);
 Color kDarkcolor1 = const Color(0xFF0F2027);
 Color kDarkcolor2 = const Color(0xFF203A43);
 Color kDarkcolor3 = const Color(0xFF2C5364);
+Color kDarkcolor4 = const Color.fromARGB(255, 59, 131, 161);
 
 Color kDarkExpensesShadowColor = const Color.fromRGBO(0, 0, 0, 0.4);
 
@@ -189,6 +190,11 @@ class AppColors {
     darkColor: kDarkSubTextColor,
   );
 
+  static CupertinoDynamicColor card3 = CupertinoDynamicColor.withBrightness(
+    color: kLightCardColor,
+    darkColor: kDarkcolor4,
+  );
+
   static CupertinoDynamicColor border = CupertinoDynamicColor.withBrightness(
     color: kLightBorderColor,
     darkColor: kDarkBorderColor,
@@ -223,7 +229,7 @@ class AppColors {
         color: kLightcolor3,
         darkColor: kDarkcolor3,
       );
-       static CupertinoDynamicColor dynamicColor4 =
+  static CupertinoDynamicColor dynamicColor4 =
       CupertinoDynamicColor.withBrightness(
         color: kLightcolor3,
         darkColor: kDarkCardColor,

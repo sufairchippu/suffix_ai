@@ -2,12 +2,12 @@ import 'package:clean_architutre_learn/app_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
-final dioClientProvider = Provider<DioClient>((ref) {
-  final dio = ref.watch(dioProvider);
+final dioClientProviderGemini = Provider<DioClient>((ref) {
+  final dio = ref.watch(dioProviderGemini);
   return DioClient(dio);
 });
 
-final dioProvider = Provider<Dio>((ref) {
+final dioProviderGemini = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
       // baseUrl: ApiUrl.baseUrl,

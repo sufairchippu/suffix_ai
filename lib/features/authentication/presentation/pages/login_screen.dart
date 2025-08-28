@@ -39,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Positioned.fill(
             child: AuthBackgroundAnimation(
               waveColor: context.blueTwo,
-              animationDuration: Duration(seconds: 3),
+              animationDuration: const Duration(seconds: 3),
               particleColor: context.secondaryColor,
             ), //CustomPaint(painter: TopBackgroundPainter())
           ),
@@ -154,7 +154,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           },
                         ),
                       )
-                    : SizedBox(height: 0),
+                    : const SizedBox(height: 0),
                 SizedBox(height: 40.rh(context)),
                 GestureDetector(
                   onTap: () {
@@ -217,7 +217,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
                 const Spacer(),
-                ConnectWithWidget(),
+                const ConnectWithWidget(),
 
                 SizedBox(height: 45.rh(context)),
                 // Skip row

@@ -1,14 +1,13 @@
 import 'package:clean_architutre_learn/core/router/route_names.dart';
+import 'package:clean_architutre_learn/core/utils/custom_transition_page.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/login_screen.dart';
+import 'package:clean_architutre_learn/features/authentication/presentation/pages/splash_screen.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/pages/chat_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/profile_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/settings_screeen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/home_screen.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:go_router/go_router.dart';
-
-import '../../features/authentication/presentation/pages/splash_screen.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -16,37 +15,69 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: '/splash',
   routes: <RouteBase>[
-    //!common
-    //*splash
+    //! Splash Screen with Fade
     GoRoute(
       path: '/splash',
       name: RouteNames.splash,
-      builder: (context, state) => SplashScreen(),
+      pageBuilder: (context, state) => customBuildTransitionPage(
+        child: const SplashScreen(),
+        state: state,
+        type: TransitionType.fade,
+      ),
     ),
+
+    //! Login Screen with Slide from Right
     GoRoute(
       path: '/login',
       name: RouteNames.login,
-      builder: (context, state) => LoginScreen(),
+      pageBuilder: (context, state) => customBuildTransitionPage(
+        child: const LoginScreen(),
+        state: state,
+        type: TransitionType.slideFromRight,
+      ),
     ),
+
+    //! Home Screen (Cupertino)
     GoRoute(
       path: '/home',
       name: RouteNames.home,
-      builder: (context, state) => HomeScreen(),
+      pageBuilder: (context, state) => customBuildTransitionPage(
+        duration: const Duration(milliseconds: 250),
+        child: const HomeScreen(),
+        state: state,
+        type: TransitionType.scale,
+      ),
       routes: [
+        //! Chat Screen (Slide from Right)
         GoRoute(
-          path: '/chat',
+          path: 'chat',
           name: RouteNames.chat,
-          builder: (context, state) => ChatScreen(),
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child: const ChatScreen(),
+            state: state,
+            type: TransitionType.slideFromLeft,
+          ),
         ),
+
+        //! Settings Screen (Slide from right)
         GoRoute(
           path: 'settings',
           name: RouteNames.settings,
-          builder: (context, state) => SettingsScreeen(),
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child: const SettingsScreeen(),
+            state: state,
+            type: TransitionType.slideFromRight,
+          ),
           routes: [
+            //! Profile Screen (Scale)
             GoRoute(
               path: 'profile',
               name: RouteNames.profile,
-              builder: (context, state) => ProfileScreen(),
+              pageBuilder: (context, state) => customBuildTransitionPage(
+                child: const ProfileScreen(),
+                state: state,
+                type: TransitionType.scale,
+              ),
             ),
           ],
         ),
