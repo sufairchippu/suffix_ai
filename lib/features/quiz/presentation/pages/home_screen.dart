@@ -34,99 +34,107 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // );
 
     bool topic = true;
-    return CupertinoPageScaffold(
-      child: SafeArea(
-        maintainBottomViewPadding: true,
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.rf(context)),
-              child: CustomScrollView(
-                slivers: [
-                  _buildAppBar(context),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 20.rh(context)),
-                      child: Center(
-                        child: Uiutils.getTextWidget(
-                          context,
-                          "Daily Tasks ,Complete Todays",
-                        ),
-                      ),
-                    ),
-                  ),
-                  _buildDailyGrid(),
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10.rh(context),
-                      children: [
-                        Uiutils.getTextWidget(
-                          context,
-                          'use thes to help youhh',
-                        ),
-                        const HomeScreenSecotionWidget(
-                          text: 'test Your Knwoledge',
-                        ),
-
-                        const HomeScreenSecotionWidget(
-                          text: 'Generate Question Paper',
-                        ),
-                        SizedBox(height: 12.rh(context)),
-                      ],
-                    ),
-                  ),
-
-                  SliverToBoxAdapter(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24.rf(context)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: context.greyFirstColor.withValues(alpha: .1),
-                            offset: const Offset(0, 2),
-                            // blurRadius: 4,
-                            spreadRadius: 0,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {},
+      child: CupertinoPageScaffold(
+        child: SafeArea(
+          maintainBottomViewPadding: true,
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.rf(context)),
+                child: CustomScrollView(
+                  slivers: [
+                    _buildAppBar(context),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 20.rh(context)),
+                        child: Center(
+                          child: Uiutils.getTextWidget(
+                            context,
+                            "Daily Tasks ,Complete Todays",
                           ),
-                        ],
+                        ),
                       ),
-                      child: Row(
+                    ),
+                    _buildDailyGrid(),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 10.rh(context),
                         children: [
-                          Expanded(
-                            child: CustomButtonWIdget(
-                              onTap: () {
-                                topic = true;
-                              },
-
-                              boxshadowColor: topic
-                                  ? context.primaryColor.withValues(alpha: .9)
-                                  : CupertinoColors.transparent,
-                              titile: 'Topic',
-                            ),
+                          Uiutils.getTextWidget(
+                            context,
+                            'use thes to help youhh',
                           ),
-                          SizedBox(width: 10.rw(context)),
-                          Expanded(
-                            child: CustomButtonWIdget(
-                              onTap: () {
-                                topic = false;
-                              },
-
-                              boxshadowColor: topic
-                                  ? CupertinoColors.transparent
-                                  : context.primaryColor.withValues(alpha: .9),
-                              titile: 'Topic',
-                            ),
+                          const HomeScreenSecotionWidget(
+                            text: 'test Your Knwoledge',
                           ),
+
+                          const HomeScreenSecotionWidget(
+                            text: 'Generate Question Paper',
+                          ),
+                          SizedBox(height: 12.rh(context)),
                         ],
                       ),
                     ),
-                  ),
-                  _buildLearnigSectionGrid(context),
-                ],
+
+                    SliverToBoxAdapter(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24.rf(context)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: context.greyFirstColor.withValues(
+                                alpha: .1,
+                              ),
+                              offset: const Offset(0, 2),
+                              // blurRadius: 4,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: CustomButtonWIdget(
+                                onTap: () {
+                                  topic = true;
+                                },
+
+                                boxshadowColor: topic
+                                    ? context.primaryColor.withValues(alpha: .9)
+                                    : CupertinoColors.transparent,
+                                titile: 'Topic',
+                              ),
+                            ),
+                            SizedBox(width: 10.rw(context)),
+                            Expanded(
+                              child: CustomButtonWIdget(
+                                onTap: () {
+                                  topic = false;
+                                },
+
+                                boxshadowColor: topic
+                                    ? CupertinoColors.transparent
+                                    : context.primaryColor.withValues(
+                                        alpha: .9,
+                                      ),
+                                titile: 'Topic',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    _buildLearnigSectionGrid(context),
+                  ],
+                ),
               ),
-            ),
-            _buildFloatingbutton(context),
-          ],
+              _buildFloatingbutton(context),
+            ],
+          ),
         ),
       ),
     );
@@ -150,12 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onTap: () {
                 // context.pushNamed(RouteNames.login);
                 // imagePicker.pickImage(source: ImageSource.gallery);
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => CameraResultScreen(),
-                  ),
-                );
+                context.pushNamed(RouteNames.camera);
 
                 ///change as camera setup
               },
@@ -183,7 +186,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // height: 35,
                 // width: 60,
                 assetImage: ImageConstants.logo,
-                onTap: () {},
+                onTap: () {
+                  context.pushNamed(RouteNames.quiz);
+                },
                 icon: null,
               ),
               Uiutils.getTextWidget(context, 'Day ${index + 1}'),

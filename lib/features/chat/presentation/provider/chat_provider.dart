@@ -94,11 +94,13 @@ class ChatListNotifier extends StateNotifier<List<Chatbubble>> {
   }
 }
 
-
-final chatReadMoreProvider = StateProvider <bool>((ref) {
+final chatReadMoreProvider = StateProvider<bool>((ref) {
   return false;
 });
 
-final chatDrawrProvider = StateProvider <bool>((ref) {
+final chatDrawrProvider = StateProvider<bool>((ref) {
   return false;
+});
+final speakingTestProvider = StateProvider<String>((ref) {
+  return '';
 });

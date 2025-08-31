@@ -170,6 +170,41 @@ class Uiutils {
   static String creatingNormalpapper(int number, String topic, Diffculty diff) {
     return "Generate an exam paper on '$topic'.\nDifficulty: $diff.\nNumber of Questions: $number.\nInclude a mix of:\n- Short Answer Questions\n- Multiple Choice Questions\n- Medium Long Answer Questions\n- Essay Questions\nin the ratio of 4:2:3:1.\n\nFormat the output as a valid JSON object with the following structure:\n{\n  \"exam_paper\": [\n    { \"type\": \"short_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"mcq\", \"question\": \"...\", \"options\": [\"...\"], \"answer\": \"...\" },\n    { \"type\": \"long_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"essay\", \"question\": \"...\", \"answer\": \"...\" }\n  ]\n}";
   }
+
+  static modelBottomsheet(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoActionSheet(
+          title: const Text("Choose Option"),
+          message: const Text("Select an action from below"),
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                debugPrint("Camera tapped");
+              },
+              child: const Text("📷 Open Camera"),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                debugPrint("Gallery tapped");
+              },
+              child: const Text("🖼️ Open Gallery"),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),
+          ),
+        );
+      },
+    );
+  }
 }
 
 enum Diffculty { easy, medium, hard }

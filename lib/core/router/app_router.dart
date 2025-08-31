@@ -5,7 +5,9 @@ import 'package:clean_architutre_learn/features/authentication/presentation/page
 import 'package:clean_architutre_learn/features/chat/presentation/pages/chat_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/profile_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/settings_screeen.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/pages/camera_result_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/home_screen.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/pages/quiz_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
@@ -59,6 +61,29 @@ final GoRouter appRouter = GoRouter(
           ),
         ),
 
+        //! Camera Screen
+        GoRoute(
+          path: 'camera',
+          name: RouteNames.camera,
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child: const CameraResultScreen(),
+            state: state,
+            type: TransitionType.slideFromRight,
+          ),
+        ),
+        //! quiz Screen
+        GoRoute(
+          path: 'quiz',
+          name: RouteNames.quiz,
+          pageBuilder: (context, state) {
+          
+            return customBuildTransitionPage(
+              child: const QuizScreen(),
+              state: state,
+              type: TransitionType.slideFromRight,
+            );
+          },
+        ),
         //! Settings Screen (Slide from right)
         GoRoute(
           path: 'settings',
@@ -68,6 +93,7 @@ final GoRouter appRouter = GoRouter(
             state: state,
             type: TransitionType.slideFromRight,
           ),
+
           routes: [
             //! Profile Screen (Scale)
             GoRoute(

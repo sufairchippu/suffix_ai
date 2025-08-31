@@ -26,6 +26,7 @@ class CustomTextFormField extends StatelessWidget {
     this.fillcolor,
     this.boxshadows,
     this.loadingOnsomething = false,
+    this.prefixNeeded = true,
     this.maxline,
     this.onHold,
   });
@@ -47,6 +48,7 @@ class CustomTextFormField extends StatelessWidget {
   final bool loadingOnsomething;
   final int? maxline;
   final void Function()? onHold;
+  final bool prefixNeeded;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -74,20 +76,22 @@ class CustomTextFormField extends StatelessWidget {
                   keyboardAppearance: Brightness.dark,
                   textInputAction: textInputAction ?? TextInputAction.send,
                   selectionHeightStyle: BoxHeightStyle.max,
-                  prefix: Padding(
-                    padding: EdgeInsets.only(
-                      right: 10.rf(context),
-                      left: 10.rw(context),
-                    ),
-                    child: GestureDetector(
-                      onTap: prefixOntap,
-                      child: Icon(
-                        icon ?? CupertinoIcons.mail_solid,
-                        size: iconSize,
-                        color: iconColor,
-                      ),
-                    ),
-                  ),
+                  prefix: prefixNeeded
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            right: 10.rf(context),
+                            left: 10.rw(context),
+                          ),
+                          child: GestureDetector(
+                            onTap: prefixOntap,
+                            child: Icon(
+                              icon ?? CupertinoIcons.mail_solid,
+                              size: iconSize,
+                              color: iconColor,
+                            ),
+                          ),
+                        )
+                      : null,
                   padding: EdgeInsets.symmetric(vertical: 15.rh(context)),
                   controller: controller,
                   keyboardType: TextInputType.emailAddress,

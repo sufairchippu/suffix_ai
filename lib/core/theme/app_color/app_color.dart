@@ -191,7 +191,7 @@ class AppColors {
   );
 
   static CupertinoDynamicColor card3 = CupertinoDynamicColor.withBrightness(
-    color: kLightCardColor,
+    color: kLightPrimarySecondColor,
     darkColor: kDarkcolor4,
   );
 
@@ -201,7 +201,7 @@ class AppColors {
   );
 
   static CupertinoDynamicColor scaffold = CupertinoDynamicColor.withBrightness(
-    color: kLightScaffoldColor,
+    color: dynamicColor4,
     darkColor: kDarkScaffoldColor,
   );
 

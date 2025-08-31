@@ -22,109 +22,113 @@ class _SettingsScreeenState extends ConsumerState<SettingsScreeen> {
   @override
   Widget build(BuildContext context) {
     final thememode = ref.watch(themeProvider);
-    return CupertinoPageScaffold(
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 22.rw(context)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  context.pop();
-                },
-                child: Icon(
-                  CupertinoIcons.xmark_circle,
-                  size: 26.rf(context),
-                  color: context.mainDarkShadeColor,
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {},
+      child: CupertinoPageScaffold(
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 22.rw(context)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    context.pop();
+                  },
+                  child: Icon(
+                    CupertinoIcons.xmark_circle,
+                    size: 26.rf(context),
+                    color: context.mainDarkShadeColor,
+                  ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(),
-                  AppLogoWidget(logoheit: 150.rf(context)),
-                  const SizedBox(),
-                ],
-              ),
-              SizedBox(height: 20.rh(context)),
-
-              CustomButtonWIdget(
-                onTap: () {
-                  context.pushNamed(RouteNames.profile);
-                },
-                height: 79.rh(context),
-                color: context.blue.withAlpha(220),
-                widget: Row(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(width: 10.rw(context)),
-                    CustomCircleImageWidget(
-                      onTap: () {},
-                      icon: null,
-                      height: 120,
-                      boxColor: context.shimmerHighlightColor,
-                    ),
-                    SizedBox(width: 10.rw(context)),
-                    Uiutils.getTextWidget(
-                      context,
-                      'Username ', //not login plz login condition
-                      textStyle: TextStyleType.mediumBold,
-                      color: context.dynamicColor4,
-                    ),
-                    const Spacer(),
-                    Icon(
-                      CupertinoIcons.chevron_right,
-                      color: context.cardColor,
-                    ),
+                    const SizedBox(),
+                    AppLogoWidget(logoheit: 150.rf(context)),
+                    const SizedBox(),
                   ],
                 ),
-              ),
-              SizedBox(height: 20.rh(context)),
-              SettingsSectionWidget(
-                thememode: thememode,
-                text: 'Theme',
-                icon: thememode.brightness == Brightness.light
-                    ? CupertinoIcons.sun_max
-                    : CupertinoIcons.moon,
-                iconcolor: context.primaryColor,
-                onTap: () {},
-              ),
-              SizedBox(height: 20.rh(context)),
-              SettingsSectionWidget(
-                thememode: thememode,
-                text: 'Terms & Conditions',
-                icon: CupertinoIcons.info_circle_fill,
-                iconcolor: context.primaryColor,
-                onTap: () {},
-              ),
+                SizedBox(height: 20.rh(context)),
 
-              SizedBox(height: 20.rh(context)),
-              SettingsSectionWidget(
-                thememode: thememode,
-                text: 'Logout',
-                icon: CupertinoIcons.square_arrow_right,
-                iconcolor: context.red,
-                onTap: () {
-                  Uiutils.showAlert(
-                    context,
-                    () {},
-                    'Logout',
-                    'Are You Sure to Logout',
-                    true,
-                    'Logout',
-                    context.red,
-                  );
-                },
-              ),
+                CustomButtonWIdget(
+                  onTap: () {
+                    context.pushNamed(RouteNames.profile);
+                  },
+                  height: 79.rh(context),
+                  color: context.blue.withAlpha(220),
+                  widget: Row(
+                    children: [
+                      SizedBox(width: 10.rw(context)),
+                      CustomCircleImageWidget(
+                        onTap: () {},
+                        icon: null,
+                        height: 120,
+                        boxColor: context.shimmerHighlightColor,
+                      ),
+                      SizedBox(width: 10.rw(context)),
+                      Uiutils.getTextWidget(
+                        context,
+                        'Username ', //not login plz login condition
+                        textStyle: TextStyleType.mediumBold,
+                        color: context.dynamicColor4,
+                      ),
+                      const Spacer(),
+                      Icon(
+                        CupertinoIcons.chevron_right,
+                        color: context.cardColor,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20.rh(context)),
+                SettingsSectionWidget(
+                  thememode: thememode,
+                  text: 'Theme',
+                  icon: thememode.brightness == Brightness.light
+                      ? CupertinoIcons.sun_max
+                      : CupertinoIcons.moon,
+                  iconcolor: context.primaryColor,
+                  onTap: () {},
+                ),
+                SizedBox(height: 20.rh(context)),
+                SettingsSectionWidget(
+                  thememode: thememode,
+                  text: 'Terms & Conditions',
+                  icon: CupertinoIcons.info_circle_fill,
+                  iconcolor: context.primaryColor,
+                  onTap: () {},
+                ),
 
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppLogoWidget(logoNeeded: false, textSize: 14.rf(context)),
-                ],
-              ),
-            ],
+                SizedBox(height: 20.rh(context)),
+                SettingsSectionWidget(
+                  thememode: thememode,
+                  text: 'Logout',
+                  icon: CupertinoIcons.square_arrow_right,
+                  iconcolor: context.red,
+                  onTap: () {
+                    Uiutils.showAlert(
+                      context,
+                      () {},
+                      'Logout',
+                      'Are You Sure to Logout',
+                      true,
+                      'Logout',
+                      context.red,
+                    );
+                  },
+                ),
+
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppLogoWidget(logoNeeded: false, textSize: 14.rf(context)),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

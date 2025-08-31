@@ -32,7 +32,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController inputController = TextEditingController();
   final SpeechService _speechService = SpeechService();
-  String _spokenText = "";
+  // String _spokenText = "";
   // bool _isListening = false;
   Future<void> _initSpeech() async {
     await Permission.microphone.request();
@@ -84,233 +84,243 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final loadingAiMsg = ref.watch(loadingmsgProvider);
     final isListening = ref.watch(voiceListenProvider);
+    final _spokenText = ref.watch(speakingTestProvider);
 
-    return CupertinoPageScaffold(
-      child: Stack(
-        children: [
-          const Positioned.fill(
-            child: GradientMotionBackground(
-              // colors: [
-              //   context.dynamicColor1,
-              //   context.dynamicColor2,
-              //   context.dynamicColor3,
-              // ],
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {},
+      child: CupertinoPageScaffold(
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: GradientMotionBackground(
+                // colors: [
+                //   context.dynamicColor1,
+                //   context.dynamicColor2,
+                //   context.dynamicColor3,
+                // ],
+              ),
             ),
-          ),
 
-          // AnimatedPositioned(
-          //   left: 100, //change it
-          //   top: 0,
-          //   right: 0,
-          //   bottom: 0,
-          //   child: Container(height: 100,color: context.red,),
-          //   duration: Duration(milliseconds: 300),
-          // ),
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: 18.rh(context),
-              top: 28.rh(context),
-              left: 15.rw(context),
-              right: 12.rw(context),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    CustomCircleImageWidget(
-                      onTap: () {
-                        // context.pushNamed(RouteNames.chat);
-                        ref.read(themeProvider.notifier).toggleTheme();
-                        //drawer like something opening
-                      },
-                      // firstLetter: "user first Letter",
-                      // netwrkImage: 'avatar path',
-                      icon: null,
-                      boxColor: context.mainDarkShadeColor,
-                    ),
-                    const Spacer(),
-
-                    AppLogoWidget(
-                      logoNeeded: true,
-                      logoheit: 70.rh(context),
-                      textColor: context.cardColor,
-                    ),
-
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        context.pop();
-                        // ref
-                        //     .read(chatListNotifierProvider.notifier)
-                        //     .clearChatts();
-                        // ref.read(chatListNotifierProvider.notifier).loadChats();
-                      },
-                      child: Icon(
-                        CupertinoIcons.xmark_circle,
-                        size: 30.rf(context),
-                        color: context.mainDarkShadeColor,
+            // AnimatedPositioned(
+            //   left: 100, //change it
+            //   top: 0,
+            //   right: 0,
+            //   bottom: 0,
+            //   child: Container(height: 100,color: context.red,),
+            //   duration: Duration(milliseconds: 300),
+            // ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: 18.rh(context),
+                top: 28.rh(context),
+                left: 15.rw(context),
+                right: 12.rw(context),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CustomCircleImageWidget(
+                        onTap: () {
+                          // context.pushNamed(RouteNames.chat);
+                          ref.read(themeProvider.notifier).toggleTheme();
+                          //drawer like something opening
+                        },
+                        // firstLetter: "user first Letter",
+                        // netwrkImage: 'avatar path',
+                        icon: null,
+                        boxColor: context.mainDarkShadeColor,
                       ),
-                    ),
-                  ],
-                ),
+                      const Spacer(),
 
-                Consumer(
-                  builder: (context, ref, child) {
-                    final chatlist = ref
-                        .watch(chatListNotifierProvider)
-                        .reversed
-                        .toList();
+                      AppLogoWidget(
+                        logoNeeded: true,
+                        logoheit: 70.rh(context),
+                        textColor: context.cardColor,
+                      ),
 
-                    return _buildChatList(chatlist, loadingAiMsg, ref);
-                  },
-                ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          context.pop();
+                          // ref
+                          //     .read(chatListNotifierProvider.notifier)
+                          //     .clearChatts();
+                          // ref.read(chatListNotifierProvider.notifier).loadChats();
+                        },
+                        child: Icon(
+                          CupertinoIcons.xmark_circle,
+                          size: 30.rf(context),
+                          color: context.mainDarkShadeColor,
+                        ),
+                      ),
+                    ],
+                  ),
 
-                CustomTextFormField(
-                  onHold: () async {
-                    if (isListening) {
-                      _speechService.stopListening();
-                      // setState(() => _isListening = false);
-                      ref.read(voiceListenProvider.notifier).state = false;
-                      _spokenText != ''
-                          ? () async {
-                              final chat = Chatbubble(
-                                message: _spokenText,
-                                time: DateTime.now().toFormattedString(),
-                                msgtype: MessegeOwner.user,
-                              );
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final chatlist = ref
+                          .watch(chatListNotifierProvider)
+                          .reversed
+                          .toList();
 
-                              log('User message posting: $_spokenText');
+                      return _buildChatList(chatlist, loadingAiMsg, ref);
+                    },
+                  ),
 
-                              try {
-                                // Add user chat
-                                await ref
-                                    .read(chatListNotifierProvider.notifier)
-                                    .addchats(chat);
+                  CustomTextFormField(
+                    onHold: () async {
+                      if (isListening) {
+                        _speechService.stopListening();
 
-                                // Reload chats
-                                await ref
-                                    .read(chatListNotifierProvider.notifier)
-                                    .loadChats();
+                        ref.read(voiceListenProvider.notifier).state = false;
+                        _spokenText != ''
+                            ? () async {
+                                final chat = Chatbubble(
+                                  message: _spokenText,
+                                  time: DateTime.now().toFormattedString(),
+                                  msgtype: MessegeOwner.user,
+                                );
 
-                                // Clear input field
-                                inputController.clear();
+                                log('User message posting: $_spokenText');
 
-                                log('Fetching AI response...');
-                                await ref
-                                    .read(aiMessgeNotifierProvider.notifier)
-                                    .getAiReply(chat.message);
-                              } catch (e) {
-                                log('Error while sending message: $e');
+                                try {
+                                  // Add user chat
+                                  await ref
+                                      .read(chatListNotifierProvider.notifier)
+                                      .addchats(chat);
+
+                                  // Reload chats
+                                  await ref
+                                      .read(chatListNotifierProvider.notifier)
+                                      .loadChats();
+
+                                  // Clear input field
+                                  inputController.clear();
+
+                                  log('Fetching AI response...');
+                                  await ref
+                                      .read(aiMessgeNotifierProvider.notifier)
+                                      .getAiReply(chat.message);
+                                } catch (e) {
+                                  log('Error while sending message: $e');
+                                }
                               }
-                            }
-                          : () {};
-                    } else {
-                      _speechService.startListening((text) {
-                        setState(() {
-                          _spokenText = text;
+                            : () {};
+                      } else {
+                        _speechService.startListening((text) {
+                          ref.read(speakingTestProvider.notifier).state = text;
                         });
-                      });
-                      ref.read(voiceListenProvider.notifier).state = true;
-                    }
-                  },
-                  // inputController.text=_spokenText;
-                  prefixOntap: () {
-                    // showCupertinoModalPopup(
-                    //   context: context,
-                    //   builder: (context) => CupertinoActionSheet(
-                    //     actions: [
-                    //       CupertinoActionSheetAction(
-                    //         onPressed: () {
-                    //           // open camera
-                    //           Navigator.pop(context);
-                    //         },
-                    //         child: const Text("Camera"),
-                    //       ),
-                    //       CupertinoActionSheetAction(
-                    //         onPressed: () {
-                    //           // open gallery
-                    //           Navigator.pop(context);
-                    //         },
-                    //         child: const Text("Gallery"),
-                    //       ),
-                    //       CupertinoActionSheetAction(
-                    //         onPressed: () {
-                    //           // open files
-                    //           Navigator.pop(context);
-                    //         },
-                    //         child: const Text("Files"),
-                    //       ),
-                    //     ],
-                    //     cancelButton: CupertinoActionSheetAction(
-                    //       onPressed: () => Navigator.pop(context),
-                    //       isDefaultAction: true,
-                    //       child: const Text("Cancel"),
-                    //     ),
-                    //   ),
-                    // );
-                  },
-                  boxshadows: [
-                    BoxShadow(
-                      color: context.containerGrayColor.withValues(alpha: 0.3),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2), // light shadow closer
-                    ),
-                    BoxShadow(
-                      color: context.containerGrayColor.withValues(alpha: 0.6),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4), // deeper shadow further away
-                    ),
-                  ],
-                  fillcolor: context.dynamicColor4,
-                  obscure: false,
-                  icon: CupertinoIcons.add_circled,
-                  hintText: "Ask Me Anything",
-                  controller: inputController,
-                  loadingOnsomething: loadingAiMsg,
-                  iconColor: context.subTextColor,
-                  isWantsuffix: true,
-                  maxline: null,
-                  textInputAction: TextInputAction.newline,
-                  onTap: () async {
-                    final text = inputController.text.trim();
-                    if (text.isEmpty) return;
+                        ref.read(voiceListenProvider.notifier).state = true;
+                      }
+                    },
+                    // inputController.text=_spokenText;
+                    prefixOntap: () {
+                      // showCupertinoModalPopup(
+                      //   context: context,
+                      //   builder: (context) => CupertinoActionSheet(
+                      //     actions: [
+                      //       CupertinoActionSheetAction(
+                      //         onPressed: () {
+                      //           // open camera
+                      //           Navigator.pop(context);
+                      //         },
+                      //         child: const Text("Camera"),
+                      //       ),
+                      //       CupertinoActionSheetAction(
+                      //         onPressed: () {
+                      //           // open gallery
+                      //           Navigator.pop(context);
+                      //         },
+                      //         child: const Text("Gallery"),
+                      //       ),
+                      //       CupertinoActionSheetAction(
+                      //         onPressed: () {
+                      //           // open files
+                      //           Navigator.pop(context);
+                      //         },
+                      //         child: const Text("Files"),
+                      //       ),
+                      //     ],
+                      //     cancelButton: CupertinoActionSheetAction(
+                      //       onPressed: () => Navigator.pop(context),
+                      //       isDefaultAction: true,
+                      //       child: const Text("Cancel"),
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                    boxshadows: [
+                      BoxShadow(
+                        color: context.containerGrayColor.withValues(
+                          alpha: 0.3,
+                        ),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2), // light shadow closer
+                      ),
+                      BoxShadow(
+                        color: context.containerGrayColor.withValues(
+                          alpha: 0.6,
+                        ),
+                        blurRadius: 12,
+                        offset: const Offset(
+                          0,
+                          4,
+                        ), // deeper shadow further away
+                      ),
+                    ],
+                    fillcolor: context.dynamicColor4,
+                    obscure: false,
+                    icon: CupertinoIcons.add_circled,
+                    hintText: "Ask Me Anything",
+                    controller: inputController,
+                    loadingOnsomething: loadingAiMsg,
+                    iconColor: context.subTextColor,
+                    isWantsuffix: true,
+                    maxline: null,
+                    textInputAction: TextInputAction.newline,
+                    onTap: () async {
+                      final text = inputController.text.trim();
+                      if (text.isEmpty) return;
 
-                    final chat = Chatbubble(
-                      message: text,
-                      time: DateTime.now().toFormattedString(),
-                      msgtype: MessegeOwner.user,
-                    );
+                      final chat = Chatbubble(
+                        message: text,
+                        time: DateTime.now().toFormattedString(),
+                        msgtype: MessegeOwner.user,
+                      );
 
-                    log('User message posting: $text');
+                      log('User message posting: $text');
 
-                    try {
-                      // Add user chat
-                      await ref
-                          .read(chatListNotifierProvider.notifier)
-                          .addchats(chat);
+                      try {
+                        // Add user chat
+                        await ref
+                            .read(chatListNotifierProvider.notifier)
+                            .addchats(chat);
 
-                      // Reload chats
-                      await ref
-                          .read(chatListNotifierProvider.notifier)
-                          .loadChats();
+                        // Reload chats
+                        await ref
+                            .read(chatListNotifierProvider.notifier)
+                            .loadChats();
 
-                      // Clear input field
-                      inputController.clear();
+                        // Clear input field
+                        inputController.clear();
 
-                      log('Fetching AI response...');
-                      await ref
-                          .read(aiMessgeNotifierProvider.notifier)
-                          .getAiReply(chat.message);
-                    } catch (e) {
-                      log('Error while sending message: $e');
-                    }
-                  },
-                  suffixIcon: CupertinoIcons.paperplane_fill,
-                ),
-              ],
+                        log('Fetching AI response...');
+                        await ref
+                            .read(aiMessgeNotifierProvider.notifier)
+                            .getAiReply(chat.message);
+                      } catch (e) {
+                        log('Error while sending message: $e');
+                      }
+                    },
+                    suffixIcon: CupertinoIcons.paperplane_fill,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
@@ -136,6 +139,8 @@ class CameraResultScreen extends ConsumerStatefulWidget {
 }
 
 class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
+  File? _image;
+  final picker = ImagePicker();
   @override
   void initState() {
     requestCameraAndStorage();
@@ -150,128 +155,150 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cameraState = ref.watch(cameraControllerProvider);
-    final imageState = ref.watch(imageStateProvider);
-    final imageNotifier = ref.read(imageStateProvider.notifier);
-    return CupertinoPageScaffold(
-      child: Padding(
-        padding: EdgeInsets.all(18.rf(context)),
-        child: CustomScrollView(
-          slivers: [
-            /// Sticky top widget (like SliverAppBar)
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverHeaderDelegate(
-                minHeight: 180.rh(context),
-                maxHeight: 600.rh(context),
+    // final cameraState = ref.watch(cameraControllerProvider);
+    // final imageState = ref.watch(imageStateProvider);
+    // final imageNotifier = ref.read(imageStateProvider.notifier);
 
-                child: Stack(
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          image: const DecorationImage(
-                            image:
-                            
-                            
-                             AssetImage('assets/images/no_imagee.avif'),
-                            fit: BoxFit.cover,
+    final imageStateNotifier = ref.read(imagePickerNotifierProvider.notifier);
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {},
+      child: CupertinoPageScaffold(
+        child: Padding(
+          padding: EdgeInsets.all(18.rf(context)),
+          child: CustomScrollView(
+            slivers: [
+              /// Sticky top widget (like SliverAppBar)
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _SliverHeaderDelegate(
+                  minHeight: 180.rh(context),
+                  maxHeight: 500.rh(context),
+
+                  child: Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          imageStateNotifier.pick(ImageSource.camera);
+                        },
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            // final imageState = ref.watch(
+                            //   imagePickerNotifierProvider,
+                            // );
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                image: DecorationImage(
+                                  image: _image != null
+                                      ? FileImage(_image!)
+                                      : AssetImage(
+                                          'assets/images/no_imagee.avif',
+                                        ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      _image != null
+                          ? Positioned(
+                              top: 28.rh(context),
+                              right: 20.rw(context),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _image!.delete();
+                                },
+                                child: Icon(
+                                  size: 27.rf(context),
+                                  CupertinoIcons.xmark_circle,
+                                  color: context.primaryColor,
+                                ),
+                              ),
+                            )
+                          : SizedBox(),
+                      Positioned(
+                        top: 28.rh(context),
+                        left: 20.rw(context),
+                        child: GestureDetector(
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: Icon(
+                            size: 27.rf(context),
+                            CupertinoIcons.chevron_left,
+                            fontWeight: FontWeight.bold,
+                            color: context.primaryColor,
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 28.rh(context),
-                      right: 20.rw(context),
-                      child: GestureDetector(
-                        onTap: () {
-                          context.pop();
-                        },
-                        child: Icon(
-                          size: 27.rf(context),
-                          CupertinoIcons.xmark_circle,
-                          color: context.primaryColor,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 28.rh(context),
-                      left: 20.rw(context),
-                      child: GestureDetector(
-                        onTap: () {
-                          context.pop();
-                        },
-                        child: Icon(
-                          size: 27.rf(context),
-                          CupertinoIcons.chevron_left,
-                          color: context.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            /// Remaining scrollable content
-            SliverList(
-              delegate: SliverChildListDelegate([
-                CustomButtonWIdget(
-                  widget: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.rh(context),
-                      vertical: 3.rh(context),
-                    ),
-                    decoration: BoxDecoration(
-                      color: context.primaryColor,
-                      border: Border.all(
-                        width: 1.rf(context),
-                        color: context.mainDarkShadeColor.withAlpha(80),
-                      ),
-                      borderRadius: BorderRadius.circular(10.rf(context)),
-                    ),
-                    child: Uiutils.getTextWidget(
-                      context,
-                      'From Gallery 📂',
-                      textStyle: TextStyleType.mediumBold,
-                    ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 16.rh(context)),
+              ),
 
-                CustomButtonWIdget(
-                  height: 40.rh(context),
-                  titile: 'Give me the Answers', //give conditions
-                  textColor: context.cardColor,
-                  textStyle: TextStyleType.mediumBold,
-                  color: context.cardColor3,
-                ),
-                SizedBox(height: 25.rh(context)),
+              /// Remaining scrollable content
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  CustomButtonWIdget(
+                    top: 12.rh(context),
+                    onTap: () {
+                      imageStateNotifier.pick(ImageSource.gallery);
+                    },
+                    widget: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.rh(context),
+                        vertical: 3.rh(context),
+                      ),
+                      decoration: BoxDecoration(
+                        color: context.primaryColor,
+                        border: Border.all(
+                          width: 1.rf(context),
+                          color: context.mainDarkShadeColor.withAlpha(80),
+                        ),
+                        borderRadius: BorderRadius.circular(10.rf(context)),
+                      ),
+                      child: Uiutils.getTextWidget(
+                        context,
+                        'From Gallery 📂',
+                        textStyle: TextStyleType.mediumBold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.rh(context)),
 
-                // for (int i = 0; i < 20; i++) ...[
-                //   Container(
-                //     padding: const EdgeInsets.all(12),
-                //     margin: const EdgeInsets.symmetric(
-                //         vertical: 6, horizontal: 12),
-                //     decoration: BoxDecoration(
-                //       color: CupertinoColors.systemGrey5,
-                //       borderRadius: BorderRadius.circular(12),
-                //     ),
-                //     child: Text("Chat message $i"),
-                //   )
-                // ]
-                GestureDetector(
-                  onLongPress: () {
-                    // Uiutils.showAlert(context, () {
+                  CustomButtonWIdget(
+                    height: 40.rh(context),
+                    titile: 'Give me the Answers', //give conditions
+                    textColor: context.cardColor,
+                    textStyle: TextStyleType.mediumBold,
+                    color: context.cardColor3,
+                  ),
+                  SizedBox(height: 25.rh(context)),
 
-                    // }, 'titile', 'discription', true, 'conformText',context.textColor);
-                  },
-                  child: CustomChatBubbleWidget(
-                    maxline: 10,
-                    chat: Chatbubble(
-                      message: '''messagekhhj lnlkh
+                  // for (int i = 0; i < 20; i++) ...[
+                  //   Container(
+                  //     padding: const EdgeInsets.all(12),
+                  //     margin: const EdgeInsets.symmetric(
+                  //         vertical: 6, horizontal: 12),
+                  //     decoration: BoxDecoration(
+                  //       color: CupertinoColors.systemGrey5,
+                  //       borderRadius: BorderRadius.circular(12),
+                  //     ),
+                  //     child: Text("Chat message $i"),
+                  //   )
+                  // ]
+                  GestureDetector(
+                    onLongPress: () {
+                      // Uiutils.showAlert(context, () {
+
+                      // }, 'titile', 'discription', true, 'conformText',context.textColor);
+                    },
+                    child: CustomChatBubbleWidget(
+                      maxline: 10,
+                      chat: Chatbubble(
+                        message: '''messagekhhj lnlkh
                       jkhbjkl
                       38,546 views  10 Aug 2021  #Flutter #Tutorial #JohannesMilke
                  Create an image picker from camera and gallery in Flutter. Pick Images, Mutiple Images and Videos from the device camera and image gallery in Flutter.
@@ -351,15 +378,16 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                 View all
                 
                       ''',
-                      time: DateTime.now().toFormattedString(),
-                      msgtype: MessegeOwner.ai,
+                        time: DateTime.now().toFormattedString(),
+                        msgtype: MessegeOwner.ai,
+                      ),
+                      loadingAiMsg: false,
                     ),
-                    loadingAiMsg: false,
                   ),
-                ),
-              ]),
-            ),
-          ],
+                ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
