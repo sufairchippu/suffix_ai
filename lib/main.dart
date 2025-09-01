@@ -23,6 +23,13 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeProvider);
+    ref.listen<WidgetsBinding>(Provider((ref) => WidgetsBinding.instance), (
+      previous,
+      next,
+    ) {
+      final brightness = MediaQuery.platformBrightnessOf(context);
+      ref.read(themeProvider.notifier).updateSystemTheme(brightness);
+    });
     return CupertinoApp.router(
       theme: theme,
 

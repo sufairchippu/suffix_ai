@@ -139,8 +139,6 @@ class CameraResultScreen extends ConsumerStatefulWidget {
 }
 
 class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
-  File? _image;
-  final picker = ImagePicker();
   @override
   void initState() {
     requestCameraAndStorage();
@@ -175,65 +173,108 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                   minHeight: 180.rh(context),
                   maxHeight: 500.rh(context),
 
-                  child: Stack(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          imageStateNotifier.pick(ImageSource.camera);
-                        },
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            // final imageState = ref.watch(
-                            //   imagePickerNotifierProvider,
-                            // );
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                image: DecorationImage(
-                                  image: _image != null
-                                      ? FileImage(_image!)
-                                      : AssetImage(
-                                          'assets/images/no_imagee.avif',
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final imageState = ref.watch(imagePickerNotifierProvider);
+                      return Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              imageState.value == null
+                                  ? imageStateNotifier.pick(ImageSource.camera)
+                                  : Uiutils.showAlert(
+                                      context,
+                                      () {
+                                        imageStateNotifier.pick(
+                                          ImageSource.camera,
+                                        );
+                                      },
+                                      "Camera",
+                                      " Are youh sure to change \nthe Picked image ",
+                                      true,
+                                      'Open Camera',
+                                      context.red,
+                                    );
+                            },
+                            child: Consumer(
+                              builder: (context, ref, child) {
+                                return imageState.when(
+                                  data: (file) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        image: DecorationImage(
+                                          image: file != null
+                                              ? FileImage(File(file.path))
+                                              : const AssetImage(
+                                                      'assets/images/no_imagee.avif',
+                                                    )
+                                                    as ImageProvider,
+                                          fit: BoxFit.cover,
                                         ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      _image != null
-                          ? Positioned(
-                              top: 28.rh(context),
-                              right: 20.rw(context),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _image!.delete();
-                                },
-                                child: Icon(
-                                  size: 27.rf(context),
-                                  CupertinoIcons.xmark_circle,
-                                  color: context.primaryColor,
-                                ),
-                              ),
-                            )
-                          : SizedBox(),
-                      Positioned(
-                        top: 28.rh(context),
-                        left: 20.rw(context),
-                        child: GestureDetector(
-                          onTap: () {
-                            context.pop();
-                          },
-                          child: Icon(
-                            size: 27.rf(context),
-                            CupertinoIcons.chevron_left,
-                            fontWeight: FontWeight.bold,
-                            color: context.primaryColor,
+                                      ),
+                                    );
+                                  },
+                                  loading: () => const Center(
+                                    child: CupertinoActivityIndicator(),
+                                  ),
+                                  error: (e, st) => Center(
+                                    child: Uiutils.getTextWidget(
+                                      context,
+                                      "Error loading image: $e",
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                          Positioned(
+                            top: 28.rh(context),
+                            right: 20.rw(context),
+                            child: Consumer(
+                              builder: (context, ref, child) {
+                                final imageState = ref.watch(
+                                  imagePickerNotifierProvider,
+                                );
+
+                                return imageState.value != null
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          ref
+                                              .read(
+                                                imagePickerNotifierProvider
+                                                    .notifier,
+                                              )
+                                              .clear();
+                                        },
+                                        child: Icon(
+                                          size: 27.rf(context),
+                                          CupertinoIcons.xmark_circle,
+                                          color: context.primaryColor,
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              },
+                            ),
+                          ),
+                          Positioned(
+                            top: 28.rh(context),
+                            left: 20.rw(context),
+                            child: GestureDetector(
+                              onTap: () {
+                                context.pop();
+                              },
+                              child: Icon(
+                                size: 27.rf(context),
+                                CupertinoIcons.chevron_left,
+                                fontWeight: FontWeight.bold,
+                                color: context.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),

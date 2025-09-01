@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:clean_architutre_learn/core/constants/lottie_constant.dart';
+import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
@@ -10,6 +11,7 @@ import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubb
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
 import 'package:flutter/cupertino.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -17,7 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/constants/widgets/app_logo_widget.dart';
 import '../../../../core/service/speach/speech_service.dart';
-import '../../../../core/theme/theme_notifier.dart';
+
 import '../provider/tts_provider.dart';
 import '../widgets/custom_chat_bubble_widget.dart';
 import '../widgets/chat_bakground_screen.dart';
@@ -52,39 +54,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.initState();
   }
 
-  // void _initializeTts() async {
-  //   // Optional: Check languages
-  //   var languages = await _flutterTts.getLanguages;
-  //   print("Languages available: $languages");
-
-  //   // Optional: Check voices
-  //   // var voices = await _flutterTts.getVoices;
-  //   // print("Voices available: $voices");
-
-  //   // Set default language
-  //   await _flutterTts.setLanguage("en-US");
-
-  //   // Set pitch (0.5 - 2.0)
-  //   await _flutterTts.setPitch(1.2);
-  //   await _flutterTts.setVoice({
-  //     "name": "com.apple.voice.compact.en-US.Samantha",
-  //     "locale": "en-US",
-  //   });
-
-  //   // Set speech rate (0.0 - 1.0)
-  //   await _flutterTts.setSpeechRate(0.5);
-
-  //   // Optional: Volume (0.0 - 1.0)
-  //   await _flutterTts.setVolume(1.0);
-  // }
-
-  // final FlutterTts _flutterTts = FlutterTts();
-
   @override
   Widget build(BuildContext context) {
     final loadingAiMsg = ref.watch(loadingmsgProvider);
     final isListening = ref.watch(voiceListenProvider);
-    final _spokenText = ref.watch(speakingTestProvider);
+    final spokenText = ref.watch(speakingTestProvider);
 
     return PopScope(
       canPop: true,
@@ -101,15 +75,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 // ],
               ),
             ),
-
-            // AnimatedPositioned(
-            //   left: 100, //change it
-            //   top: 0,
-            //   right: 0,
-            //   bottom: 0,
-            //   child: Container(height: 100,color: context.red,),
-            //   duration: Duration(milliseconds: 300),
-            // ),
             Padding(
               padding: EdgeInsets.only(
                 bottom: 18.rh(context),
@@ -123,12 +88,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     children: [
                       CustomCircleImageWidget(
                         onTap: () {
-                          // context.pushNamed(RouteNames.chat);
-                          ref.read(themeProvider.notifier).toggleTheme();
-                          //drawer like something opening
+                          ref.read(chatHistoryProvider.notifier).state = true;
                         },
-                        // firstLetter: "user first Letter",
-                        // netwrkImage: 'avatar path',
                         icon: null,
                         boxColor: context.mainDarkShadeColor,
                       ),
@@ -175,15 +136,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         _speechService.stopListening();
 
                         ref.read(voiceListenProvider.notifier).state = false;
-                        _spokenText != ''
+                        spokenText != ''
                             ? () async {
                                 final chat = Chatbubble(
-                                  message: _spokenText,
+                                  message: spokenText,
                                   time: DateTime.now().toFormattedString(),
                                   msgtype: MessegeOwner.user,
                                 );
 
-                                log('User message posting: $_spokenText');
+                                log('User message posting: $spokenText');
 
                                 try {
                                   // Add user chat
@@ -215,42 +176,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ref.read(voiceListenProvider.notifier).state = true;
                       }
                     },
-                    // inputController.text=_spokenText;
-                    prefixOntap: () {
-                      // showCupertinoModalPopup(
-                      //   context: context,
-                      //   builder: (context) => CupertinoActionSheet(
-                      //     actions: [
-                      //       CupertinoActionSheetAction(
-                      //         onPressed: () {
-                      //           // open camera
-                      //           Navigator.pop(context);
-                      //         },
-                      //         child: const Text("Camera"),
-                      //       ),
-                      //       CupertinoActionSheetAction(
-                      //         onPressed: () {
-                      //           // open gallery
-                      //           Navigator.pop(context);
-                      //         },
-                      //         child: const Text("Gallery"),
-                      //       ),
-                      //       CupertinoActionSheetAction(
-                      //         onPressed: () {
-                      //           // open files
-                      //           Navigator.pop(context);
-                      //         },
-                      //         child: const Text("Files"),
-                      //       ),
-                      //     ],
-                      //     cancelButton: CupertinoActionSheetAction(
-                      //       onPressed: () => Navigator.pop(context),
-                      //       isDefaultAction: true,
-                      //       child: const Text("Cancel"),
-                      //     ),
-                      //   ),
-                      // );
-                    },
+                    prefixOntap: () {},
                     boxshadows: [
                       BoxShadow(
                         color: context.containerGrayColor.withValues(
@@ -318,6 +244,104 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ],
               ),
+            ),
+            Consumer(
+              builder: (context, ref, child) {
+                final isdrawer = ref.watch(chatHistoryProvider);
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  top: 0,
+                  bottom: 0,
+                  left: isdrawer ? 0 : -350.rw(context),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 30.rw(context),
+                      vertical: 40.rh(context),
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.cardColor3,
+                      borderRadius: BorderRadius.horizontal(
+                        right: Radius.circular(30.rf(context)),
+                      ),
+                    ),
+                    // height: double.infinity,
+                    width: 350.rw(context),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 30.rh(context)),
+
+                        Row(
+                          children: [
+                            CustomCircleImageWidget(onTap: () {}),
+                            SizedBox(width: 20.rw(context)),
+                            Uiutils.getTextWidget(context, 'Sufair RF'),
+                          ],
+                        ),
+                        SizedBox(height: 30.rh(context)),
+                        // Divider(),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(width: .1.rh(context)),
+                          ),
+                        ),
+                        SizedBox(height: 10.rh(context)),
+
+                        GestureDetector(
+                          onTap: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Uiutils.getTextWidget(context, 'Clear History'),
+                              const Icon(CupertinoIcons.trash),
+                            ],
+                          ),
+                        ),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     border: Border.all(width: .01.rh(context)),
+                        //   ),
+                        // ),
+                        SizedBox(height: 30.rh(context)),
+
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: 12,
+                            itemBuilder: (context, index) {
+                              return CustomButtonWIdget(
+                                widget: Row(
+                                  children: [
+                                    Uiutils.getTextWidget(
+                                      context,
+                                      'discussed topi',
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 12.rh(context)),
+                        // Spacer(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Icon(CupertinoIcons.settings),
+                            GestureDetector(
+                              onTap: () {
+                                ref.read(chatHistoryProvider.notifier).state =
+                                    false;
+                              },
+                              child: const Icon(CupertinoIcons.arrow_left),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

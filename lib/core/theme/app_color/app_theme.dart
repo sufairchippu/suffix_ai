@@ -14,7 +14,7 @@ class AppTheme {
   static final dark = CupertinoThemeData(
     brightness: Brightness.dark,
     primaryColor: AppColors.buttnColor,
-    scaffoldBackgroundColor: AppColors.scaffold ,
+    scaffoldBackgroundColor: AppColors.card ,
     barBackgroundColor: AppColors.blue,
     textTheme: CupertinoTextThemeData(primaryColor: AppColors.text),
     applyThemeToAll: true,

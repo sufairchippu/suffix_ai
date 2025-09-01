@@ -125,18 +125,22 @@ class Uiutils {
 
   static void showAlert(
     BuildContext context,
-    VoidCallback onLogout,
+    VoidCallback onConformTap,
     String titile,
     String discription,
     bool cnacel,
     String conformText,
-    Color infoColor,
-  ) {
+    Color infoColor, {
+    bool somethingTodo = false,
+    Widget? widget,
+  }) {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
         title: Uiutils.getTextWidget(context, titile, color: infoColor),
-        content: Uiutils.getTextWidget(context, discription),
+        content: somethingTodo
+            ? widget
+            : Uiutils.getTextWidget(context, discription),
         actions: [
           cnacel
               ? CupertinoDialogAction(
@@ -155,7 +159,7 @@ class Uiutils {
             ),
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
-              onLogout(); // Call logout function
+              onConformTap(); // Call logout function
             },
           ),
         ],
@@ -164,43 +168,51 @@ class Uiutils {
   }
 
   static String creatingMCQpapper(int number, String topic, Diffculty diff) {
-    return 'Generate $number multiple-choice questions about $topic. Difficulty: $diff. Format in JSON with fields: question, options, correct_answer, difficulty';
+    return 'Generate $number multiple-choice questions about $topic. Difficulty: $diff. Format in JSON with fields: question, options, correct_answer_index, difficulty';
   }
 
   static String creatingNormalpapper(int number, String topic, Diffculty diff) {
-    return "Generate an exam paper on '$topic'.\nDifficulty: $diff.\nNumber of Questions: $number.\nInclude a mix of:\n- Short Answer Questions\n- Multiple Choice Questions\n- Medium Long Answer Questions\n- Essay Questions\nin the ratio of 4:2:3:1.\n\nFormat the output as a valid JSON object with the following structure:\n{\n  \"exam_paper\": [\n    { \"type\": \"short_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"mcq\", \"question\": \"...\", \"options\": [\"...\"], \"answer\": \"...\" },\n    { \"type\": \"long_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"essay\", \"question\": \"...\", \"answer\": \"...\" }\n  ]\n}";
+    return "Generate an exam paper on '$topic'.\nDifficulty: $diff.\nNumber of Questions: $number.\nInclude a mix of:\n- Short Answer Questions\n- Multiple Choice Questions\n- Medium Long Answer Questions\n- Essay Questions\nin the ratio of 4:2:3:1.\n\nFormat the output as a valid JSON object with the following structure:\n{\n  \"exam_paper\": [\n    { \"type\": \"short_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"mcq\", \"question\": \"...\", \"options\": [\"...\"], \"answer_index\": \"...\" },\n    { \"type\": \"long_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"essay\", \"question\": \"...\", \"answer\": \"...\" }\n  ]\n}";
   }
 
-  static modelBottomsheet(BuildContext context) {
+  static modelBottomsheet(
+    BuildContext context,
+    Widget title,
+    Widget discription,
+    List<Widget> cupertinoactions,
+    Widget cupertinoCancel,
+  ) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: const Text("Choose Option"),
-          message: const Text("Select an action from below"),
-          actions: [
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                debugPrint("Camera tapped");
-              },
-              child: const Text("📷 Open Camera"),
-            ),
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                debugPrint("Gallery tapped");
-              },
-              child: const Text("🖼️ Open Gallery"),
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            isDefaultAction: true,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Cancel"),
-          ),
+          title: title,
+          message: discription,
+          actions: cupertinoactions,
+          //  [
+          //   CupertinoActionSheetAction(
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //       debugPrint("Camera tapped");
+          //     },
+          //     child: const Text("📷 Open Camera"),
+          //   ),
+          //   CupertinoActionSheetAction(
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //       debugPrint("Gallery tapped");
+          //     },
+          //     child: const Text("🖼️ Open Gallery"),
+          //   ),
+          // ],
+          cancelButton: cupertinoCancel,
+          // CupertinoActionSheetAction(
+          //   isDefaultAction: true,
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          //   child: const Text("Cancel"),
+          // ),
         );
       },
     );

@@ -130,7 +130,7 @@ class AppColors {
   static CupertinoDynamicColor mainDarkShade =
       CupertinoDynamicColor.withBrightness(
         color: kLightMainDarkShade,
-        darkColor: kDarkMainDarkShade,
+        darkColor: subText,
       );
 
   static CupertinoDynamicColor mainLightShade =
@@ -232,7 +232,7 @@ class AppColors {
   static CupertinoDynamicColor dynamicColor4 =
       CupertinoDynamicColor.withBrightness(
         color: kLightcolor3,
-        darkColor: kDarkCardColor,
+        darkColor:kDarkcolor2 ,
       );
   static CupertinoDynamicColor buttnColor =
       CupertinoDynamicColor.withBrightness(

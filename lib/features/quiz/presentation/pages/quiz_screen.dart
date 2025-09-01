@@ -47,7 +47,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               ),
 
               AnimatedPositioned(
-                duration: Duration(seconds: 3),
+                duration: const Duration(seconds: 3),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 38.rw(context),
@@ -98,7 +98,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                           return ListView.separated(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: 4,
                             separatorBuilder: (context, index) =>
                                 SizedBox(height: 15.rh(context)),

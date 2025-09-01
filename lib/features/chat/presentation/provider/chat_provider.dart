@@ -104,3 +104,6 @@ final chatDrawrProvider = StateProvider<bool>((ref) {
 final speakingTestProvider = StateProvider<String>((ref) {
   return '';
 });
+final chatHistoryProvider = StateProvider<bool>((ref) {
+  return false;
+});

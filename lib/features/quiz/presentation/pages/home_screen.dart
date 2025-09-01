@@ -6,13 +6,11 @@ import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.d
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
-import 'package:clean_architutre_learn/features/quiz/presentation/pages/camera_result_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/constants/widgets/custom_button_widget.dart';
-import '../provider/home_screen_provider.dart';
 import '../widget/floating_action_item.dart';
 import '../widget/home_screen_section_widget.dart';
 
