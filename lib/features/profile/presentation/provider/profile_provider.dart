@@ -23,7 +23,7 @@ class ProfileProvidernNotifier extends StateNotifier<AsyncValue<XFile?>> {
     }
   }
 
-  /// Pick multiple images (returns List<XFile> inside AsyncValue)
+  // Pick multiple images (returns List<XFile> inside AsyncValue)
   // Future<void> pickMulti() async {
   //   state = const AsyncLoading();
   //   try {

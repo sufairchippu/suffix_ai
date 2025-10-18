@@ -8,7 +8,7 @@ import '../../utils/ui_utils.dart';
 class CustomButtonWIdget extends StatelessWidget {
   const CustomButtonWIdget({
     super.key,
-
+    this.width,
     this.height,
     this.color,
     this.borderRadius,
@@ -23,6 +23,7 @@ class CustomButtonWIdget extends StatelessWidget {
     this.top,
     this.right,
     this.bottom,
+    this.bordercolor,
   });
 
   final double? height;
@@ -30,6 +31,7 @@ class CustomButtonWIdget extends StatelessWidget {
   final double? borderRadius;
   final String? titile;
   final Color? boxshadowColor;
+  final Color? bordercolor;
   final void Function()? onTap;
   final double? padding;
   final Widget? widget;
@@ -39,6 +41,7 @@ class CustomButtonWIdget extends StatelessWidget {
   final double? top;
   final double? right;
   final double? bottom;
+  final double? width;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -51,6 +54,7 @@ class CustomButtonWIdget extends StatelessWidget {
           (bottom ?? 0).rh(context),
         ),
         child: Container(
+          width: width,
           height: height ?? 49.rh(context),
           decoration: BoxDecoration(
             color: color,
@@ -67,6 +71,9 @@ class CustomButtonWIdget extends StatelessWidget {
               ),
             ],
             borderRadius: BorderRadius.circular(borderRadius ?? 24.rf(context)),
+            border: Border.all(
+              color: bordercolor ?? CupertinoColors.transparent,
+            ),
           ),
 
           child: Center(

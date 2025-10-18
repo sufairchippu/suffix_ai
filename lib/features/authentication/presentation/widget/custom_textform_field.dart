@@ -15,8 +15,9 @@ class CustomTextFormField extends StatelessWidget {
     this.text,
     this.hintText,
     this.onTap,
+    this.boxColor,
     this.isWantsuffix = false,
-    required this.obscure,
+    this.obscure = false,
     this.validator,
     this.iconSize,
     this.iconColor,
@@ -28,8 +29,16 @@ class CustomTextFormField extends StatelessWidget {
     this.loadingOnsomething = false,
     this.prefixNeeded = true,
     this.maxline,
+    this.borderColor,
     this.onHold,
+    this.borderRadius,
+    this.onChange,
+    this.titileStyle,
+    this.downPadding,
+    this.textColor,
   });
+  final Color? borderColor;
+  final double? borderRadius;
   final double? iconSize;
   final TextEditingController? controller;
   final String? text;
@@ -48,21 +57,33 @@ class CustomTextFormField extends StatelessWidget {
   final bool loadingOnsomething;
   final int? maxline;
   final void Function()? onHold;
+  final void Function(String)? onChange;
+  final TextStyleType? titileStyle;
   final bool prefixNeeded;
+  final Color? boxColor;
+  final double? downPadding;
+  final Color? textColor;
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Uiutils.getTextWidget(context, text ?? ''),
+        Uiutils.getTextWidget(
+          context,
+          text ?? '',
+          textStyle: titileStyle,
+          color: textColor,
+        ),
         Stack(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.topRight,
           children: [
             DecoratedBox(
               decoration: BoxDecoration(
                 boxShadow: boxshadows,
                 color: fillcolor ?? CupertinoColors.transparent,
-                borderRadius: BorderRadius.circular(18.rf(context)),
+                borderRadius: BorderRadius.circular(
+                  borderRadius ?? 18.rf(context),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.only(
@@ -71,6 +92,7 @@ class CustomTextFormField extends StatelessWidget {
                       : 8.rw(context), // Extra space for suffix icon
                 ),
                 child: CupertinoTextFormFieldRow(
+                  onChanged: onChange,
                   maxLines: maxline,
                   readOnly: loadingOnsomething,
                   keyboardAppearance: Brightness.dark,
@@ -87,12 +109,15 @@ class CustomTextFormField extends StatelessWidget {
                             child: Icon(
                               icon ?? CupertinoIcons.mail_solid,
                               size: iconSize,
-                              color: iconColor,
+                              color: iconColor ?? context.mainDarkShadeColor,
                             ),
                           ),
                         )
                       : null,
-                  padding: EdgeInsets.symmetric(vertical: 15.rh(context)),
+                  padding: EdgeInsets.only(
+                    bottom: downPadding ?? 20.rh(context),
+                    top: 5.rh(context),
+                  ),
                   controller: controller,
                   keyboardType: TextInputType.emailAddress,
                   obscureText: obscure,
@@ -106,8 +131,14 @@ class CustomTextFormField extends StatelessWidget {
                   ),
                   validator: validator,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: context.cardColor2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: boxColor,
+                    border: Border.all(
+                      width: 1,
+                      color: borderColor ?? context.cardColor2,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      borderRadius ?? 12.rf(context),
+                    ),
                   ),
                 ),
               ),
@@ -118,13 +149,13 @@ class CustomTextFormField extends StatelessWidget {
                 onLongPress: onHold,
                 onTap: loadingOnsomething ? null : onTap,
                 child: Padding(
-                  padding: EdgeInsets.all(15.rf(context)),
+                  padding: EdgeInsets.all(10.rf(context)),
                   child: Icon(
                     suffixIcon ??
                         (obscure
                             ? CupertinoIcons.eye_slash
                             : CupertinoIcons.eye),
-                    color: iconColor,
+                    color: iconColor ?? context.mainDarkShadeColor,
                     size: 24.rf(context),
                   ),
                 ),

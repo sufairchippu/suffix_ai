@@ -11,6 +11,7 @@ class AppLogoWidget extends StatelessWidget {
   const AppLogoWidget({
     super.key,
     this.logoNeeded = true,
+    this.textNeeded = true,
     this.logoheit = 35,
     this.textSize = 18,
     this.textStyle,
@@ -23,6 +24,7 @@ class AppLogoWidget extends StatelessWidget {
   final TextStyleType? textStyle;
   final Color? textColor;
   final Color? textcolor2;
+  final bool textNeeded;
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +38,25 @@ class AppLogoWidget extends StatelessWidget {
                 width: logoheit / 7 * 6,
               )
             : const SizedBox(height: 0, width: 0),
-        Uiutils.getTextWidget(
-          context,
-          AppConstants.appName,
-          color: textColor ?? context.greyFirstColor,
-          fs: textSize,
-          textStyle: textStyle ?? TextStyleType.heading,
-        ),
+        textNeeded
+            ? Uiutils.getTextWidget(
+                context,
+                AppConstants.appName,
+                color: textColor ?? context.greyFirstColor,
+                fs: textSize,
+                textStyle: textStyle ?? TextStyleType.heading,
+              )
+            : const SizedBox(),
         SizedBox(width: 3.rw(context)),
-        Uiutils.getTextWidget(
-          context,
-          'AI',
-          color: textcolor2 ?? context.greySecondColor,
-          textStyle: textStyle ?? TextStyleType.heading,
-          fs: textSize / 7 * 8, //change here accordinggllyyy
-        ),
+        textNeeded
+            ? Uiutils.getTextWidget(
+                context,
+                'AI',
+                color: textcolor2 ?? context.greySecondColor,
+                textStyle: textStyle ?? TextStyleType.heading,
+                fs: textSize / 7 * 8, //change here accordinggllyyy
+              )
+            : const SizedBox(),
       ],
     );
   }

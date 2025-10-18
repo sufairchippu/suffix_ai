@@ -3,7 +3,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-/// State type: AsyncValue<XFile?> - null means "no image selected"
+// State type: AsyncValue<XFile?> - null means "no image selected"
 class ImagePickerNotifier extends StateNotifier<AsyncValue<XFile?>> {
   final ImagePicker _picker;
   ImagePickerNotifier([ImagePicker? picker])
@@ -26,7 +26,7 @@ class ImagePickerNotifier extends StateNotifier<AsyncValue<XFile?>> {
     }
   }
 
-  /// Pick multiple images (returns List<XFile> inside AsyncValue)
+  // Pick multiple images (returns List<XFile> inside AsyncValue)
   // Future<void> pickMulti() async {
   //   state = const AsyncLoading();
   //   try {

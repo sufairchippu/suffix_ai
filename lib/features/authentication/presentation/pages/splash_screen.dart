@@ -29,12 +29,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      child: Center(
-        child: Uiutils.getassetImage(
-          height: 230.rh(context),
-          width: 210.rw(context),
-          ImageConstants.logo,
-        ), // Uiutils.getSvg(ImageConstants.logo,)
+      child: SafeArea(
+        child: SizedBox.expand(
+          // 👈 forces it to take the full screen
+          child: Center(
+            child: Uiutils.getassetImage(
+              height: 230.rh(context),
+              width: 210.rw(context),
+              ImageConstants.logo,
+            ),
+          ),
+        ),
       ),
     );
   }

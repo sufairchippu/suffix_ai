@@ -92,59 +92,81 @@ class _SettingsScreeenState extends ConsumerState<SettingsScreeen> {
                       : CupertinoIcons.moon,
                   iconcolor: context.primaryColor,
                   onTap: () {
-                    Uiutils.modelBottomsheet(context, const SizedBox(), const SizedBox(), [
-                      CupertinoListTile(
-                        title: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1.rf(context),
-                              color: context.textColor,
+                    Uiutils.modelBottomsheet(
+                      context,
+                      const SizedBox(),
+                      const SizedBox(),
+                      [
+                        CupertinoListTile(
+                          title: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 1.rf(context),
+                                color: context.textColor,
+                              ),
                             ),
                           ),
+
+                          subtitle: Uiutils.getTextWidget(
+                            context,
+                            AppThemeMode.dark.name
+                                .toString()
+                                .capitalizeFirstLetter(),
+                          ),
+                          onTap: () {
+                            ref
+                                .read(themeProvider.notifier)
+                                .updateSystemTheme(Brightness.dark);
+                          },
                         ),
-                        leading: Uiutils.getTextWidget(
-                          context,
-                          AppThemeMode.dark.name
-                              .toString()
-                              .capitalizeFirstLetter(),
-                        ),
-                      ),
-                      CupertinoListTile(
-                        title: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1.rf(context),
-                              color: context.textColor,
+                        CupertinoListTile(
+                          onTap: () {
+                            ref
+                                .read(themeProvider.notifier)
+                                .updateSystemTheme(Brightness.light);
+                          },
+                          title: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 1.rf(context),
+                                color: context.textColor,
+                              ),
                             ),
                           ),
-                        ),
-                        leading: Uiutils.getTextWidget(
-                          context,
-                          AppThemeMode.light.name
-                              .toString()
-                              .capitalizeFirstLetter(),
-                        ),
-                      ),
-                      CupertinoListTile(
-                        title: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1.rf(context),
-                              color: context.textColor,
-                            ),
+                          subtitle: Uiutils.getTextWidget(
+                            context,
+                            AppThemeMode.light.name
+                                .toString()
+                                .capitalizeFirstLetter(),
                           ),
                         ),
-                        leading: Uiutils.getTextWidget(
-                          context,
-                          AppThemeMode.system.name
-                              .toString()
-                              .capitalizeFirstLetter(),
+                        CupertinoListTile(
+                          onTap: () {
+                            //      ref
+                            // .read(themeProvider.notifier)
+                            // .setThemeMode()
+                          },
+                          title: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 1.rf(context),
+                                color: context.textColor,
+                              ),
+                            ),
+                          ),
+                          subtitle: Uiutils.getTextWidget(
+                            context,
+                            '${AppThemeMode.system.name
+                                    .toString()
+                                    .capitalizeFirstLetter()} Default',
+                          ),
                         ),
-                      ),
-                    ], const SizedBox());
+                      ],
+                      const SizedBox(),
+                    );
                     // ref.read(themeProvider.notifier).toggleTheme();
                   },
                 ),

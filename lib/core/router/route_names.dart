@@ -9,4 +9,5 @@ class RouteNames {
   static const String settings = '/settings';
   static const String camera = '/camera';
   static const String quiz = '/quiz';
+  static const String generate = '/generate';
 }

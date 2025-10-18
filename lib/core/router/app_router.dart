@@ -6,6 +6,7 @@ import 'package:clean_architutre_learn/features/chat/presentation/pages/chat_scr
 import 'package:clean_architutre_learn/features/profile/presentation/pages/profile_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/settings_screeen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/camera_result_screen.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/pages/generation_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/home_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/quiz_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,10 +22,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/splash',
       name: RouteNames.splash,
-      pageBuilder: (context, state) => customBuildTransitionPage(
+      pageBuilder: (context, state) => CupertinoPage(
         child: const SplashScreen(),
-        state: state,
-        type: TransitionType.fade,
+        //state:
+        key: state.pageKey,
+        // type: TransitionType.fade,
       ),
     ),
 
@@ -76,7 +78,6 @@ final GoRouter appRouter = GoRouter(
           path: 'quiz',
           name: RouteNames.quiz,
           pageBuilder: (context, state) {
-          
             return customBuildTransitionPage(
               child: const QuizScreen(),
               state: state,
@@ -102,10 +103,19 @@ final GoRouter appRouter = GoRouter(
               pageBuilder: (context, state) => customBuildTransitionPage(
                 child: const ProfileScreen(),
                 state: state,
+
                 type: TransitionType.scale,
               ),
             ),
           ],
+        ),
+        GoRoute(
+          path: 'generate',
+          name: RouteNames.generate,
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child: const GenerationScreen(),
+            state: state,
+          ),
         ),
       ],
     ),

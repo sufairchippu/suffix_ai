@@ -9,7 +9,6 @@ import 'package:clean_architutre_learn/features/authentication/presentation/widg
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../../core/constants/widgets/custom_button_widget.dart';
 import '../widget/floating_action_item.dart';
 import '../widget/home_screen_section_widget.dart';
@@ -22,9 +21,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final imagePicker = ImagePicker();
-  late XFile _file;
-
   @override
   Widget build(BuildContext context) {
     // final String? userrr = LocalStorageService.getString(
@@ -47,7 +43,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     _buildAppBar(context),
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 20.rh(context)),
+                        padding: EdgeInsets.only(
+                          top: 12.rh(context),
+                          bottom: 20.rh(context),
+                        ),
                         child: Center(
                           child: Uiutils.getTextWidget(
                             context,
@@ -60,20 +59,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     SliverToBoxAdapter(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 10.rh(context),
+                        // spacing: 10.rh(context),
                         children: [
+                          SizedBox(height: 5.rh(context)),
+
                           Uiutils.getTextWidget(
                             context,
                             'use thes to help youhh',
                           ),
+                          SizedBox(height: 5.rh(context)),
                           const HomeScreenSecotionWidget(
+                            generateType: false,
                             text: 'test Your Knwoledge',
                           ),
+                          SizedBox(height: 15.rh(context)),
 
                           const HomeScreenSecotionWidget(
+                            generateType: true,
+
                             text: 'Generate Question Paper',
                           ),
-                          SizedBox(height: 12.rh(context)),
+                          SizedBox(height: 20.rh(context)),
                         ],
                       ),
                     ),

@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'package:clean_architutre_learn/core/constants/lottie_constant.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
+import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
+import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
@@ -102,19 +104,29 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       ),
 
                       const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          context.pop();
-                          // ref
-                          //     .read(chatListNotifierProvider.notifier)
-                          //     .clearChatts();
-                          // ref.read(chatListNotifierProvider.notifier).loadChats();
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final isdrawer = ref.watch(chatHistoryProvider);
+                          return GestureDetector(
+                            onTap: () {
+                              isdrawer
+                                  ? ref
+                                            .read(chatHistoryProvider.notifier)
+                                            .state =
+                                        false
+                                  : context.pop();
+                              // ref
+                              //     .read(chatListNotifierProvider.notifier)
+                              //     .clearChatts();
+                              // ref.read(chatListNotifierProvider.notifier).loadChats();
+                            },
+                            child: Icon(
+                              CupertinoIcons.xmark_circle,
+                              size: 30.rf(context),
+                              color: context.mainDarkShadeColor,
+                            ),
+                          );
                         },
-                        child: Icon(
-                          CupertinoIcons.xmark_circle,
-                          size: 30.rf(context),
-                          color: context.mainDarkShadeColor,
-                        ),
                       ),
                     ],
                   ),
@@ -277,6 +289,29 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             CustomCircleImageWidget(onTap: () {}),
                             SizedBox(width: 20.rw(context)),
                             Uiutils.getTextWidget(context, 'Sufair RF'),
+                          const  Spacer(),
+                            GestureDetector(
+                              onTap: () {
+
+                                //add to fire base  whole this engineer
+                                ref
+                                    .read(chatListNotifierProvider.notifier)
+                                    .clearChatts();
+                              },
+                              child: Column(
+                                children: [
+                                  AppLogoWidget(
+                                    textNeeded: false,
+                                    logoheit: 50.rf(context),
+                                  ),
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    'New Chat',
+                                    textStyle: TextStyleType.extraSmallBold,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                         SizedBox(height: 30.rh(context)),
@@ -289,7 +324,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         SizedBox(height: 10.rh(context)),
 
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            ref
+                                .read(chatListNotifierProvider.notifier)
+                                .clearChatts();
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -327,7 +366,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(CupertinoIcons.settings),
+                            GestureDetector(
+                              onTap: () {
+                                context.pushNamed(RouteNames.settings);
+                              },
+                              child: const Icon(CupertinoIcons.settings),
+                            ),
                             GestureDetector(
                               onTap: () {
                                 ref.read(chatHistoryProvider.notifier).state =
