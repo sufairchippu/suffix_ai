@@ -32,148 +32,169 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {},
       child: CupertinoPageScaffold(
-        child: SafeArea(
-          maintainBottomViewPadding: true,
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18.rf(context)),
-                child: CustomScrollView(
-                  slivers: [
-                    _buildAppBar(context),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 12.rh(context),
-                          bottom: 20.rh(context),
-                        ),
-                        child: Center(
-                          child: Uiutils.getTextWidget(
-                            context,
-                            "Daily Tasks ,Complete Todays",
-                          ),
-                        ),
-                      ),
+        child: Stack(
+          children: [
+            CustomScrollView(
+              scrollBehavior: const ScrollBehavior(),
+              shrinkWrap: true,
+              slivers: [
+                SliverToBoxAdapter(child: SizedBox(height: 120.rh(context))),
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: Uiutils.getTextWidget(
+                      context,
+                      "Daily Tasks ,Complete Todays",
                     ),
-                    _buildDailyGrid(),
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        // spacing: 10.rh(context),
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 15.rh(context),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 8.rw(context)),
+                    // child: Divider(
+                    //   thickness: 2.rf(context),
+                    //   color: context.blue,
+                    // ),
+                  ),
+                ),
+                _buildDailyGrid(),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.rh(context)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      // spacing: 10.rh(context),
+                      children: [
+                        SizedBox(height: 5.rh(context)),
+
+                        Uiutils.getTextWidget(
+                          context,
+                          'use thes to help youhh',
+                        ),
+                        SizedBox(height: 5.rh(context)),
+                        const HomeScreenSecotionWidget(
+                          generateType: false,
+                          text: 'test Your Knwoledge',
+                        ),
+                        SizedBox(height: 15.rh(context)),
+
+                        const HomeScreenSecotionWidget(
+                          generateType: true,
+
+                          text: 'Generate Question Paper',
+                        ),
+                        SizedBox(height: 20.rh(context)),
+                      ],
+                    ),
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.rh(context)),
+
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24.rf(context)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: context.greyFirstColor.withValues(alpha: .1),
+                            offset: const Offset(0, 2),
+                            // blurRadius: 4,
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: Row(
                         children: [
-                          SizedBox(height: 5.rh(context)),
+                          Expanded(
+                            child: CustomButtonWIdget(
+                              onTap: () {
+                                topic = true;
+                              },
 
-                          Uiutils.getTextWidget(
-                            context,
-                            'use thes to help youhh',
+                              boxshadowColor: topic
+                                  ? context.primaryColor.withValues(alpha: .9)
+                                  : CupertinoColors.transparent,
+                              titile: 'Topic',
+                            ),
                           ),
-                          SizedBox(height: 5.rh(context)),
-                          const HomeScreenSecotionWidget(
-                            generateType: false,
-                            text: 'test Your Knwoledge',
-                          ),
-                          SizedBox(height: 15.rh(context)),
+                          SizedBox(width: 10.rw(context)),
+                          Expanded(
+                            child: CustomButtonWIdget(
+                              onTap: () {
+                                topic = false;
+                              },
 
-                          const HomeScreenSecotionWidget(
-                            generateType: true,
-
-                            text: 'Generate Question Paper',
+                              boxshadowColor: topic
+                                  ? CupertinoColors.transparent
+                                  : context.primaryColor.withValues(alpha: .9),
+                              titile: 'Topic',
+                            ),
                           ),
-                          SizedBox(height: 20.rh(context)),
                         ],
                       ),
                     ),
-
-                    SliverToBoxAdapter(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24.rf(context)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: context.greyFirstColor.withValues(
-                                alpha: .1,
-                              ),
-                              offset: const Offset(0, 2),
-                              // blurRadius: 4,
-                              spreadRadius: 0,
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: CustomButtonWIdget(
-                                onTap: () {
-                                  topic = true;
-                                },
-
-                                boxshadowColor: topic
-                                    ? context.primaryColor.withValues(alpha: .9)
-                                    : CupertinoColors.transparent,
-                                titile: 'Topic',
-                              ),
-                            ),
-                            SizedBox(width: 10.rw(context)),
-                            Expanded(
-                              child: CustomButtonWIdget(
-                                onTap: () {
-                                  topic = false;
-                                },
-
-                                boxshadowColor: topic
-                                    ? CupertinoColors.transparent
-                                    : context.primaryColor.withValues(
-                                        alpha: .9,
-                                      ),
-                                titile: 'Topic',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    _buildLearnigSectionGrid(context),
-                  ],
+                  ),
                 ),
-              ),
-              _buildFloatingbutton(context),
-            ],
-          ),
+                _buildLearnigSectionGrid(context),
+              ],
+            ),
+            _buildAppBar(context),
+
+            _buildFloatingbutton(context),
+          ],
         ),
       ),
     );
   }
 
-  SliverToBoxAdapter _buildAppBar(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 12.rf(context)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Uiutils.getTextWidget(
-              context,
-              'Hi,  \n${'Guest'}',
-              textStyle: TextStyleType.mediumBold,
+  Positioned _buildAppBar(BuildContext context) {
+    return Positioned(
+      // Add spacing from bottom
+      left: 0,
+      right: 0,
+      child: ClipPath(
+        clipper: CurvedBottomClipper(),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: 10.rw(context),
+            horizontal: 10.rh(context),
+          ),
+          color: context.primaryColor,
+
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 35.rf(context)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Uiutils.getTextWidget(
+                  context,
+                  'Hi,  \n${'Guest'}',
+                  textStyle: TextStyleType.mediumBold,
+                ),
+                const AppLogoWidget(),
+
+                GestureDetector(
+                  onTap: () {
+                    // context.pushNamed(RouteNames.login);
+                    // imagePicker.pickImage(source: ImageSource.gallery);
+                    context.pushNamed(RouteNames.camera);
+
+                    ///change as camera setup
+                  },
+
+                  child: Icon(
+                    CupertinoIcons.camera_viewfinder,
+                    color: context.subTextColor,
+                    size: 30.rf(context),
+                  ),
+                ),
+              ],
             ),
-            const AppLogoWidget(),
-
-            GestureDetector(
-              onTap: () {
-                // context.pushNamed(RouteNames.login);
-                // imagePicker.pickImage(source: ImageSource.gallery);
-                context.pushNamed(RouteNames.camera);
-
-                ///change as camera setup
-              },
-
-              child: Icon(
-                CupertinoIcons.camera_viewfinder,
-                color: context.primaryColor,
-                size: 30.rf(context),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -221,57 +242,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  SliverGrid _buildLearnigSectionGrid(BuildContext context) {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate((context, index) {
-        return Padding(
-          padding: EdgeInsets.only(top: 22.rh(context)),
-          child: Container(
-            margin: EdgeInsetsGeometry.only(right: 10.rw(context)),
-            padding: EdgeInsets.only(top: 12.rh(context)),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14.rf(context)),
-              boxShadow: [
-                BoxShadow(
-                  color: context.dynamicColor3,
-                  blurRadius: 2.rf(context),
-                  spreadRadius: 1.rf(context),
-                  offset: const Offset(2, 4), // soft bottom shadow
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Uiutils.getTextWidget(context, "Topic Name"),
-
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 100.rh(context),
-                    width: 80.rw(context),
-                    child: Uiutils.getassetImage(ImageConstants.logo),
+  SliverPadding _buildLearnigSectionGrid(BuildContext context) {
+    return SliverPadding(
+      padding: EdgeInsets.fromLTRB(
+        12.rw(context),
+        20.rh(context),
+        12.rw(context),
+        60.rh(context),
+      ),
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return Padding(
+            padding: EdgeInsets.only(top: 10.rh(context)),
+            child: Container(
+              margin: EdgeInsets.only(right: 10.rw(context)),
+              padding: EdgeInsets.only(top: 12.rh(context)),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14.rf(context)),
+                boxShadow: [
+                  BoxShadow(
+                    color: context.dynamicColor3,
+                    blurRadius: 2.rf(context),
+                    spreadRadius: 1.rf(context),
+                    offset: const Offset(2, 4),
                   ),
-                ),
-                Uiutils.getTextWidget(context, '* hbdkjbhk'),
-                Uiutils.getTextWidget(context, '* hbdkjbhk'),
-                Uiutils.getTextWidget(context, '* hbdkjbhk'),
-              ],
+                ],
+              ),
+              child: Column(
+                children: [
+                  Uiutils.getTextWidget(context, "Topic Name"),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 100.rh(context),
+                      width: 80.rw(context),
+                      child: Uiutils.getassetImage(ImageConstants.logo),
+                    ),
+                  ),
+                  Uiutils.getTextWidget(context, '* hbdkjbhk'),
+                  Uiutils.getTextWidget(context, '* hbdkjbhk'),
+                  Uiutils.getTextWidget(context, '* hbdkjbhk'),
+                ],
+              ),
             ),
-          ),
-        );
-      }, childCount: 5),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        childAspectRatio: .7,
-        crossAxisSpacing: 10.rf(context),
-        mainAxisSpacing: 20.rf(context),
-        crossAxisCount: 2,
+          );
+        }, childCount: 5),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          childAspectRatio: .7,
+          crossAxisSpacing: 10.rf(context),
+          mainAxisSpacing: 20.rf(context), // vertical spacing between rows
+          crossAxisCount: 2,
+        ),
       ),
     );
   }
 
   Positioned _buildFloatingbutton(BuildContext context) {
     return Positioned(
-      bottom: 0, // Add spacing from bottom
+      bottom: 26.rh(context), // Add spacing from bottom
       left: 0,
       right: 0,
       child: Padding(
@@ -304,35 +332,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
               ),
               SizedBox(width: 40.rw(context)),
-              GestureDetector(
+              // GestureDetector(
+              //   onTap: () {
+              //     // Main Center Button Action
+              //   },
+              //   child: Column(
+              //     children: [
+              //       Container(
+              //         height: 40.rh(context),
+              //         width: 40.rf(context),
+              //         decoration: BoxDecoration(
+              //           color: context.primaryColor,
+              //           shape: BoxShape.circle,
+              //           boxShadow: [
+              //             BoxShadow(
+              //               color: context.primaryColor.withValues(alpha: 0.3),
+              //               blurRadius: 8,
+              //               offset: const Offset(2, 4),
+              //             ),
+              //           ],
+              //         ),
+              //         child: const Icon(
+              //           CupertinoIcons.smallcircle_circle_fill,
+              //           color: CupertinoColors.white,
+              //           size: 30,
+              //         ),
+              //       ),
+              //       Uiutils.getTextWidget(context, ''),
+              //     ],
+              //   ),
+              // ),
+              FloatingActionItem(
+                selected: true,
+                icon: CupertinoIcons.home,
+                label: "Home",
                 onTap: () {
-                  // Main Center Button Action
+                  context.pushReplacementNamed(RouteNames.home);
                 },
-                child: Column(
-                  children: [
-                    Container(
-                      height: 40.rh(context),
-                      width: 40.rf(context),
-                      decoration: BoxDecoration(
-                        color: context.primaryColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: context.primaryColor.withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(2, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        CupertinoIcons.smallcircle_circle_fill,
-                        color: CupertinoColors.white,
-                        size: 30,
-                      ),
-                    ),
-                    Uiutils.getTextWidget(context, ''),
-                  ],
-                ),
+              ),
+              SizedBox(width: 40.rw(context)),
+
+              FloatingActionItem(
+                icon: CupertinoIcons.wand_stars_inverse,
+                label: "ImaGenrator",
+                onTap: () {
+                  context.pushNamed(RouteNames.nanoBanana);
+                },
               ),
               SizedBox(width: 40.rw(context)),
               FloatingActionItem(
@@ -348,4 +393,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
+}
+
+// Custom clipper for curved bottom
+class CurvedBottomClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height - 40);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 40,
+    );
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

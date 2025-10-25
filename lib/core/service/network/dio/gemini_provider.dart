@@ -1,4 +1,5 @@
 import 'package:clean_architutre_learn/app_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
@@ -36,7 +37,7 @@ final dioProviderGemini = Provider<Dio>((ref) {
         if (e.type == DioExceptionType.connectionTimeout ||
             e.type == DioExceptionType.receiveTimeout ||
             e.type == DioExceptionType.sendTimeout) {
-          print("⚠️ Network Error: Slow or No Internet Connection");
+          debugPrint("⚠️ Network Error: Slow or No Internet Connection");
         }
         return handler.next(e);
       },

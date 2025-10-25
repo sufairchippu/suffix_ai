@@ -1,3 +1,6 @@
+import 'package:clean_architutre_learn/core/constants/models/models.dart';
+import 'package:clean_architutre_learn/core/theme/app_color/app_color.dart';
+
 class CoreConstants {
   static const List<String> infoTexts = [
     "Let’s get started — choose your question paper type below.",
@@ -10,5 +13,43 @@ class CoreConstants {
     "Design your own question paper in just a few taps.",
     "Pick a format that best fits your exam style.",
     "Select your paper type and move to the next step.",
+  ];
+
+  static List<NanoSelectionModels> listofnanBananaSelction = [
+    NanoSelectionModels(
+      title: 'Glow Up',
+      description:
+          'Transform your look with a refreshing new style that radiates confidence.',
+      cardColor: AppColors.dynamicColor1, // Soft mint / fresh tone
+      image: '',
+    ),
+    NanoSelectionModels(
+      title: 'Strike a Better Pose',
+      description:
+          'Master the art of posture and posing for confident, camera-ready moments.',
+      cardColor: AppColors.dynamicColor2, // Cool cyan / energetic tone
+      image: '',
+    ),
+    NanoSelectionModels(
+      title: 'Professional Styling',
+      description:
+          'Refine your appearance with expert styling tips that highlight your best features.',
+      cardColor: AppColors.blue, // Deep, confident tone
+      image: '',
+    ),
+    NanoSelectionModels(
+      title: 'Social Media Profile',
+      description:
+          'Build a stunning profile that captures your authentic self and attracts engagement.',
+      cardColor: AppColors.yellow, // Bright, attention-grabbing tone
+      image: '',
+    ),
+    NanoSelectionModels(
+      title: 'Trending Now',
+      description:
+          'Stay ahead of the curve with styles and trends defining the moment.',
+      cardColor: AppColors.green, // Vibrant and modern tone
+      image: '',
+    ),
   ];
 }

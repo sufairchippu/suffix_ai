@@ -1,5 +1,7 @@
+import 'package:clean_architutre_learn/core/service/speach/speech_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 enum TtsState { idle, playing, stopped }
 
@@ -53,3 +55,31 @@ final ttsProvider = StateNotifierProvider<TtsNotifier, TtsState>((ref) {
 final voiceListenProvider = StateProvider<bool>((ref) {
   return false;
 });
+
+
+final speechNotifierProvider =
+    StateNotifierProvider<SpeechNotifier, bool>((ref) {
+  return SpeechNotifier();
+});
+
+class SpeechNotifier extends StateNotifier<bool> {
+  final _speechService = SpeechService();
+
+  SpeechNotifier() : super(false);
+
+  Future<void> init() async {
+    await Permission.microphone.request();
+    await Permission.speech.request();
+    await _speechService.initialize();
+  }
+
+  void toggleListening(Function(String) onText) async {
+    if (state) {
+      _speechService.stopListening();
+      state = false;
+    } else {
+      _speechService.startListening(onText);
+      state = true;
+    }
+  }
+}

@@ -10,4 +10,7 @@ class RouteNames {
   static const String camera = '/camera';
   static const String quiz = '/quiz';
   static const String generate = '/generate';
+  static const String nanoBanana = '/nanoBanana';
+  static const String nanoBananaDisplay = '/nanoBananaDisplay';
+
 }

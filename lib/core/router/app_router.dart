@@ -2,6 +2,7 @@ import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/utils/custom_transition_page.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/login_screen.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/splash_screen.dart';
+import 'package:clean_architutre_learn/features/banana/presentation/pages/nano_banana_screen.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/pages/chat_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/profile_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/settings_screeen.dart';
@@ -62,7 +63,15 @@ final GoRouter appRouter = GoRouter(
             type: TransitionType.slideFromLeft,
           ),
         ),
-
+        GoRoute(
+          path: 'nanoBanana',
+          name: RouteNames.nanoBanana,
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child: const NanoBananaScreen(),
+            state: state,
+            type: TransitionType.scale,
+          ),
+        ),
         //! Camera Screen
         GoRoute(
           path: 'camera',

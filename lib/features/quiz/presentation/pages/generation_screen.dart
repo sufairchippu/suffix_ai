@@ -12,8 +12,8 @@ import 'package:clean_architutre_learn/core/utils/custom_segment_widget.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/custom_textform_field.dart';
 import 'package:clean_architutre_learn/features/drop_down/presentation/widget/custom_drop_down_widget.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,7 +31,7 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
   TextEditingController univercityController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController maxMArkController = TextEditingController();
-  TextEditingController ppaerCOdeCOntroller = TextEditingController();
+  TextEditingController paperCOdeCOntroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     int dummyCount = 20;
@@ -75,7 +75,7 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
 
             PureCupertinoDropdown(
               subHeading: "Questionn paper  Type ",
-              items: [
+              items:const [
                 'Multiple Choice Question',
                 'UNivercity type',
                 'One Word',
@@ -83,6 +83,7 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                 'UNivercity type With 1 Qn neglatable',
                 '',
               ],
+              selectedValueProvider: paperTypeOptionProvider,
               bottomPadding: 0,
             ),
             Row(
@@ -96,6 +97,11 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                 SizedBox(width: 10.rw(context)),
                 Expanded(
                   child: CustomTextFormField(
+                    onChange: (value) {
+                      if (questnCount.text.isNotEmpty) {
+                        dummyCount = int.tryParse(value) ?? dummyCount;
+                      }
+                    },
                     downPadding: 0,
                     titileStyle: TextStyleType.mediumBold,
                     borderRadius: 12,
@@ -105,11 +111,11 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                     icon: CupertinoIcons.minus,
                     prefixOntap: () {
                       if (dummyCount >= 5) {
-                        questnCount.text = (dummyCount--).toString();
+                        questnCount.text = (--dummyCount).toString();
                       }
                     },
                     onTap: () {
-                      questnCount.text = (dummyCount++).toString();
+                      questnCount.text = (++dummyCount).toString();
                     },
                     suffixIcon: CupertinoIcons.add,
                     isWantsuffix: true,
@@ -118,9 +124,10 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
               ],
             ),
             PureCupertinoDropdown(
-              items: ['Maths', "SCience"],
+              items:const ['Maths', "SCience"],
               topPadding: 0,
               subHeading: 'topic',
+              selectedValueProvider: topicOptionProvider,
             ),
             SizedBox(height: 9.rh(context)),
 
@@ -138,8 +145,9 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
             ),
 
             PureCupertinoDropdown(
-              items: ['chold ', 'adult', ''],
+              items: const['chold ', 'adult', ''],
               subHeading: "Categeory of  question paper",
+              selectedValueProvider: categeoryOptionProvider,
               // bottomPadding: 16.rh(context),
             ),
             SizedBox(height: 9.rh(context)),
@@ -241,10 +249,10 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
             CustomTextFormField(
               titileStyle: TextStyleType.mediumBold,
               textColor: context.mainLightShadeColor,
-              hintText: 'Calicut University',
+              hintText: 'E 2021',
               text: "Paper Code\n (optional*)",
               textInputAction: TextInputAction.next,
-              controller: univercityController,
+              controller: paperCOdeCOntroller,
               prefixNeeded: false,
               borderRadius: 9.rf(context),
               downPadding: 20.rh(context),

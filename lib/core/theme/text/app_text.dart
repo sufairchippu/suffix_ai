@@ -30,7 +30,7 @@ class AppText {
     FontWeight? fontweight,
     double? fontSize,
   }) {
-    final defaultzColor = color ?? CupertinoColors.inactiveGray;
+    final defaultzColor = color ?? context.greySecondColor;
 
     TextStyle buildStyle({
       required double size,

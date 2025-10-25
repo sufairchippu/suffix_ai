@@ -13,6 +13,7 @@ import 'package:clean_architutre_learn/features/chat/business/usecases/get_messa
 import 'package:clean_architutre_learn/features/chat/data/data_sources/ai_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/ai_response_model.dart';
 import 'package:clean_architutre_learn/features/chat/data/repo/ai_response_repo_impl.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/entities/chat_bubble.dart';
@@ -58,10 +59,11 @@ class AiMessgeNotifier extends StateNotifier<Content> {
 
     reply.fold(
       (failure) {
-        print('Error: ${failure.message}');
+        debugPrint('Error: ${failure.message}');
       },
-      (content) {
+      (content) async {
         // Update StateNotifier state with new content
+
         state = content;
 
         if (content.parts != null && content.parts!.isNotEmpty) {
@@ -76,13 +78,13 @@ class AiMessgeNotifier extends StateNotifier<Content> {
             );
 
             // Add to chat list via another provider
-            ref.read(chatListNotifierProvider.notifier).addchats(chat).then((
+   await ref.read(chatListNotifierProvider.notifier).addChat(chat).then((
               value,
             ) {
               ref.read(loadingmsgProvider.notifier).state = false;
             });
 
-            print('AI Reply: $message');
+            debugPrint('AI Reply: $message');
           }
         }
       },

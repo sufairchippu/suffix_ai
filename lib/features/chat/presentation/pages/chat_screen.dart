@@ -13,7 +13,6 @@ import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubb
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -21,7 +20,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/constants/widgets/app_logo_widget.dart';
 import '../../../../core/service/speach/speech_service.dart';
-
 import '../provider/tts_provider.dart';
 import '../widgets/custom_chat_bubble_widget.dart';
 import '../widgets/chat_bakground_screen.dart';
@@ -36,23 +34,20 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController inputController = TextEditingController();
   final SpeechService _speechService = SpeechService();
-  // String _spokenText = "";
-  // bool _isListening = false;
+
   Future<void> _initSpeech() async {
     await Permission.microphone.request();
     await Permission.speech.request();
 
     bool available = await _speechService.initialize();
     if (!available) {
-      print("Speech recognition not available");
+      log("Speech recognition not available");
     }
   }
 
   @override
   void initState() {
-    ref.read(chatListNotifierProvider.notifier).loadChats();
     _initSpeech();
-    // _initializeTts();
     super.initState();
   }
 
@@ -61,22 +56,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final loadingAiMsg = ref.watch(loadingmsgProvider);
     final isListening = ref.watch(voiceListenProvider);
     final spokenText = ref.watch(speakingTestProvider);
+    final isdrawer = ref.watch(chatHistoryProvider);
+    final asyncChats = ref.watch(chatListNotifierProvider);
 
     return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop, result) {},
+      onPopInvokedWithResult: (didPop, result) {
+        if (isdrawer) {
+          ref.read(chatHistoryProvider.notifier).state = false;
+        } else {
+          context.pop();
+        }
+      },
       child: CupertinoPageScaffold(
         child: Stack(
           children: [
-            const Positioned.fill(
-              child: GradientMotionBackground(
-                // colors: [
-                //   context.dynamicColor1,
-                //   context.dynamicColor2,
-                //   context.dynamicColor3,
-                // ],
-              ),
-            ),
+            const Positioned.fill(child: GradientMotionBackground()),
+
             Padding(
               padding: EdgeInsets.only(
                 bottom: 18.rh(context),
@@ -86,6 +81,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
               child: Column(
                 children: [
+                  // --- Top Header ---
                   Row(
                     children: [
                       CustomCircleImageWidget(
@@ -96,91 +92,52 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         boxColor: context.mainDarkShadeColor,
                       ),
                       const Spacer(),
-
                       AppLogoWidget(
                         logoNeeded: true,
                         logoheit: 70.rh(context),
                         textColor: context.cardColor,
                       ),
-
                       const Spacer(),
-                      Consumer(
-                        builder: (context, ref, child) {
-                          final isdrawer = ref.watch(chatHistoryProvider);
-                          return GestureDetector(
-                            onTap: () {
-                              isdrawer
-                                  ? ref
-                                            .read(chatHistoryProvider.notifier)
-                                            .state =
-                                        false
-                                  : context.pop();
-                              // ref
-                              //     .read(chatListNotifierProvider.notifier)
-                              //     .clearChatts();
-                              // ref.read(chatListNotifierProvider.notifier).loadChats();
-                            },
-                            child: Icon(
-                              CupertinoIcons.xmark_circle,
-                              size: 30.rf(context),
-                              color: context.mainDarkShadeColor,
-                            ),
-                          );
+                      GestureDetector(
+                        onTap: () {
+                          if (isdrawer) {
+                            ref.read(chatHistoryProvider.notifier).state =
+                                false;
+                          } else {
+                            context.pop();
+                          }
                         },
+                        child: Icon(
+                          CupertinoIcons.xmark_circle,
+                          size: 30.rf(context),
+                          color: context.mainDarkShadeColor,
+                        ),
                       ),
                     ],
                   ),
-
-                  Consumer(
-                    builder: (context, ref, child) {
-                      final chatlist = ref
-                          .watch(chatListNotifierProvider)
-                          .reversed
-                          .toList();
-
-                      return _buildChatList(chatlist, loadingAiMsg, ref);
+                  // --- Chat List ---
+                  asyncChats.when(
+                    data: (chats) {
+                      final chatList = chats.reversed.toList();
+                      return _buildChatList(chatList, loadingAiMsg, ref);
                     },
+                    loading: () => const Expanded(
+                      child: Center(child: CupertinoActivityIndicator()),
+                    ),
+                    error: (e, _) => Expanded(
+                      child: Center(child: Text('Error loading chats: $e')),
+                    ),
                   ),
 
+                  // --- Input Field ---
                   CustomTextFormField(
                     onHold: () async {
                       if (isListening) {
                         _speechService.stopListening();
-
                         ref.read(voiceListenProvider.notifier).state = false;
-                        spokenText != ''
-                            ? () async {
-                                final chat = Chatbubble(
-                                  message: spokenText,
-                                  time: DateTime.now().toFormattedString(),
-                                  msgtype: MessegeOwner.user,
-                                );
-
-                                log('User message posting: $spokenText');
-
-                                try {
-                                  // Add user chat
-                                  await ref
-                                      .read(chatListNotifierProvider.notifier)
-                                      .addchats(chat);
-
-                                  // Reload chats
-                                  await ref
-                                      .read(chatListNotifierProvider.notifier)
-                                      .loadChats();
-
-                                  // Clear input field
-                                  inputController.clear();
-
-                                  log('Fetching AI response...');
-                                  await ref
-                                      .read(aiMessgeNotifierProvider.notifier)
-                                      .getAiReply(chat.message);
-                                } catch (e) {
-                                  log('Error while sending message: $e');
-                                }
-                              }
-                            : () {};
+                        if (spokenText.isNotEmpty) {
+                          _sendMessage(ref, spokenText);
+                        }
                       } else {
                         _speechService.startListening((text) {
                           ref.read(speakingTestProvider.notifier).state = text;
@@ -189,25 +146,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       }
                     },
                     prefixOntap: () {},
-                    boxshadows: [
-                      BoxShadow(
-                        color: context.containerGrayColor.withValues(
-                          alpha: 0.3,
-                        ),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2), // light shadow closer
-                      ),
-                      BoxShadow(
-                        color: context.containerGrayColor.withValues(
-                          alpha: 0.6,
-                        ),
-                        blurRadius: 12,
-                        offset: const Offset(
-                          0,
-                          4,
-                        ), // deeper shadow further away
-                      ),
-                    ],
                     fillcolor: context.dynamicColor4,
                     obscure: false,
                     icon: CupertinoIcons.add_circled,
@@ -221,36 +159,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     onTap: () async {
                       final text = inputController.text.trim();
                       if (text.isEmpty) return;
-
-                      final chat = Chatbubble(
-                        message: text,
-                        time: DateTime.now().toFormattedString(),
-                        msgtype: MessegeOwner.user,
-                      );
-
-                      log('User message posting: $text');
-
-                      try {
-                        // Add user chat
-                        await ref
-                            .read(chatListNotifierProvider.notifier)
-                            .addchats(chat);
-
-                        // Reload chats
-                        await ref
-                            .read(chatListNotifierProvider.notifier)
-                            .loadChats();
-
-                        // Clear input field
-                        inputController.clear();
-
-                        log('Fetching AI response...');
-                        await ref
-                            .read(aiMessgeNotifierProvider.notifier)
-                            .getAiReply(chat.message);
-                      } catch (e) {
-                        log('Error while sending message: $e');
-                      }
+                      await _sendMessage(ref, text);
+                      inputController.clear();
                     },
                     suffixIcon: CupertinoIcons.paperplane_fill,
                   ),
@@ -259,7 +169,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             Consumer(
               builder: (context, ref, child) {
-                final isdrawer = ref.watch(chatHistoryProvider);
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
@@ -289,14 +198,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             CustomCircleImageWidget(onTap: () {}),
                             SizedBox(width: 20.rw(context)),
                             Uiutils.getTextWidget(context, 'Sufair RF'),
-                          const  Spacer(),
+                            const Spacer(),
                             GestureDetector(
                               onTap: () {
-
                                 //add to fire base  whole this engineer
                                 ref
                                     .read(chatListNotifierProvider.notifier)
-                                    .clearChatts();
+                                    .clearChats();
                               },
                               child: Column(
                                 children: [
@@ -327,7 +235,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           onTap: () {
                             ref
                                 .read(chatListNotifierProvider.notifier)
-                                .clearChatts();
+                                .clearChats();
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -387,10 +295,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 );
               },
             ),
+
+            ///attachment
+            Consumer(
+              builder: (context, ref, child) => AnimatedContainer(
+                duration:const Duration(microseconds: 300),
+                alignment: AlignmentGeometry.bottomLeft,
+                child:const Icon(CupertinoIcons.rocket),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _sendMessage(WidgetRef ref, String text) async {
+    final chat = Chatbubble(
+      message: text,
+      time: DateTime.now().toFormattedString(),
+      msgtype: MessegeOwner.user,
+    );
+
+    try {
+      await ref.read(chatListNotifierProvider.notifier).addChat(chat);
+      inputController.clear();
+
+      await ref
+          .read(aiMessgeNotifierProvider.notifier)
+          .getAiReply(chat.message);
+    } catch (e) {
+      log('Error while sending message: $e');
+    }
   }
 
   Expanded _buildChatList(
@@ -402,63 +338,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: ListView.builder(
         reverse: true,
         padding: EdgeInsets.zero,
-        // physics: NeverScrollableScrollPhysics(),
-        // shrinkWrap: true,
-        itemCount: chatlist.length + 1,
+        itemCount: //loadingAiMsg ? chatlist.length + 2 :
+            chatlist.length + 1 + (loadingAiMsg ? 1 : 0),
         itemBuilder: (context, index) {
-          if (index == chatlist.length) {
-            final hour = DateTime.now().hour;
-            return Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(28.rf(context)),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Uiutils.getLottie(
-                            LottieConstant.chatScreen,
-                            height: 60.rh(context),
-                            width: 80,
-                          ),
-                          SizedBox(width: 15.rw(context)),
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Uiutils.getTextWidget(
-                                  context,
-                                  hour < 12
-                                      ? "Good Morning ☀️,User"
-                                      : hour < 17
-                                      ? "Good Afternoon 🌤,User"
-                                      : "Good Evening 🌙, User",
-                                ),
-
-                                if (chatlist.isEmpty) ...[
-                                  Uiutils.getTextWidget(
-                                    context,
-                                    "How Can I Help Youh ,",
-                                  ),
-                                  SizedBox(height: 15.rh(context)),
-                                ],
-                                Uiutils.getTextWidget(
-                                  context,
-                                  'Share Your thoughts ...',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 100.rh(context)),
-              ],
-            );
-          }
-          if (index == 0 && loadingAiMsg) {
+          if (loadingAiMsg && index == 0) {
             return Row(
               children: [
                 LoadingAnimationWidget.fourRotatingDots(
@@ -468,8 +351,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ],
             );
           }
-          final chat = chatlist[index];
+          if (index == chatlist.length) {
+            final hour = DateTime.now().hour;
+            return Padding(
+              padding: EdgeInsets.all(28.rf(context)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Uiutils.getLottie(
+                    LottieConstant.chatScreen,
+                    height: 60.rh(context),
+                    width: 80,
+                  ),
+                  SizedBox(height: 10.rh(context)),
+                  Uiutils.getTextWidget(
+                    context,
+                    hour < 12
+                        ? "Good Morning ☀️"
+                        : hour < 17
+                        ? "Good Afternoon 🌤"
+                        : "Good Evening 🌙",
+                  ),
 
+                  if (chatlist.isEmpty) ...[
+                    Uiutils.getTextWidget(context, "How Can I Help Youh ,"),
+                    SizedBox(height: 15.rh(context)),
+                  ],
+                  Uiutils.getTextWidget(
+                    context,
+                    'Share Your thoughts with us...',
+                  ),
+
+                  ///! here below widget needed to be below of the whole chat list not above how
+                ],
+              ),
+            );
+          }
+
+          final chat = chatlist[index];
           return CustomChatBubbleWidget(chat: chat, loadingAiMsg: loadingAiMsg);
         },
       ),

@@ -8,12 +8,13 @@ class FloatingActionItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-
+  final bool selected;
   const FloatingActionItem({
     super.key,
     required this.icon,
     required this.label,
     required this.onTap,
+    this.selected = false,
   });
 
   @override
@@ -24,7 +25,7 @@ class FloatingActionItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: context.primaryColor, size: 24.rf(context)),
+            Icon(icon, color:selected?context.textColor: context.primaryColor, size: 24.rf(context)),
             SizedBox(height: 6.rh(context)),
             Uiutils.getTextWidget(context, label),
           ],

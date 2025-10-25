@@ -120,7 +120,7 @@ class _CustomChatBubbleWidgetState
                                     textStyle: TextStyleType.extraSmallBold,
                                     color: context.buttnColor,
                                   ),
-                                  const Spacer(),
+                                  const Spacer(),//remove below one
                                   widget.loadingAiMsg
                                       ? LoadingAnimationWidget.staggeredDotsWave(
                                           color: context.subTextColor,
