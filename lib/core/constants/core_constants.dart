@@ -14,7 +14,6 @@ class CoreConstants {
     "Pick a format that best fits your exam style.",
     "Select your paper type and move to the next step.",
   ];
-
   static List<NanoSelectionModels> listofnanBananaSelction = [
     NanoSelectionModels(
       title: 'Glow Up',
@@ -22,6 +21,13 @@ class CoreConstants {
           'Transform your look with a refreshing new style that radiates confidence.',
       cardColor: AppColors.dynamicColor1, // Soft mint / fresh tone
       image: '',
+      specifications: [
+        'Personalized Makeover Plan',
+        'Wardrobe Refresh',
+        'Skin & Hair Care Tips',
+        'Confidence Boosting Routine',
+        'Before & After Showcase',
+      ],
     ),
     NanoSelectionModels(
       title: 'Strike a Better Pose',
@@ -29,6 +35,13 @@ class CoreConstants {
           'Master the art of posture and posing for confident, camera-ready moments.',
       cardColor: AppColors.dynamicColor2, // Cool cyan / energetic tone
       image: '',
+      specifications: [
+        'Body Posture Correction',
+        'Facial Angle Training',
+        'Lighting Awareness',
+        'Outfit-Pose Match Guide',
+        'Expressive Posing Practice',
+      ],
     ),
     NanoSelectionModels(
       title: 'Professional Styling',
@@ -36,6 +49,13 @@ class CoreConstants {
           'Refine your appearance with expert styling tips that highlight your best features.',
       cardColor: AppColors.blue, // Deep, confident tone
       image: '',
+      specifications: [
+        'Stylist-Curated Outfits',
+        'Color Coordination Guide',
+        'Accessorizing Essentials',
+        'Formal & Casual Mix',
+        'Seasonal Style Checklist',
+      ],
     ),
     NanoSelectionModels(
       title: 'Social Media Profile',
@@ -43,6 +63,13 @@ class CoreConstants {
           'Build a stunning profile that captures your authentic self and attracts engagement.',
       cardColor: AppColors.yellow, // Bright, attention-grabbing tone
       image: '',
+      specifications: [
+        'Bio & Caption Optimization',
+        'Profile Photo Enhancement',
+        'Consistent Feed Aesthetics',
+        'Brand Tone & Theme Setup',
+        'Content Calendar Basics',
+      ],
     ),
     NanoSelectionModels(
       title: 'Trending Now',
@@ -50,6 +77,13 @@ class CoreConstants {
           'Stay ahead of the curve with styles and trends defining the moment.',
       cardColor: AppColors.green, // Vibrant and modern tone
       image: '',
+      specifications: [
+        'Viral Style Boards',
+        'Reel & Short Inspirations',
+        'Streetwear Highlights',
+        'Color of the Season Picks',
+        'Influencer Collaboration Ideas',
+      ],
     ),
   ];
 }

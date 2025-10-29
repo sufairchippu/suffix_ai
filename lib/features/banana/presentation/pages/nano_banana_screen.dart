@@ -52,8 +52,12 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                       fit: FlexFit.loose,
                       child: CustomCarousalWidget(
                         widgets: CoreConstants.listofnanBananaSelction
-                            .map(
-                              (e) => CustomButtonWIdget(
+                            .asMap()
+                            .entries
+                            .map((element) {
+                              final index = element.key;
+                              final eValue = element.value;
+                              return CustomButtonWIdget(
                                 borderRadius: 12.rf(context),
                                 color: context.dynamicColor2,
                                 height: 100.rh(context),
@@ -65,14 +69,14 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                                     SizedBox(height: 30.rh(context)),
                                     Uiutils.getTextWidget(
                                       context,
-                                      e.title,
+                                      eValue.title,
                                       textStyle: TextStyleType.heading,
                                       fs: 26.rf(context),
                                     ),
                                     SizedBox(height: 70.rh(context)),
                                     Uiutils.getTextWidget(
                                       context,
-                                      e.description,
+                                      eValue.description,
                                       textStyle: TextStyleType.mediumSemiBold,
                                       fs: 25.rf(context),
                                       overFlow: TextOverflow.visible,
@@ -89,10 +93,11 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                                 onTap: () {
                                   context.pushNamed(
                                     RouteNames.nanoBananaDisplay,
+                                    pathParameters: {'specilization':'$index' },
                                   );
                                 },
-                              ),
-                            )
+                              );
+                            })
                             .toList(),
 
                         //[

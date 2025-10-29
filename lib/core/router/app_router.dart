@@ -2,6 +2,7 @@ import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/utils/custom_transition_page.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/login_screen.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/splash_screen.dart';
+import 'package:clean_architutre_learn/features/banana/presentation/pages/dispkay_screen.dart';
 import 'package:clean_architutre_learn/features/banana/presentation/pages/nano_banana_screen.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/pages/chat_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/profile_screen.dart';
@@ -71,7 +72,26 @@ final GoRouter appRouter = GoRouter(
             state: state,
             type: TransitionType.scale,
           ),
-        ),
+          routes: [
+            GoRoute(
+              path: 'nanoBananaDisplay/:specilization',
+              name: RouteNames.nanoBananaDisplay,
+              pageBuilder: (context, state) {
+                final index =
+                    int.tryParse(
+                      state.pathParameters['specilization'] ?? '0',
+                    ) ??
+                    0;
+                    debugPrint('${state.pathParameters}========================================');
+                return customBuildTransitionPage(
+                  child: NanoDisplayScreen(specificationsIndex: index),
+                  state: state,
+                  type: TransitionType.scale,
+                );
+              },
+            ),
+          ],
+        ), //jfgjhfvjfghjuygyfhjgfjhfgjfgfg//! add here dipslay scrren and pass the index
         //! Camera Screen
         GoRoute(
           path: 'camera',

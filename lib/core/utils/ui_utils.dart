@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +26,7 @@ class Uiutils {
 
   static SvgPicture getSvg(
     String assetName, {
-
+    ColorFilter? color,
     double? height,
     double? width,
     BoxFit? boxfit,
@@ -33,6 +36,7 @@ class Uiutils {
       fit: boxfit ?? BoxFit.cover,
       height: height ?? 100,
       width: width ?? 60,
+      colorFilter: color,
     );
   }
 
@@ -88,6 +92,38 @@ class Uiutils {
       maxLines: maxline,
       overflow: overFlow ?? TextOverflow.ellipsis,
     );
+  }
+
+  // Use Random.secure() for cryptographic randomness where available.
+  static final Random _secureRandom = Random.secure();
+
+  // A small counter to avoid collisions when called multiple times in the same microsecond.
+  static int _counter = 0;
+
+  /// Generates a unique string.
+  /// Optional [prefix] can be used to add a readable label like "user_", "order_", etc.
+  /// Example output: "user_17000000001234567-0001-4f2a9b3c8d"
+  static String generateUniqueId({String prefix = ''}) {
+    // High resolution timestamp (microseconds since epoch UTC)
+    final int ts = DateTime.now().toUtc().microsecondsSinceEpoch;
+
+    // Increment counter and keep it within a small range for compactness
+    _counter = (_counter + 1) & 0xffff; // 16-bit wrap-around
+
+    // Generate 6 random bytes (48 bits), cryptographically random
+    final bytes = Uint8List(6);
+    for (var i = 0; i < bytes.length; i++) {
+      bytes[i] = _secureRandom.nextInt(256);
+    }
+
+    // Hex-encode random bytes (12 hex chars)
+    final rndHex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+
+    // Counter as 4-hex digits (keeps fixed width)
+    final counterHex = _counter.toRadixString(16).padLeft(4, '0');
+
+    // Combine parts with separators for readability
+    return '${prefix}${ts.toString()}-$counterHex-$rndHex';
   }
 
   static DateTime parseBackendDate(String dateString) {

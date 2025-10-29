@@ -9,4 +9,8 @@ class LocalServiceKeys {
 
   static const String USER_TOKEN_KEY = "user_token_key";
   static const String USER_NAME = "user_name";
+
+
+  static const String CHAT_SET_ID = "chat_set_id";
+
 }

@@ -7,8 +7,11 @@
 //   return AiDataSource();
 // },);
 
+import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
+import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
 import 'package:clean_architutre_learn/core/service/network/dio/gemini_provider.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
+import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/chat/business/usecases/get_message.dart';
 import 'package:clean_architutre_learn/features/chat/data/data_sources/ai_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/ai_response_model.dart';
@@ -52,7 +55,7 @@ class AiMessgeNotifier extends StateNotifier<Content> {
   final GetMessage _messge;
 
   Future<void> getAiReply(String input) async {
-                    // ref.read(chatListNotifierProvider.notifier).loadChats();
+    // ref.read(chatListNotifierProvider.notifier).loadChats();
 
     ref.read(loadingmsgProvider.notifier).state = true;
     final reply = await _messge(input);
@@ -74,15 +77,17 @@ class AiMessgeNotifier extends StateNotifier<Content> {
               time: DateTime.now().toFormattedString(),
               // id: UniqueKey().hashCode, // or use any ID generator
               msgtype: MessegeOwner.ai,
+              // chatSetID:LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID) //Uiutils.generateUniqueId(),
               // Enum for AI messages
             );
 
             // Add to chat list via another provider
-   await ref.read(chatListNotifierProvider.notifier).addChat(chat).then((
-              value,
-            ) {
-              ref.read(loadingmsgProvider.notifier).state = false;
-            });
+            await ref
+                .read(chatListNotifierProvider.notifier)
+                .addChat(chat)
+                .then((value) {
+                  ref.read(loadingmsgProvider.notifier).state = false;
+                });
 
             debugPrint('AI Reply: $message');
           }

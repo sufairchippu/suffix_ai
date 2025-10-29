@@ -5,11 +5,12 @@ class NanoSelectionModels {
   final String description;
   final Color cardColor;
   final String? image;
-
+  final List<String> specifications;
   NanoSelectionModels({
     required this.title,
     required this.description,
     required this.cardColor,
     required this.image,
+    required this.specifications,
   });
 }
