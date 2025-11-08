@@ -10,7 +10,6 @@
 // import 'package:clean_architutre_learn/features/chat/data/repo/chat_bubble_repo_impl.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 // final chatLocalDabsourceProvider = Provider<ChatLocalDataSource>((ref) {
 //   return ChatLocalDataSource();
 // });
@@ -24,7 +23,6 @@
 //   final chatBubbleRepo = ref.read(chatRepostoryProvider);
 //   return GetChats(chatBubbleRepo);
 // });
-
 
 // // final chatStreamProvider = StreamProvider<List<ChatBubbleModel>>((ref) {
 // //   final dataSource = ref.watch(chatLocalDabsourceProvider);
@@ -88,18 +86,6 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/business/usecases/add_chat.dart';
@@ -117,10 +103,18 @@ final chatRepositoryProvider = Provider<ChatBubbleRepository>((ref) {
   return ChatBubbleRepoImpl(ref.read(chatLocalDataSourceProvider));
 });
 
-final getChatsProvider = Provider((ref) => GetChats(ref.read(chatRepositoryProvider)));
-final addChatProvider = Provider((ref) => AddChat(ref.read(chatRepositoryProvider)));
-final deleteChatProvider = Provider((ref) => DeletChat(ref.read(chatRepositoryProvider)));
-final clearChatProvider = Provider((ref) => ClearChats(ref.read(chatRepositoryProvider)));
+final getChatsProvider = Provider(
+  (ref) => GetChats(ref.read(chatRepositoryProvider)),
+);
+final addChatProvider = Provider(
+  (ref) => AddChat(ref.read(chatRepositoryProvider)),
+);
+final deleteChatProvider = Provider(
+  (ref) => DeletChat(ref.read(chatRepositoryProvider)),
+);
+final clearChatProvider = Provider(
+  (ref) => ClearChats(ref.read(chatRepositoryProvider)),
+);
 
 /// --- AsyncNotifier for managing chats ---
 class ChatListNotifier extends AsyncNotifier<List<Chatbubble>> {
@@ -146,9 +140,16 @@ class ChatListNotifier extends AsyncNotifier<List<Chatbubble>> {
   }
 
   Future<void> addChat(Chatbubble chat) async {
-    state = const AsyncLoading();
-    await _addChat(chat);
-    state = await AsyncValue.guard(() async => await _fetchChats());
+    final previous = state.value ?? [];
+    // Optimistic update
+    state = AsyncValue.data([...previous, chat]);
+
+    final result = await AsyncValue.guard(() async {
+      await _addChat(chat);
+      return await _fetchChats();
+    });
+
+    state = result;
   }
 
   Future<void> deleteChat(int chatId) async {
@@ -165,14 +166,16 @@ class ChatListNotifier extends AsyncNotifier<List<Chatbubble>> {
 /// --- Provider for the notifier ---
 final chatListNotifierProvider =
     AsyncNotifierProvider<ChatListNotifier, List<Chatbubble>>(() {
-  return ChatListNotifier();
-});
-
+      return ChatListNotifier();
+    });
 
 final chatReadMoreProvider = StateProvider<bool>((ref) {
   return false;
 });
 
+final newChatNotifierProvider = StateProvider<bool>((ref) {
+  return true;
+});
 // final chatDrawrProvider = StateProvider<bool>((ref) {
 //   return false;
 // });

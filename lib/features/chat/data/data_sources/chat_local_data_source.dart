@@ -38,7 +38,8 @@ class ChatLocalDataSource {
             message TEXT NOT NULL,
             time TEXT NOT NULL,
             msgtype INTEGER NOT NULL,
-            attachment TEXT
+            attachment TEXT,
+            chat_set_id TEXT NOT NULL
           )
         ''');
       },

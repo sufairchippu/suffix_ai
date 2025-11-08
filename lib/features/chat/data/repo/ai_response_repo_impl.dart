@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:clean_architutre_learn/core/error/failures.dart';
 import 'package:clean_architutre_learn/features/chat/business/repo/ai_responce_repository.dart';
 import 'package:clean_architutre_learn/features/chat/data/data_sources/ai_data_source.dart';
@@ -8,17 +10,22 @@ class AiResponseRepoImpl implements AiResponceRepository {
   final AiDataSource aidata;
   AiResponseRepoImpl(this.aidata);
   @override
-  Future<Either<Failure, Content>> getMessage(String data) async {
-
-
+  Future<Either<Failure, Content>> getMessage({
+    required String data,
+    File? imageFile,
+    File? documentFile,
+  }) async {
     try {
-      final getData=await aidata.getAiresponse(data);
+      
+      final getData = await aidata.getAiResponse(
+        userAsking: data,
+        documentFile: documentFile,
+        imageFile: imageFile,
+      );
       return right(getData!);
     } catch (e) {
       return left(SomeSpecificError(e.toString()));
-      
     }
-
   }
 }
 //  try {

@@ -1,8 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
+import 'package:clean_architutre_learn/core/constants/core_constants.dart';
 import 'package:clean_architutre_learn/core/constants/lottie_constant.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/router/route_names.dart';
+import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
+import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
@@ -12,6 +16,7 @@ import 'package:clean_architutre_learn/features/authentication/presentation/widg
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
+import 'package:clean_architutre_learn/features/drop_down/data/entities/dropdown_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -34,7 +39,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController inputController = TextEditingController();
   final SpeechService _speechService = SpeechService();
-
+  late final String chatSetID;
   Future<void> _initSpeech() async {
     await Permission.microphone.request();
     await Permission.speech.request();
@@ -47,22 +52,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   void initState() {
-    _initSpeech();
     super.initState();
+
+    _initSpeech();
+    final newchatProvider = ref.read(newChatNotifierProvider);
+
+    if (newchatProvider) {
+      LocalStorageService.setString(
+        LocalServiceKeys.CHAT_SET_ID,
+        Uiutils.generateUniqueId(),
+      );
+    }
+    log("$newchatProvider---------------------");
+    chatSetID = LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID);
   }
 
   @override
   Widget build(BuildContext context) {
-    final loadingAiMsg = ref.watch(loadingmsgProvider);
+    final newchatProvider = ref.watch(newChatNotifierProvider);
+
     final isListening = ref.watch(voiceListenProvider);
     final spokenText = ref.watch(speakingTestProvider);
     final isdrawer = ref.watch(chatHistoryProvider);
     final asyncChats = ref.watch(chatListNotifierProvider);
 
+    final attachmentState = ref.watch(chatAttachmentProvider);
+
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         if (isdrawer) {
           ref.read(chatHistoryProvider.notifier).state = false;
+        } else if (attachmentState) {
+          ref.read(chatAttachmentProvider.notifier).state = false;
         } else {
           context.pop();
         }
@@ -119,7 +140,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   asyncChats.when(
                     data: (chats) {
                       final chatList = chats.reversed.toList();
-                      return _buildChatList(chatList, loadingAiMsg, ref);
+                      return _buildChatList(chatList, ref, context);
                     },
                     loading: () => const Expanded(
                       child: Center(child: CupertinoActivityIndicator()),
@@ -145,22 +166,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ref.read(voiceListenProvider.notifier).state = true;
                       }
                     },
-                    prefixOntap: () {},
+                    prefixOntap: () {
+                      ref.read(chatAttachmentProvider.notifier).state =
+                          !attachmentState;
+                    },
                     fillcolor: context.dynamicColor4,
                     obscure: false,
                     icon: CupertinoIcons.add_circled,
                     hintText: "Ask Me Anything",
                     controller: inputController,
-                    loadingOnsomething: loadingAiMsg,
+                    // loadingOnsomething: loadingAiMsg,
                     iconColor: context.subTextColor,
                     isWantsuffix: true,
                     maxline: null,
                     textInputAction: TextInputAction.newline,
                     onTap: () async {
-                      final text = inputController.text.trim();
-                      if (text.isEmpty) return;
-                      await _sendMessage(ref, text);
-                      inputController.clear();
+                      try {
+                        if (asyncChats.value!.isNotEmpty &&
+                            asyncChats.value!.length >= 0) {
+                          ref.read(newChatNotifierProvider.notifier).state =
+                              false;
+                        }
+                        log("$newchatProvider----------------------");
+
+                        final text = inputController.text.trim();
+                        if (text.isEmpty) return;
+                        await _sendMessage(ref, text);
+                        inputController.clear();
+                      } catch (e) {}
                     },
                     suffixIcon: CupertinoIcons.paperplane_fill,
                   ),
@@ -201,7 +234,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             const Spacer(),
                             GestureDetector(
                               onTap: () {
+                                LocalStorageService.setString(
+                                  LocalServiceKeys.CHAT_SET_ID,
+                                  Uiutils.generateUniqueId(),
+                                );
                                 //add to fire base  whole this engineer
+                                ref
+                                        .watch(newChatNotifierProvider.notifier)
+                                        .state =
+                                    true;
                                 ref
                                     .read(chatListNotifierProvider.notifier)
                                     .clearChats();
@@ -297,11 +338,53 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
 
             ///attachment
-            Consumer(
-              builder: (context, ref, child) => AnimatedContainer(
-                duration:const Duration(microseconds: 300),
-                alignment: AlignmentGeometry.bottomLeft,
-                child:const Icon(CupertinoIcons.rocket),
+            Positioned(
+              left: 35.rw(context),
+              bottom: 80.rh(context),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final attachmentList = CoreConstants.listOfAttachment;
+                  log('$attachmentState----------------attachment ');
+                  return attachmentState
+                      ? AnimatedContainer(
+                          decoration: BoxDecoration(),
+                          // height: 100.rh(context),
+                          // width: 300.rw(context),
+                          duration: const Duration(microseconds: 300),
+                          alignment: AlignmentGeometry.bottomLeft,
+                          child: CustomButtonWIdget(
+                            height: 115.rh(context),
+                            borderRadius: 14.rf(context),
+                            padding: 12.rf(context),
+                            width: 190.rw(context),
+                            bordercolor: context.greySecondColor,
+                            color: context.secondaryColor.withValues(
+                              alpha: .85,
+                            ),
+                            widget: Column(
+                              spacing: 12.rh(context),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: List.generate(attachmentList.length, (
+                                index,
+                              ) {
+                                final item = attachmentList[index];
+                                return Row(
+                                  spacing: 10.rh(context),
+                                  children: [
+                                    Icon(
+                                      item.icon,
+                                      color: context.primaryColor,
+                                    ),
+                                    Uiutils.getTextWidget(context, item.name),
+                                  ],
+                                );
+                              }),
+                            ),
+                          ),
+                        )
+                      : SizedBox();
+                },
               ),
             ),
           ],
@@ -310,58 +393,83 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Future<void> _sendMessage(WidgetRef ref, String text) async {
+  Future<void> _sendMessage(
+    WidgetRef ref,
+    String text, {
+    File? imageFile,
+    File? documentFile,
+  }) async {
     final chat = Chatbubble(
+      chatSetID: chatSetID,
       message: text,
       time: DateTime.now().toFormattedString(),
+      // attachment: [
+      //   // AttachmentFile(
+      //   //   path: imageFile!.path,
+      //   //   type: 'image/jpeg',
+      //   //   name:
+      //   //       'chat_${DateTime.now().millisecondsSinceEpoch}.jpg', //supabaseUrl: supabase.storage.from('chat_attachments') .getPublicUrl(fileName);
+      //   // ),
+      // ],
       msgtype: MessegeOwner.user,
     );
+    await ref.read(chatListNotifierProvider.notifier).addChat(chat);
 
     try {
-      await ref.read(chatListNotifierProvider.notifier).addChat(chat);
+      // 1️⃣ Add user's message immediately
       inputController.clear();
 
+      // 2️⃣ Show loading state for AI reply
+      ref.read(loadingmsgProvider.notifier).state = true;
+
+      // 3️⃣ Get AI reply asynchronously
       await ref
           .read(aiMessgeNotifierProvider.notifier)
-          .getAiReply(chat.message);
+          .getAiReply(
+            data: chat.message,
+            documentFile: documentFile,
+            imageFile: imageFile,
+          );
+
+      // 4️⃣ Stop loading once AI reply is done
+      ref.read(loadingmsgProvider.notifier).state = false;
     } catch (e) {
       log('Error while sending message: $e');
+      ref.read(loadingmsgProvider.notifier).state = false;
     }
   }
 
-  Expanded _buildChatList(
+  Widget _buildChatList(
     List<Chatbubble> chatlist,
-    bool loadingAiMsg,
     WidgetRef ref,
+    BuildContext context,
   ) {
+    final loadingAiMsg = ref.watch(loadingmsgProvider);
+    log('$loadingAiMsg --------------fnvkhsgfksd---------------loading');
+    // Combine messages and optional AI "thinking..." message
+    // final totalCount =
+    //     chatlist.length + (loadingAiMsg ? 1 : 0) + 1; // +1 for greeting section
+
     return Expanded(
       child: ListView.builder(
         reverse: true,
         padding: EdgeInsets.zero,
-        itemCount: //loadingAiMsg ? chatlist.length + 2 :
-            chatlist.length + 1 + (loadingAiMsg ? 1 : 0),
+        itemCount: loadingAiMsg ? chatlist.length : chatlist.length + 1,
         itemBuilder: (context, index) {
-          if (loadingAiMsg && index == 0) {
-            return Row(
-              children: [
-                LoadingAnimationWidget.fourRotatingDots(
-                  color: context.buttnColor,
-                  size: 40.rf(context),
-                ),
-              ],
-            );
-          }
-          if (index == chatlist.length) {
+          if (index == chatlist.length + (loadingAiMsg ? 1 : 0)) {
+            // this is the last item in the builder
             final hour = DateTime.now().hour;
             return Padding(
               padding: EdgeInsets.all(28.rf(context)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Uiutils.getLottie(
-                    LottieConstant.chatScreen,
-                    height: 60.rh(context),
-                    width: 80,
+                  RepaintBoundary(
+                    child: Uiutils.getLottie(
+                      LottieConstant.chatScreen,
+                      height: 60.rh(context),
+                      width: 80,
+                    ),
                   ),
                   SizedBox(height: 10.rh(context)),
                   Uiutils.getTextWidget(
@@ -372,24 +480,66 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ? "Good Afternoon 🌤"
                         : "Good Evening 🌙",
                   ),
-
                   if (chatlist.isEmpty) ...[
-                    Uiutils.getTextWidget(context, "How Can I Help Youh ,"),
+                    Uiutils.getTextWidget(context, "How can I help you?"),
                     SizedBox(height: 15.rh(context)),
                   ],
                   Uiutils.getTextWidget(
                     context,
-                    'Share Your thoughts with us...',
+                    'Share your thoughts with us...',
                   ),
-
-                  ///! here below widget needed to be below of the whole chat list not above how
                 ],
               ),
             );
           }
 
           final chat = chatlist[index];
-          return CustomChatBubbleWidget(chat: chat, loadingAiMsg: loadingAiMsg);
+
+          // 🟢 3️⃣ Show user bubble
+          final bubble = CustomChatBubbleWidget(chat: chat);
+
+          // 🟢 4️⃣ If this is the latest message AND AI is loading → show "Thinking..."
+          final isLastUserMessage = index == 0 && loadingAiMsg;
+
+          if (isLastUserMessage) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                bubble,
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 12.rw(context),
+                    right: 12.rw(context),
+                    bottom: 8.rh(context),
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: EdgeInsets.all(10.rf(context)),
+                      decoration: BoxDecoration(
+                        color: context.dynamicColor4,
+                        borderRadius: BorderRadius.circular(15.rf(context)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          LoadingAnimationWidget.fourRotatingDots(
+                            color: context.buttnColor,
+                            size: 25.rf(context),
+                          ),
+                          SizedBox(width: 10.rw(context)),
+                          Uiutils.getTextWidget(context, "Thinking..."),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            // 🟢 Default: just show the chat bubble
+            return bubble;
+          }
         },
       ),
     );

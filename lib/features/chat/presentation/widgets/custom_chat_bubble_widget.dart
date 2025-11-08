@@ -12,16 +12,12 @@ import '../provider/chat_provider.dart';
 import '../provider/tts_provider.dart';
 import 'chat_bubble_painter.dart';
 
+///needed to ontap navigate new screen copy the output specfically
 class CustomChatBubbleWidget extends ConsumerStatefulWidget {
-  const CustomChatBubbleWidget({
-    super.key,
-    required this.chat,
-    required this.loadingAiMsg,
-    this.maxline,
-  });
+  const CustomChatBubbleWidget({super.key, required this.chat, this.maxline});
 
   final Chatbubble chat;
-  final bool loadingAiMsg;
+
   final int? maxline;
 
   @override
@@ -32,8 +28,42 @@ class CustomChatBubbleWidget extends ConsumerStatefulWidget {
 class _CustomChatBubbleWidgetState
     extends ConsumerState<CustomChatBubbleWidget> {
   @override
-  @override
   Widget build(BuildContext context) {
+    Widget _buildAttachmentPreview(Attachment attachment) {
+      if (attachment.type == 'image') {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Uiutils.getNetworkImage(
+            attachment.path,
+            height: 150,
+            width: 150,
+            // fit: BoxFit.cover,
+          ),
+        );
+      } else {
+        // Document preview
+        return Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: CupertinoColors.systemGrey5,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(CupertinoIcons.doc_fill, color: context.primaryColor),
+              SizedBox(width: 8),
+              Uiutils.getNetworkImage(
+                attachment.name ?? '',
+                // style: TextStyle(color: context.textColor),
+                // overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        );
+      }
+    }
+
     return Row(
       mainAxisAlignment: widget.chat.msgtype == MessegeOwner.user
           ? MainAxisAlignment.end
@@ -51,6 +81,21 @@ class _CustomChatBubbleWidgetState
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: [
+              if (widget.chat.attachment != null)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 8.rh(context)),
+                  child: Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: widget.chat.attachment!.length,
+                      itemBuilder: (context, index) {
+                        final attachmentItem = widget.chat.attachment![index];
+                        return _buildAttachmentPreview(attachmentItem);
+                      },
+                    ),
+                  ),
+                ),
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   8.rh(context),
@@ -120,13 +165,13 @@ class _CustomChatBubbleWidgetState
                                     textStyle: TextStyleType.extraSmallBold,
                                     color: context.buttnColor,
                                   ),
-                                  const Spacer(),//remove below one
-                                  widget.loadingAiMsg
-                                      ? LoadingAnimationWidget.staggeredDotsWave(
-                                          color: context.subTextColor,
-                                          size: 20.rf(context),
-                                        )
-                                      : const SizedBox(),
+                                  const Spacer(), //remove below one
+                                  // widget.loadingAiMsg
+                                  //     ? LoadingAnimationWidget.staggeredDotsWave(
+                                  //         color: context.subTextColor,
+                                  //         size: 20.rf(context),
+                                  //       )
+                                  //     : const SizedBox(),
                                 ],
                               ),
                               Uiutils.getTextWidget(
@@ -182,6 +227,19 @@ class _CustomChatBubbleWidgetState
                     MainAxisAlignment.end,
                 // : MainAxisAlignment.start,
                 children: [
+                  if (widget.chat.msgtype == MessegeOwner.ai) ...[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.rw(context)),
+                      child: Uiutils.getTextWidget(
+                        context,
+                        Uiutils.timeAgo(
+                          Uiutils.parseBackendDate(widget.chat.time),
+                        ),
+                        textStyle: TextStyleType.extraSmallsemiBold,
+                      ),
+                    ),
+                    Spacer(),
+                  ],
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 19.rw(context),
@@ -222,15 +280,16 @@ class _CustomChatBubbleWidgetState
                   ),
                 ],
               ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.rw(context)),
-                child: Uiutils.getTextWidget(
-                  context,
-                  Uiutils.timeAgo(Uiutils.parseBackendDate(widget.chat.time)),
-                  textStyle: TextStyleType.extraSmallsemiBold,
+              if (widget.chat.msgtype == MessegeOwner.user) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6.rw(context)),
+                  child: Uiutils.getTextWidget(
+                    context,
+                    Uiutils.timeAgo(Uiutils.parseBackendDate(widget.chat.time)),
+                    textStyle: TextStyleType.extraSmallsemiBold,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

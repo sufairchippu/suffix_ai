@@ -48,7 +48,9 @@
 
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:clean_architutre_learn/app_config.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_coonstants.dart/api_url.dart';
@@ -61,26 +63,57 @@ class AiDataSource {
 
   final List<Map<String, dynamic>> conversationHistory = [];
 
-  Future<Content?> getAiresponse(String userAsking) async {
+  Future<Content?> getAiResponse({
+    required String userAsking,
+    File? imageFile,
+    File? documentFile,
+  }) async {
     try {
-      // Add user message
-      conversationHistory.add({
-        "role": "user",
-        "parts": [
-          {"text": userAsking},
-        ],
-      });
+      ///here fetch the sqlite data and store in the>>>>>>>>>>>>>>>> conversationHistory
 
-      Map<String, dynamic> body = {"contents": conversationHistory};
+      // ✅ Create list of message parts (text + optional attachments)
+      final List<Map<String, dynamic>> userParts = [
+        {"text": userAsking},
+      ];
 
-      var response = await client.post(ApiUrl.baseUrl, data: jsonEncode(body));
+      if (imageFile != null) {
+        final mimeType = _getMimeType(imageFile.path);
+        userParts.add({
+          "inline_data": {
+            "mime_type": mimeType,
+            "data": base64Encode(await imageFile.readAsBytes()),
+          },
+        });
+      }
+
+      if (documentFile != null) {
+        final mimeType = _getMimeType(documentFile.path);
+        userParts.add({
+          "inline_data": {
+            "mime_type": mimeType,
+            "data": base64Encode(await documentFile.readAsBytes()),
+          },
+        });
+      }
+
+      // ✅ Add the user message to chat history
+      conversationHistory.add({"role": "user", "parts": userParts});
+
+      // ✅ Construct final request body with all history
+      final body = {"contents": conversationHistory};
+
+      // ✅ Send to Gemini API
+      final response = await client.post(
+        "${ApiUrl.baseUrl}?key=${AppConfig.aiApiKey}",
+        data: jsonEncode(body),
+      );
 
       if (response is Map<String, dynamic>) {
         final aiResponseModel = AiResponseModel.fromJson(response);
-        final content = aiResponseModel.candidates![0].content!;
+        final content = aiResponseModel.candidates?.first.content;
 
-        // Extract AI text and add it to history
-        final aiText = content.parts?.first.text ?? "";
+        // ✅ Extract AI text and add to history
+        final aiText = content?.parts?.first.text ?? "⚠️ No response";
         conversationHistory.add({
           "role": "model",
           "parts": [
@@ -90,13 +123,33 @@ class AiDataSource {
 
         return content;
       } else {
-        log("Unexpected response format: $response");
+        log("⚠️ Unexpected response format: $response");
       }
     } on DioException catch (e) {
-      log("DioException: ${e.response?.statusCode}");
-      log("Error: ${e.response?.data}");
+      log("❌ DioException: ${e.response?.statusCode}");
+      log("❌ Error data: ${e.response?.data}");
       rethrow;
+    } catch (e, st) {
+      log("❌ General error: $e");
+      log(st.toString());
     }
+
     return null;
+  }
+
+  // 🧩 Detect MIME type based on file extension
+  String _getMimeType(String path) {
+    final ext = path.split('.').last.toLowerCase();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'pdf':
+        return 'application/pdf';
+      default:
+        return 'application/octet-stream';
+    }
   }
 }

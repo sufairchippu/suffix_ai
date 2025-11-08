@@ -7,6 +7,8 @@
 //   return AiDataSource();
 // },);
 
+import 'dart:io';
+
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
 import 'package:clean_architutre_learn/core/service/network/dio/gemini_provider.dart';
@@ -54,11 +56,19 @@ class AiMessgeNotifier extends StateNotifier<Content> {
   final Ref ref;
   final GetMessage _messge;
 
-  Future<void> getAiReply(String input) async {
+  Future<void> getAiReply({
+    required String data,
+    File? imageFile,
+    File? documentFile,
+  }) async {
     // ref.read(chatListNotifierProvider.notifier).loadChats();
 
     ref.read(loadingmsgProvider.notifier).state = true;
-    final reply = await _messge(input);
+    final reply = await _messge(
+      data: data,
+      documentFile: documentFile,
+      imageFile: imageFile,
+    );
 
     reply.fold(
       (failure) {
@@ -77,7 +87,9 @@ class AiMessgeNotifier extends StateNotifier<Content> {
               time: DateTime.now().toFormattedString(),
               // id: UniqueKey().hashCode, // or use any ID generator
               msgtype: MessegeOwner.ai,
-              // chatSetID:LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID) //Uiutils.generateUniqueId(),
+              chatSetID: LocalStorageService.getString(
+                LocalServiceKeys.CHAT_SET_ID,
+              ), //Uiutils.generateUniqueId(),
               // Enum for AI messages
             );
 

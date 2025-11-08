@@ -1,5 +1,6 @@
 import 'package:clean_architutre_learn/core/constants/models/models.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_color.dart';
+import 'package:flutter/cupertino.dart';
 
 class CoreConstants {
   static const List<String> infoTexts = [
@@ -84,6 +85,18 @@ class CoreConstants {
         'Color of the Season Picks',
         'Influencer Collaboration Ideas',
       ],
+    ),
+  ];
+  static const List<Attachment> listOfAttachment = [
+
+  
+    Attachment(icon: CupertinoIcons.camera, name: 'Camera', route: '/camera'),
+
+    Attachment(icon: CupertinoIcons.photo, name: 'Gallery', route: '/gallery'),
+  Attachment(
+      icon: CupertinoIcons.doc_text_viewfinder,
+      name: 'Documents',
+      route: '/documents',
     ),
   ];
 }

@@ -15,16 +15,16 @@ class ChatBubbleRepoImpl implements ChatBubbleRepository {
     final data = ChatBubbleModel(
       message: chat.message,
       time: chat.time,
- 
+
       msgtype: chat.msgtype,
       attachment: chat.attachment,
+      chatSetID: chat.chatSetID,
     );
 
     log('message.  has insertted db');
     localchat.insertChat(data);
-    
 
-// final dataaaaaa= localchat.getSinglChat(int.parse(data.id!));
+    // final dataaaaaa= localchat.getSinglChat(int.parse(data.id!));
   }
 
   @override
