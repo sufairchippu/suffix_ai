@@ -15,4 +15,13 @@ class NanoSelectionModels {
   });
 }
 
-
+class AttachmentItemInscreen {
+  final String name;
+  final String route;
+  final IconData icon;
+  const AttachmentItemInscreen({
+    required this.icon,
+    required this.name,
+    required this.route,
+  });
+}

@@ -87,13 +87,13 @@ class CoreConstants {
       ],
     ),
   ];
-  static const List<Attachment> listOfAttachment = [
+  static const List<AttachmentItemInscreen> listOfAttachment = [
 
   
-    Attachment(icon: CupertinoIcons.camera, name: 'Camera', route: '/camera'),
+    AttachmentItemInscreen(icon: CupertinoIcons.camera, name: 'Camera', route: '/camera'),
 
-    Attachment(icon: CupertinoIcons.photo, name: 'Gallery', route: '/gallery'),
-  Attachment(
+    AttachmentItemInscreen(icon: CupertinoIcons.photo, name: 'Gallery', route: '/gallery'),
+  AttachmentItemInscreen(
       icon: CupertinoIcons.doc_text_viewfinder,
       name: 'Documents',
       route: '/documents',
