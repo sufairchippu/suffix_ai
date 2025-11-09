@@ -506,34 +506,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 bubble,
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 12.rw(context),
-                    right: 12.rw(context),
-                    bottom: 8.rh(context),
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      padding: EdgeInsets.all(10.rf(context)),
-                      decoration: BoxDecoration(
-                        color: context.dynamicColor4,
-                        borderRadius: BorderRadius.circular(15.rf(context)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          LoadingAnimationWidget.fourRotatingDots(
-                            color: context.buttnColor,
-                            size: 25.rf(context),
-                          ),
-                          SizedBox(width: 10.rw(context)),
-                          Uiutils.getTextWidget(context, "Thinking..."),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                ThinkingWidget(),
               ],
             );
           } else {
@@ -541,6 +514,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             return bubble;
           }
         },
+      ),
+    );
+  }
+}
+
+class ThinkingWidget extends StatelessWidget {
+  const ThinkingWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 12.rw(context),
+        right: 12.rw(context),
+        bottom: 8.rh(context),
+      ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          padding: EdgeInsets.all(10.rf(context)),
+          decoration: BoxDecoration(
+            color: context.dynamicColor4,
+            borderRadius: BorderRadius.circular(15.rf(context)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LoadingAnimationWidget.fourRotatingDots(
+                color: context.buttnColor,
+                size: 25.rf(context),
+              ),
+              SizedBox(width: 10.rw(context)),
+              Uiutils.getTextWidget(context, "Thinking..."),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -89,7 +89,7 @@ class AiMessgeNotifier extends StateNotifier<Content> {
               msgtype: MessegeOwner.ai,
               chatSetID: LocalStorageService.getString(
                 LocalServiceKeys.CHAT_SET_ID,
-              ), //Uiutils.generateUniqueId(),
+              )??'image_set_id', //Uiutils.generateUniqueId(),
               // Enum for AI messages
             );
 
