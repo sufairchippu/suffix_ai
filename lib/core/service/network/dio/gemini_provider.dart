@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
-final dioClientProviderGemini = Provider<DioClient>((ref) {
+final dioClientProviderGemini = Provider<DioClientGemini>((ref) {
   final dio = ref.watch(dioProviderGemini);
-  return DioClient(dio);
+  return DioClientGemini(dio);
 });
 
 final dioProviderGemini = Provider<Dio>((ref) {
@@ -47,10 +47,10 @@ final dioProviderGemini = Provider<Dio>((ref) {
   return dio;
 });
 
-class DioClient {
+class DioClientGemini {
   final Dio _dio;
 
-  DioClient(this._dio);
+  DioClientGemini(this._dio);
 
   Future<dynamic> get(
     String uri, {

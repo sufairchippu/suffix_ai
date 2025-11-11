@@ -16,7 +16,6 @@ import 'package:clean_architutre_learn/features/authentication/presentation/widg
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
-import 'package:clean_architutre_learn/features/drop_down/data/entities/dropdown_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -193,7 +192,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         if (text.isEmpty) return;
                         await _sendMessage(ref, text);
                         inputController.clear();
-                      } catch (e) {}
+                      } catch (e) {
+                        log('$e');
+                      }
                     },
                     suffixIcon: CupertinoIcons.paperplane_fill,
                   ),

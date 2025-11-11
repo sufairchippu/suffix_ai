@@ -58,7 +58,7 @@ import '../../../../core/service/network/dio/gemini_provider.dart';
 import '../model/ai_response_model.dart';
 
 class AiDataSource {
-  final DioClient client;
+  final DioClientGemini client;
   AiDataSource(this.client);
 
   final List<Map<String, dynamic>> conversationHistory = [];
@@ -104,7 +104,7 @@ class AiDataSource {
 
       // ✅ Send to Gemini API
       final response = await client.post(
-        "${ApiUrl.baseUrl}?key=${AppConfig.aiApiKey}",
+        "${ApiUrl.baseGeminiUrl}?key=${AppConfig.aiApiKey}",
         data: jsonEncode(body),
       );
 

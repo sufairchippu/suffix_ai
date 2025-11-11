@@ -1,11 +1,4 @@
-// import 'package:clean_architutre_learn/features/chat/data/data_sources/ai_data_source.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// f
-// final aiDataSourceProvider= Provider<AiDataSource>((ref) {
-
-//   return AiDataSource();
-// },);
 
 import 'dart:io';
 
@@ -13,7 +6,7 @@ import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dar
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
 import 'package:clean_architutre_learn/core/service/network/dio/gemini_provider.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
-import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
+
 import 'package:clean_architutre_learn/features/chat/business/usecases/get_message.dart';
 import 'package:clean_architutre_learn/features/chat/data/data_sources/ai_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/ai_response_model.dart';
@@ -24,31 +17,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../business/entities/chat_bubble.dart';
 import '../../business/repo/ai_responce_repository.dart';
 import 'chat_provider.dart';
-
-// class AiMessgeNotifier extends StateNotifier<Content> {
-//   AiMessgeNotifier(this._messge) : super(Content());
-//   final GetMessage _messge;
-
-//   Future<void> getAiReply(String input) async {
-//   final reply=  await _messge(input);
-// reply.fold(
-//   (failure) {
-//     // Handle error
-//     print('Error: ${failure.message}');
-//   },
-//   (content) {
-//     // If content has a list of messages
-//     for (var message in content.parts!) {
-//       ref
-//                               .read(chatListNotifierProvider.notifier)
-//                               .addchats(chat)
-//       print(message);
-
-//     }
-//   },
-// );
-//   }
-// }
 
 class AiMessgeNotifier extends StateNotifier<Content> {
   AiMessgeNotifier(this.ref, this._messge) : super(Content());
@@ -127,7 +95,7 @@ final aireposProvider = Provider<AiResponceRepository>((ref) {
 
 final aiDataSourceProvider = Provider<AiDataSource>((ref) {
   final dio = ref.read(dioProviderGemini);
-  final client = DioClient(dio);
+  final client = DioClientGemini(dio);
   return AiDataSource(client);
 });
 final loadingmsgProvider = StateProvider<bool>((ref) {

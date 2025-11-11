@@ -3,6 +3,8 @@ class LocalServiceKeys {
   static const String THEME_KEY = "theme_key";
   static const String THEME_MODE_KEY = "theme_mode_key";
   //! validator
+//
+  static const String IS_LOGGED = "is_logged";
 
   //? secure Stroage
   //* barrier token

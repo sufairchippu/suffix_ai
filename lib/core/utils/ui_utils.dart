@@ -123,7 +123,7 @@ class Uiutils {
     final counterHex = _counter.toRadixString(16).padLeft(4, '0');
 
     // Combine parts with separators for readability
-    return '${prefix}${ts.toString()}-$counterHex-$rndHex';
+    return '$prefix${ts.toString()}-$counterHex-$rndHex';
   }
 
   static DateTime parseBackendDate(String dateString) {

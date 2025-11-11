@@ -158,6 +158,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 SizedBox(height: 40.rh(context)),
                 GestureDetector(
                   onTap: () {
+
+                    
                     context.pushReplacementNamed(RouteNames.home);
                     emailController.clear();
                     passwordController.clear();

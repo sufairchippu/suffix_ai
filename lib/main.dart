@@ -1,3 +1,4 @@
+import 'package:clean_architutre_learn/app_config.dart';
 import 'package:clean_architutre_learn/core/router/app_router.dart';
 import 'package:clean_architutre_learn/features/chat/data/data_sources/chat_local_data_source.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/service/local_storage/local_storage_service.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/theme/theme_notifier.dart';
 
 void main() async {
@@ -13,6 +14,10 @@ void main() async {
   await LocalStorageService.init();
   await dotenv.load(fileName: ".env");
   await ChatLocalDataSource().database;
+  await Supabase.initialize(
+  url: AppConfig.mainUrl,
+  anonKey: AppConfig.superbasePubishKey,
+);
   runApp(const ProviderScope(child: MyApp()));
 }
 

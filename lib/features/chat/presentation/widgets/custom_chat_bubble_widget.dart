@@ -3,7 +3,6 @@ import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.d
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/theme/text/app_text.dart';
 import '../../../../core/utils/ui_utils.dart';
@@ -29,7 +28,7 @@ class _CustomChatBubbleWidgetState
     extends ConsumerState<CustomChatBubbleWidget> {
   @override
   Widget build(BuildContext context) {
-    Widget _buildAttachmentPreview(Attachment attachment) {
+    Widget buildAttachmentPreview(Attachment attachment) {
       if (attachment.type == 'image') {
         return ClipRRect(
           borderRadius: BorderRadius.circular(10),
@@ -91,7 +90,7 @@ class _CustomChatBubbleWidgetState
                       itemCount: widget.chat.attachment!.length,
                       itemBuilder: (context, index) {
                         final attachmentItem = widget.chat.attachment![index];
-                        return _buildAttachmentPreview(attachmentItem);
+                        return buildAttachmentPreview(attachmentItem);
                       },
                     ),
                   ),
