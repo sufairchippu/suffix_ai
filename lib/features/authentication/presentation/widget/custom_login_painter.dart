@@ -180,12 +180,15 @@ class TopBackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Animated wave shape
     Path wavePath = Path();
-    wavePath.moveTo(0, size.height * 0.95);
+    wavePath.moveTo(0, size.height * 0.9);
 
     for (double x = 0; x <= size.width; x += size.width / 20) {
       final y =
-          size.height * 0.65 +
+          size.height * 0.9 +
           20 * sin((x / size.width * 2 * pi) + animationValue);
+      // final y =
+      //     size.height * 0.65 +
+      //     20 * sin((x / size.width * 2 * pi) + animationValue);
       wavePath.lineTo(x, y);
     }
 
@@ -193,7 +196,10 @@ class TopBackgroundPainter extends CustomPainter {
     wavePath.lineTo(0, size.height);
     wavePath.close();
 
-    final wavePaint = Paint()..color = waveColor.withValues(alpha: .3);
+    // final wavePaint = Paint()..color = waveColor.withValues(alpha: .3);
+    final wavePaint = Paint()
+  ..color = waveColor.withOpacity(0.3)
+  ..style = PaintingStyle.fill;
     canvas.drawPath(wavePath, wavePaint);
 
     // Floating particles
@@ -258,7 +264,6 @@ class _AuthBackgroundAnimationState extends State<AuthBackgroundAnimation>
     return AnimatedBuilder(
       animation: _controller,
       builder: (_, __) {
-
         return CustomPaint(
           painter: TopBackgroundPainter(
             animationValue: _controller.value * 2 * pi,

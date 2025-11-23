@@ -182,7 +182,7 @@ class _CustomChatBubbleWidgetState
                                     : TextOverflow.ellipsis,
                                 context,
                                 widget.chat.message,
-                                color: context.cardColor,
+                                // color: context.cardColor3,
                               ),
                               if (widget.chat.message.length > 100)
                                 Row(

@@ -16,6 +16,33 @@ class Chatbubble {
     required this.msgtype,
     this.attachment,
   });
+
+  // Convert Dart object to JSON (for Supabase insert)
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "chat_set_id": chatSetID,
+    "message": message,
+    "time": time,
+    "msg_type": msgtype.name, // enum → string
+    "attachments": attachment?.map((a) => a.toMap()).toList(),
+  };
+
+  // Convert JSON from database to Dart model
+  factory Chatbubble.fromJson(Map<String, dynamic> json) => Chatbubble(
+    id: json["id"],
+    chatSetID: json["chat_set_id"],
+    message: json["message"] ?? "",
+    time: json["time"] ?? "",
+    msgtype: MessegeOwner.values.firstWhere(
+      (element) => element.name == json["msg_type"],
+      orElse: () => MessegeOwner.user,
+    ),
+    attachment: json["attachments"] != null
+        ? (json["attachments"] as List)
+              .map((a) => Attachment.fromMap(a))
+              .toList()
+        : [],
+  );
 }
 
 class Attachment {

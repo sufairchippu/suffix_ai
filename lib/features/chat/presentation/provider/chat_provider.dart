@@ -116,6 +116,12 @@ final clearChatProvider = Provider(
   (ref) => ClearChats(ref.read(chatRepositoryProvider)),
 );
 
+/// --- Provider for the notifier ---
+final chatListNotifierProvider =
+    AsyncNotifierProvider<ChatListNotifier, List<Chatbubble>>(() {
+      return ChatListNotifier();
+    });
+
 /// --- AsyncNotifier for managing chats ---
 class ChatListNotifier extends AsyncNotifier<List<Chatbubble>> {
   late final GetChats _getChats;
@@ -162,12 +168,6 @@ class ChatListNotifier extends AsyncNotifier<List<Chatbubble>> {
     state = await AsyncValue.guard(() async => await _fetchChats());
   }
 }
-
-/// --- Provider for the notifier ---
-final chatListNotifierProvider =
-    AsyncNotifierProvider<ChatListNotifier, List<Chatbubble>>(() {
-      return ChatListNotifier();
-    });
 
 final chatReadMoreProvider = StateProvider<bool>((ref) {
   return false;

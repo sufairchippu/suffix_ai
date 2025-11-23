@@ -114,7 +114,7 @@ class AppText {
         return buildStyle(
           size: fontSize ?? 14.rf(context),
           fw: fontweight ?? FontWeight.w400,
-          clr: context.cardColor2, // defaultzColor,
+          clr:defaultzColor?? context.cardColor2, // defaultzColor,
         );
 
       case TextStyleType.mediumSemiBold:
@@ -135,7 +135,7 @@ class AppText {
         return buildStyle(
           size: fontSize ?? 12.rf(context),
           fw: fontweight ?? FontWeight.w500,
-          clr: CupertinoColors.destructiveRed,
+          clr:defaultzColor?? CupertinoColors.destructiveRed,
         );
     }
   }

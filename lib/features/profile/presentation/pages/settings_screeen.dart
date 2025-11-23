@@ -7,6 +7,7 @@ import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/theme/theme_notifier.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
+import 'package:clean_architutre_learn/features/authentication/presentation/provider/login_provider.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -159,9 +160,7 @@ class _SettingsScreeenState extends ConsumerState<SettingsScreeen> {
                           ),
                           subtitle: Uiutils.getTextWidget(
                             context,
-                            '${AppThemeMode.system.name
-                                    .toString()
-                                    .capitalizeFirstLetter()} Default',
+                            '${AppThemeMode.system.name.toString().capitalizeFirstLetter()} Default',
                           ),
                         ),
                       ],
@@ -259,7 +258,9 @@ We are constantly improving the platform to deliver better tools and experiences
                     Uiutils.showAlert(
                       context,
                       () {
+                        ref.read(authNotifierProvider.notifier).logout();
                         context.pushReplacement(RouteNames.login);
+                        ref.read(authErrorProvider.notifier).state = '';
                       },
                       'Logout',
                       'Are You Sure to Logout',
@@ -270,6 +271,16 @@ We are constantly improving the platform to deliver better tools and experiences
                   },
                 ),
 
+                SizedBox(height: 20.rh(context)),
+                SettingsSectionWidget(
+                  thememode: thememode,
+                  text: 'Reset Password',
+                  icon: CupertinoIcons.refresh_thick,
+                  iconcolor: context.blue.withValues(alpha: .9),
+                  onTap: () {
+                    context.pushNamed(RouteNames.newPass);
+                  },
+                ),
                 const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

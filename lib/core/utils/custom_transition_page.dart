@@ -14,13 +14,11 @@ CustomTransitionPage<void> customBuildTransitionPage({
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    fullscreenDialog: true, // 👈 ensures fullscreen
+    fullscreenDialog: false
+    , // 👈 ensures fullscreen
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       // Disable rounded corner clipping by wrapping in ClipRect
-      return ClipRect(
-        // 👈 important
-        child: _buildTransition(type, animation, secondaryAnimation, child),
-      );
+      return _buildTransition(type, animation, secondaryAnimation, child);
     },
     transitionDuration: duration,
     reverseTransitionDuration: duration,

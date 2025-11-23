@@ -1,6 +1,8 @@
 import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/utils/custom_transition_page.dart';
+import 'package:clean_architutre_learn/features/authentication/presentation/pages/forget_pass_screen.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/login_screen.dart';
+import 'package:clean_architutre_learn/features/authentication/presentation/pages/pass_change_screen.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/splash_screen.dart';
 import 'package:clean_architutre_learn/features/banana/presentation/pages/dispkay_screen.dart';
 import 'package:clean_architutre_learn/features/banana/presentation/pages/nano_banana_screen.dart';
@@ -18,11 +20,11 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: '/splash',
+  initialLocation: '/',
   routes: <RouteBase>[
     //! Splash Screen with Fade
     GoRoute(
-      path: '/splash',
+      path: '/',
       name: RouteNames.splash,
       pageBuilder: (context, state) => CupertinoPage(
         child: const SplashScreen(),
@@ -41,6 +43,26 @@ final GoRouter appRouter = GoRouter(
         state: state,
         type: TransitionType.slideFromRight,
       ),
+      routes: [
+        GoRoute(
+          path: 'pass_forget',
+          name: RouteNames.passForget,
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child: const ForgetPassScreen(),
+            state: state,
+            type: TransitionType.slideFromRight,
+          ),
+        ),
+        GoRoute(
+          path: 'new_pass',
+          name: RouteNames.newPass,
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child:  PassChangeScreen(),
+            state: state,
+            type: TransitionType.slideFromRight,
+          ),
+        ),
+      ],
     ),
 
     //! Home Screen (Cupertino)
@@ -82,7 +104,9 @@ final GoRouter appRouter = GoRouter(
                       state.pathParameters['specilization'] ?? '0',
                     ) ??
                     0;
-                    debugPrint('${state.pathParameters}========================================');
+                debugPrint(
+                  '${state.pathParameters}========================================',
+                );
                 return customBuildTransitionPage(
                   child: NanoDisplayScreen(specificationsIndex: index),
                   state: state,

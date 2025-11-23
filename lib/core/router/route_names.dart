@@ -2,6 +2,9 @@ class RouteNames {
   static const String splash = '/splash';
   static const String onBoarding = '/onboarding';
   static const String login = '/login';
+  static const String passForget = '/pass_forget';
+  static const String newPass = '/new_pass';
+
 
   static const String chat = '/chat';
   static const String home = '/home';

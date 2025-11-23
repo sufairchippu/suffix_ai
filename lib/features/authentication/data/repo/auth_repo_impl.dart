@@ -3,19 +3,27 @@ import 'package:clean_architutre_learn/features/authentication/business/repo/aut
 import 'package:clean_architutre_learn/features/authentication/data/data_sources/auth_data_souurce.dart';
 
 class AuthRepoImpl implements AuthRepo {
-  final AuthDataSouurce dtatSourece;
-  AuthRepoImpl(this.dtatSourece);
+  final AuthDataSouurce datatSourece;
+  AuthRepoImpl(this.datatSourece);
   @override
   Future<UserEntity?> login(String email, String password) =>
-      dtatSourece.login(email, password);
+      datatSourece.login(email, password);
 
   @override
-  Future<void> logout() => dtatSourece.logout();
+  Future<void> logout() => datatSourece.logout();
 
   @override
   Future<UserEntity?> signup(String email, String password) =>
-      dtatSourece.signup(email, password);
+      datatSourece.signup(email, password);
 
   @override
-  UserEntity? currentUser() => dtatSourece.currentUser();
+  UserEntity? currentUser() => datatSourece.currentUser();
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) =>
+      datatSourece.sendPasswordResetEmail(email);
+
+  @override
+  Future<void> updatePassword(String newPassword) =>
+      datatSourece.updatePassword(newPassword);
 }

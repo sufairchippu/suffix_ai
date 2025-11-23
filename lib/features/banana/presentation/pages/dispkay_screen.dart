@@ -1,4 +1,3 @@
-import 'package:clean_architutre_learn/core/constants/core_constants.dart';
 import 'package:clean_architutre_learn/core/constants/svg_constants.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/app_logo_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
@@ -18,9 +17,9 @@ class NanoDisplayScreen extends ConsumerStatefulWidget {
 class _NanoDisplayScreenState extends ConsumerState<NanoDisplayScreen> {
   @override
   Widget build(BuildContext context) {
-    late List<String> promtTitles = CoreConstants
-        .listofnanBananaSelction[widget.specificationsIndex]
-        .specifications;
+    // late List<String> promtTitles = CoreConstants
+    //     .listofnanBananaSelction[widget.specificationsIndex]
+    //     .specifications;
     return CupertinoPageScaffold(
       child: SafeArea(
         child: Column(

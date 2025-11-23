@@ -11,8 +11,6 @@ class ConnectWithWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Uiutils.getTextWidget(context, 'Connect With ...'),
-        SizedBox(height: 6.rh(context)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 30.rw(context),
@@ -41,6 +39,9 @@ class ConnectWithWidget extends StatelessWidget {
             // ),
           ],
         ),
+        SizedBox(height: 6.rh(context)),
+
+        Uiutils.getTextWidget(context, 'Connect With ...'),
       ],
     );
   }
@@ -52,10 +53,10 @@ class CustomCircleImageWidget extends StatelessWidget {
     required this.onTap,
     this.height,
     this.width,
-     this.icon,
+    this.icon,
     this.netwrkImage,
     this.assetImage,
-     this.firstLetter,
+    this.firstLetter,
     this.boxColor,
   });
   final void Function()? onTap;
@@ -74,15 +75,16 @@ class CustomCircleImageWidget extends StatelessWidget {
       return Uiutils.getassetImage(assetImage!);
     } else if (netwrkImage != null) {
       return Uiutils.getNetworkImage(netwrkImage!);
-    } else if(firstLetter!=null){
+    } else if (firstLetter != null) {
       return Uiutils.getTextWidget(
         context,
         firstLetter!.characters.first.split('/').first.toUpperCase(),
       );
-    }
-    else{
-      return Uiutils.getSvg(boxfit: BoxFit.contain,SvgConstants. profilUndefined);
-
+    } else {
+      return Uiutils.getSvg(
+        boxfit: BoxFit.contain,
+        SvgConstants.profilUndefined,
+      );
     }
   }
 

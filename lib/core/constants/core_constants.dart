@@ -1,6 +1,7 @@
 import 'package:clean_architutre_learn/core/constants/models/models.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_color.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CoreConstants {
   static const List<String> infoTexts = [
@@ -88,15 +89,44 @@ class CoreConstants {
     ),
   ];
   static const List<AttachmentItemInscreen> listOfAttachment = [
+    AttachmentItemInscreen(
+      icon: CupertinoIcons.camera,
+      name: 'Camera',
+      route: '/camera',
+    ),
 
-  
-    AttachmentItemInscreen(icon: CupertinoIcons.camera, name: 'Camera', route: '/camera'),
-
-    AttachmentItemInscreen(icon: CupertinoIcons.photo, name: 'Gallery', route: '/gallery'),
-  AttachmentItemInscreen(
+    AttachmentItemInscreen(
+      icon: CupertinoIcons.photo,
+      name: 'Gallery',
+      route: '/gallery',
+    ),
+    AttachmentItemInscreen(
       icon: CupertinoIcons.doc_text_viewfinder,
       name: 'Documents',
       route: '/documents',
     ),
   ];
+
+  static String mapSupabaseError(AuthApiException e) {
+    switch (e.code) {
+      case 'email_address_invalid':
+        return 'Invalid email address. Please enter a valid one.';
+      case 'invalid_credentials':
+        return 'Incorrect email or password.';
+      case 'user_not_found':
+        return 'User not found. Please sign up first.';
+      case 'user_already_exists':
+        return 'An account with this email already exists.';
+      case 'email_not_confirmed':
+        return 'Please verify your email address before logging in.';
+      case 'password_too_short':
+        return 'Password must be at least 6 characters.';
+      case 'invalid_grant':
+        return 'Invalid email or password.';
+      default:
+        return e.message.isNotEmpty
+            ? e.message
+            : 'Authentication failed. Please try again.';
+    }
+  }
 }

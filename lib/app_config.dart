@@ -3,11 +3,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConfig {
   // API URLs
-  static final String stagingUrl = dotenv.env['STAGING_URL'] ?? '';
-  static final String mainUrl = dotenv.env['MAIN_URL'] ?? '';//superbase currentlyy
+  static String get stagingUrl => dotenv.env['STAGING_URL'] ?? '';
+  static String get mainUrl =>
+      dotenv.env['MAIN_URL'] ?? ''; //superbase currentlyy
 
   // API KEYS
-  static final String superbaseAnonKey = dotenv.env[ApiUrl.kSUPERBASEANON] ?? '';
-  static final String superbasePubishKey = dotenv.env[ApiUrl.kSUPERBASEPUBLISHABLE] ?? '';
-  static final String aiApiKey = dotenv.env[ApiUrl.kAIAPI] ?? '';
+  static String get superbaseAnonKey => dotenv.env['SUPERBASE_ANON'] ?? '';
+  static String get superbasePubishKey =>
+      dotenv.env['SUPERBASE_PUBLISHABLE'] ?? '';
+  static String get aiApiKey => dotenv.env[ApiUrl.kAIAPI] ?? '';
 }
