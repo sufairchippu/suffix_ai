@@ -76,7 +76,7 @@ class Validators {
   static FormFieldValidator<String> emailValidator() {
     return (value) {
       if (value == null || value.isEmpty) {
-        return 'Please enter EMail';
+        return 'Please enter Email';
       }
       if (value.isNotEmpty) {
         if (!value.contains('@') || !value.contains('.')) {

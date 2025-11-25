@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clean_architutre_learn/core/constants/widgets/app_logo_widget.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
@@ -21,7 +23,7 @@ class ForgetPassScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController _emailController = TextEditingController();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+    final loginState = ref.watch(authNotifierProvider);
     return CupertinoPageScaffold(
       child: Stack(
         children: [
@@ -91,21 +93,46 @@ class ForgetPassScreen extends ConsumerWidget {
                             try {
                               ref
                                   .read(authNotifierProvider.notifier)
-                                  .sendemailLink(_emailController.text);
+                                  .sendemailLink(_emailController.text)
+                                  .then(
+                                    (value) => Timer(Duration(seconds: 2), () {
+                                      context.pop();
+                                    }),
+                                  );
                             } catch (e) {}
                           },
                           height: 35.rh(context),
                           width: 160.rw(context),
                           color: context.scaffoldColor,
                           borderRadius: 12.rf(context),
-                          widget: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Uiutils.getTextWidget(context, 'Get Link'),
-
-                              //on loading
-                              CupertinoActivityIndicator(),
-                            ],
+                          widget: Center(
+                            child: loginState.when(
+                              data: (data) => Uiutils.getTextWidget(
+                                context,
+                                "Get-Link",
+                                fs: 12.rf(context),
+                                fw: FontWeight.w600,
+                              ),
+                              error: (error, stackTrace) =>
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    "Get-Link",
+                                    fs: 12.rf(context),
+                                    fw: FontWeight.w600,
+                                  ),
+                              loading: () => Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    "Get-Link",
+                                    fs: 12.rf(context),
+                                    fw: FontWeight.w600,
+                                  ),
+                                  CupertinoActivityIndicator(),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],

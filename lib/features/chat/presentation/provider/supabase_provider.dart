@@ -54,19 +54,19 @@ class SupaBaseChatSetNotifier extends AsyncNotifier<List<ChatSetModel>> {
     throw UnimplementedError();
   }
 
-  Future<List<ChatSetModel>> _fetchChatSets() async {
+  Future<List<ChatSetModel>> fetchChatSets() async {
     final result = await _getChatSet();
     return result.fold((failure) => [], (chats) => chats);
   }
 
   Future<void> deletChatSet(String chatSetID) async {
     await _deleteChat(chatSetID);
-    state = await AsyncValue.guard(() async => await _fetchChatSets());
+    state = await AsyncValue.guard(() async => await fetchChatSets());
   }
 
   Future<void> clearAllChat() async {
     await _clearALlChats();
-    state = await AsyncValue.guard(() async => await _fetchChatSets());
+    state = await AsyncValue.guard(() async => await fetchChatSets());
   }
 }
 

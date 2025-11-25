@@ -153,8 +153,8 @@ class AuthProviderNotifier extends AsyncNotifier<UserEntity?> {
     try {
       await _logout();
       state = const AsyncData(null);
-      ref.read(authErrorProvider.notifier).state =
-          'User has Logout sucessfully!,';
+      // ref.read(authErrorProvider.notifier).state =
+      //     'User has Logout sucessfully! ';
     } on AuthApiException catch (e) {
       ref.read(authErrorProvider.notifier).state = e.message;
     } catch (e, st) {

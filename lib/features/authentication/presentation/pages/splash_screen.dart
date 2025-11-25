@@ -9,6 +9,7 @@ import 'package:clean_architutre_learn/features/authentication/presentation/prov
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -21,6 +22,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    
     Future.delayed(const Duration(seconds: 3), ()  {
       // Now check login status
       final isLoggedIn = LocalStorageService.getBool(

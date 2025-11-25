@@ -52,7 +52,7 @@ class AuthDataSouurceImpl implements AuthDataSouurce {
           statusCode: '400',
           code: 'invalid_credentials',
         );
-        return null;
+
       } else {
         LocalStorageService.setBool(LocalServiceKeys.IS_LOGGED_user, true);
         return UserEntity(id: user.id, email: email);
@@ -76,12 +76,13 @@ class AuthDataSouurceImpl implements AuthDataSouurce {
       final response = await client.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo: 'cleanarch:/${RouteNames.login}'
       );
       final user = response.user;
       if (user == null) {
         return null;
       } else {
-        LocalStorageService.setBool(LocalServiceKeys.IS_LOGGED_user, true);
+        //LocalStorageService.setBool(LocalServiceKeys.IS_LOGGED_user, true);
         return UserEntity(id: user.id, email: email);
       }
     } on AuthException catch (e) {
@@ -96,7 +97,7 @@ class AuthDataSouurceImpl implements AuthDataSouurce {
     try {
       await client.auth.resetPasswordForEmail(
         email,
-        redirectTo: 'myapp:/${RouteNames.newPass}',
+        redirectTo: 'cleanarch:/${RouteNames.newPass}',
       );
       debugPrint("Password reset email sent");
     } on AuthApiException catch (e) {

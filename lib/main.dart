@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clean_architutre_learn/app_config.dart';
 import 'package:clean_architutre_learn/core/router/app_router.dart';
 import 'package:clean_architutre_learn/core/router/route_names.dart';
@@ -20,7 +22,7 @@ void main() async {
     Supabase.initialize(
       url: AppConfig.mainUrl,
       anonKey: AppConfig.superbasePubishKey,
-    ), 
+    ),
   ]);
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -34,22 +36,54 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   // This widget is the root of your application.
+
+  StreamSubscription<AuthState>? _authSub;
   @override
   void initState() {
     super.initState();
-    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
-      final chekingEvent = event.event;
-      final chekingSession = event.session;
 
-      if (chekingSession == AuthChangeEvent.passwordRecovery) {
-        context.pushNamed(RouteNames.newPass);
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+
+      if (event == AuthChangeEvent.passwordRecovery) {
+        // 👇 Navigate to your reset password screen
+        appRouter.goNamed(RouteNames.newPass);
       }
-
-
-
-      //?>>>>> adddf anotherrr conditionsss in hereee
+      if (event == AuthChangeEvent.signedIn) {
+        // Email confirmation auto login link
+        appRouter.goNamed(RouteNames.home);
+      }
     });
+    // Supabase.instance.client.auth.onAuthStateChange.listen((event) {
+    //   final chekingEvent = event.event;
+    //   final chekingSession = event.session;
+
+    //   if (chekingSession == AuthChangeEvent.passwordRecovery) {
+    //     context.pushNamed(RouteNames.newPass);
+    //   }
+
+    //   //?>>>>> adddf anotherrr conditionsss in hereee
+    // });
   }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
+  // StreamSubscription? _sub;
+  // void initDeepLink() {
+  //   _sub = uriLinkStream.listen((Uri? uri) async {
+  //     if (uri.toString().contains("login")) {
+  //       final session = await Supabase.instance.client.auth.getSessionFromUrl(
+  //         uri!,
+  //       );
+  //       if (session != null) {
+  //         Supabase.instance.client.auth.setSession(session as String);
+  //       }
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

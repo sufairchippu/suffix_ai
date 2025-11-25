@@ -54,6 +54,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _emailController.text.trim(),
           _passwordController.text.trim(),
         );
+        _resetFormState();
+        ref.read(loginMethodeProvider.notifier).state = false;
       } else {
         await authNotifier.login(
           _emailController.text.trim(),
@@ -68,6 +70,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (isLoggedIn) {
         if (context.mounted) {
           context.pushReplacementNamed(RouteNames.home);
+          // ref.read(authRepoProvider)
           // Uiutils.showSnackbar(context, 'Welcome back!');
         }
         _resetFormState();
@@ -87,6 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.invalidate(loginPasswordProvider);
     ref.invalidate(loginConformPasswordProvider);
     ref.invalidate(loginMethodeProvider);
+    ref.invalidate(authErrorProvider);
   }
 
   @override
@@ -147,23 +151,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               textStyle: TextStyleType.errorText,
                               context,
                               loginError,
-                              color: context.red
+                              color: context.red,
                             ),
                           );
                         },
                       ),
                     SizedBox(height: 10.rh(context)),
                     _buildButtonMethode(isCreateACState, context, loginState),
-              
+
                     const Spacer(),
-                          _buildJoinChooseMethode(context, isCreateACState),
+                    _buildJoinChooseMethode(context, isCreateACState),
                     SizedBox(height: 20.rw(context)),
 
                     const ConnectWithWidget(),
 
-                    SizedBox(height: 5.rh(context)),
-                    // Skip row
-                    _buildSkipButton(context),
+                    // SizedBox(height: 5.rh(context)),
+                    // // Skip row
+                    // _buildSkipButton(context),
                     SizedBox(height: 20.rh(context)),
                   ],
                 ),
@@ -220,8 +224,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: Uiutils.getTextWidget(
             context,
             isCreateACState ? 'Sign-In' : 'Sign-Up',
-         textStyle: TextStyleType.mediumBold,
-              color: context.primaryColor,
+            textStyle: TextStyleType.mediumBold,
+            color: context.primaryColor,
           ),
         ),
       ],
@@ -233,8 +237,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     BuildContext context,
     AsyncValue<UserEntity?> loginState,
   ) {
-    return Column(spacing: 0,
+    return Column(
+      spacing: 0,
       children: [
+        if (isCreateACState) ...[
+          Uiutils.getTextWidget(
+            context,
+            "After Confirm its you in mail can Register",
+          ),
+          SizedBox(height: 10.rh(context)),
+        ],
         GestureDetector(
           onTap: () => _handleAuth(context),
           child: Container(
@@ -250,13 +262,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: loginState.when(
                 data: (data) => Uiutils.getTextWidget(
                   context,
-                  isCreateACState ? 'Sign-up' : 'Login',
+                  isCreateACState ? 'Register' : 'Login',
                   fs: 22.rf(context),
                   fw: FontWeight.w600,
                 ),
                 error: (error, stackTrace) => Uiutils.getTextWidget(
                   context,
-                  isCreateACState ? 'Sign-up' : 'Login',
+                  isCreateACState ? 'Register' : 'Login',
                   fs: 22.rf(context),
                   fw: FontWeight.w600,
                 ),
@@ -265,7 +277,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Uiutils.getTextWidget(
                       context,
-                      isCreateACState ? 'Sign-up' : 'Login',
+                      isCreateACState ? 'Register' : 'Login',
                       fs: 22.rf(context),
                       fw: FontWeight.w600,
                     ),

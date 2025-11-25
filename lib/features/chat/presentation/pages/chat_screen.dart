@@ -16,6 +16,7 @@ import 'package:clean_architutre_learn/features/authentication/presentation/widg
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
+import 'package:clean_architutre_learn/features/chat/presentation/provider/supabase_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,7 +56,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     _initSpeech();
     final newchatProvider = ref.read(newChatNotifierProvider);
-
+    ref.read(supabaseChatSetNotifierProvider.notifier).fetchChatSets();
     if (newchatProvider) {
       LocalStorageService.setString(
         LocalServiceKeys.CHAT_SET_ID,
@@ -74,6 +75,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final spokenText = ref.watch(speakingTestProvider);
     final isdrawer = ref.watch(chatHistoryProvider);
     final asyncChats = ref.watch(chatListNotifierProvider);
+    final asyncChatSet = ref.watch(supabaseChatSetNotifierProvider);
 
     final attachmentState = ref.watch(chatAttachmentProvider);
 
@@ -294,22 +296,32 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         // ),
                         SizedBox(height: 30.rh(context)),
 
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: 12,
-                            itemBuilder: (context, index) {
-                              return CustomButtonWIdget(
-                                widget: Row(
-                                  children: [
-                                    Uiutils.getTextWidget(
-                                      context,
-                                      'discussed topi',
+                        asyncChatSet.when(
+                          data: (data) {
+                            return Expanded(
+                              child: ListView.builder(
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  return CustomButtonWIdget(
+                                    widget: Row(
+                                      children: [
+                                        Uiutils.getTextWidget(
+                                          context,
+                                          data[index].msg,
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          error: (error, stackTrace) {
+                            return SizedBox();
+                          },
+                          loading: () {
+                            return CupertinoActivityIndicator();
+                          },
                         ),
                         SizedBox(height: 12.rh(context)),
                         // Spacer(),
@@ -414,9 +426,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       // ],
       msgtype: MessegeOwner.user,
     );
-    await ref.read(chatListNotifierProvider.notifier).addChat(chat);
 
     try {
+      await ref.read(chatListNotifierProvider.notifier).addChat(chat);
+      await ref.read(supabaseChatNotifierProvider.notifier).addChats(chat);
       // 1️⃣ Add user's message immediately
       inputController.clear();
 
@@ -505,10 +518,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           if (isLastUserMessage) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                bubble,
-                ThinkingWidget(),
-              ],
+              children: [bubble, ThinkingWidget()],
             );
           } else {
             // 🟢 Default: just show the chat bubble
@@ -521,9 +531,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 }
 
 class ThinkingWidget extends StatelessWidget {
-  const ThinkingWidget({
-    super.key,
-  });
+  const ThinkingWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

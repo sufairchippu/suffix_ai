@@ -259,8 +259,8 @@ We are constantly improving the platform to deliver better tools and experiences
                       context,
                       () {
                         ref.read(authNotifierProvider.notifier).logout();
+                        ref.invalidate(authErrorProvider);
                         context.pushReplacement(RouteNames.login);
-                        ref.read(authErrorProvider.notifier).state = '';
                       },
                       'Logout',
                       'Are You Sure to Logout',

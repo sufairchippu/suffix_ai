@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
@@ -11,6 +9,7 @@ import 'package:clean_architutre_learn/features/chat/business/usecases/get_messa
 import 'package:clean_architutre_learn/features/chat/data/data_sources/ai_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/ai_response_model.dart';
 import 'package:clean_architutre_learn/features/chat/data/repo/ai_response_repo_impl.dart';
+import 'package:clean_architutre_learn/features/chat/presentation/provider/supabase_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -55,9 +54,9 @@ class AiMessgeNotifier extends StateNotifier<Content> {
               time: DateTime.now().toFormattedString(),
               // id: UniqueKey().hashCode, // or use any ID generator
               msgtype: MessegeOwner.ai,
-              chatSetID: LocalStorageService.getString(
-                LocalServiceKeys.CHAT_SET_ID,
-              )??'image_set_id', //Uiutils.generateUniqueId(),
+              chatSetID:
+                  LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID) ??
+                  'image_set_id', //Uiutils.generateUniqueId(),
               // Enum for AI messages
             );
 
@@ -68,6 +67,7 @@ class AiMessgeNotifier extends StateNotifier<Content> {
                 .then((value) {
                   ref.read(loadingmsgProvider.notifier).state = false;
                 });
+            ref.read(supabaseChatNotifierProvider.notifier).addChats(chat);
 
             debugPrint('AI Reply: $message');
           }

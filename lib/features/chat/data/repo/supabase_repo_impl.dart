@@ -22,15 +22,13 @@ class SupabaseRepoImpl extends SupabaseRepository {
   }
 
   @override
-  Future<void> clearWholeChats() {
-    // TODO: implement clearWholeChats
-    throw UnimplementedError();
+  Future<void> clearWholeChats() async {
+    supaDataSource.clearWholeData();
   }
 
   @override
-  Future<void> deleteChatRemote(String chatSetID) {
-    // TODO: implement deleteChatRemote
-    throw UnimplementedError();
+  Future<void> deleteChatRemote(String chatSetID) async {
+    supaDataSource.deleteChat(chatSetID);
   }
 
   @override
@@ -46,8 +44,12 @@ class SupabaseRepoImpl extends SupabaseRepository {
   }
 
   @override
-  Future<Either<Failure, List<ChatSetModel>>> getChatSETRemote() {
-    // TODO: implement getChatSETRemote
-    throw UnimplementedError();
+  Future<Either<Failure, List<ChatSetModel>>> getChatSETRemote() async {
+    try {
+      final chatset = await supaDataSource.getWholeChatsets();
+      return right(chatset);
+    } catch (e) {
+      return left(SomeSpecificError(e.toString()));
+    }
   }
 }

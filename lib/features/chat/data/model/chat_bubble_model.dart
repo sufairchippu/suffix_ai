@@ -49,6 +49,7 @@ class ChatBubbleModel extends Chatbubble {
               .map((e) => Attachment.fromMap(e))
               .toList()
         : null,
+
     chatSetID: map['chat_set_id'],
   );
 }

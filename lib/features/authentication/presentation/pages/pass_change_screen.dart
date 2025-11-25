@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clean_architutre_learn/core/constants/widgets/app_logo_widget.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
@@ -29,6 +31,8 @@ class _PassChangeScreenState extends ConsumerState<PassChangeScreen> {
   Widget build(BuildContext context) {
     final obscurePass = ref.watch(loginPasswordProvider);
     final obscureConfirm = ref.watch(loginConformPasswordProvider);
+    final loginState = ref.watch(authNotifierProvider);
+
     return CupertinoPageScaffold(
       child: Stack(
         children: [
@@ -147,21 +151,47 @@ class _PassChangeScreenState extends ConsumerState<PassChangeScreen> {
                             try {
                               ref
                                   .read(authNotifierProvider.notifier)
-                                  .newPaaword(_passwordController.text.trim());
+                                  .newPaaword(_passwordController.text.trim())
+                                  .then(
+                                    (value) => Timer(
+                                      Duration(seconds: 2),
+                                      () => context.pop(),
+                                    ),
+                                  );
                             } catch (e) {}
                           },
                           height: 35.rh(context),
                           width: 160.rw(context),
                           color: context.scaffoldColor,
                           borderRadius: 12.rf(context),
-                          widget: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Uiutils.getTextWidget(context, 'Reset'),
-
-                              //on loading
-                              CupertinoActivityIndicator(),
-                            ],
+                          widget: Center(
+                            child: loginState.when(
+                              data: (data) => Uiutils.getTextWidget(
+                                context,
+                                "Reset",
+                                fs: 12.rf(context),
+                                fw: FontWeight.w600,
+                              ),
+                              error: (error, stackTrace) =>
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    "Reset",
+                                    fs: 12.rf(context),
+                                    fw: FontWeight.w600,
+                                  ),
+                              loading: () => Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    "Reset",
+                                    fs: 12.rf(context),
+                                    fw: FontWeight.w600,
+                                  ),
+                                  CupertinoActivityIndicator(),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],

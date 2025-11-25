@@ -1,30 +1,38 @@
+import 'dart:developer';
+
 import 'package:clean_architutre_learn/core/constants/app_constants.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_set_model.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/chat_bubble_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RemoteDataSource {
   final supabase = Supabase.instance.client;
-  late final userId = supabase.auth.currentUser!.id;
+  late final user = supabase.auth.currentUser?? Supabase.instance.client.auth.currentUser!;
 
   Future<void> inserttoRemote(ChatBubbleModel chat) async {
-    await supabase.from(AppConstants.chattable).insert({
-      'user_id': userId,
-      'chat_set_id': chat.chatSetID,
-      'message': chat.message,
-      'msg_type': chat.msgtype,
-      'time': chat.time,
-      'attachments': chat.attachment?.map((e) => e.toMap()).toList(),
-      'created_at': DateTime.now().toUtc().toIso8601String(),
-    });
+    try {
+      debugPrint("Current user: ${supabase.auth.currentUser}");
+      await supabase.from(AppConstants.chattable).insert({
+        'user_id': user.id,
+        'chat_set_id': chat.chatSetID,
+        'message': chat.message,
+        'msg_type': chat.msgtype.name,
+        'time': chat.time,
+        'attachments': chat.attachment?.map((e) => e.toMap()).toList(),
+        'created_at': DateTime.now().toUtc().toIso8601String(),
+      });
+    } catch (e) {
+      debugPrint('Error message. $e}');
+    }
   }
 
   Future<List<ChatBubbleModel>> getchats(String chatSetID) async {
     final respo = await supabase
         .from(AppConstants.chattable)
         .select()
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .eq('chat_set_id', chatSetID)
         .order('created_at', ascending: true);
 
@@ -41,12 +49,15 @@ class RemoteDataSource {
     await supabase
         .from(AppConstants.chattable)
         .delete() //add udid user id to all the funtion get only userwise adata
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .eq('chat_set_id', chatSetID);
   }
 
-  // Future<List<ChatSetModel>>getWholeChatsets()async{
-  // await supabase.from(AppConstants.chattable).select().
-  // }
+  Future<List<ChatSetModel>> getWholeChatsets() async {
+    final respo = await supabase.rpc(AppConstants.chatSetTable);
+    final chatset = respo.map((e) => ChatSetModel.fromJson(e)).toList();
+    return chatset;
+  }
+
   // get wholechatset
 }
