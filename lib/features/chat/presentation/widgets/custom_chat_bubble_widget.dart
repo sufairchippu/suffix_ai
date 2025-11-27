@@ -51,7 +51,7 @@ class _CustomChatBubbleWidgetState
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(CupertinoIcons.doc_fill, color: context.primaryColor),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Uiutils.getNetworkImage(
                 attachment.name ?? '',
                 // style: TextStyle(color: context.textColor),
@@ -237,7 +237,7 @@ class _CustomChatBubbleWidgetState
                         textStyle: TextStyleType.extraSmallsemiBold,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                   ],
                   Padding(
                     padding: EdgeInsets.symmetric(

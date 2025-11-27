@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:clean_architutre_learn/core/constants/widgets/app_logo_widget.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
-import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
@@ -15,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+// ignore: must_be_immutable
 class PassChangeScreen extends ConsumerStatefulWidget {
   PassChangeScreen({super.key, this.isFromSettings = false});
   bool isFromSettings;
@@ -154,11 +154,13 @@ class _PassChangeScreenState extends ConsumerState<PassChangeScreen> {
                                   .newPaaword(_passwordController.text.trim())
                                   .then(
                                     (value) => Timer(
-                                      Duration(seconds: 2),
+                                      const Duration(seconds: 2),
                                       () => context.pop(),
                                     ),
                                   );
-                            } catch (e) {}
+                            } catch (e) {
+                              debugPrint("$e password reseting Error");
+                            }
                           },
                           height: 35.rh(context),
                           width: 160.rw(context),
@@ -188,7 +190,7 @@ class _PassChangeScreenState extends ConsumerState<PassChangeScreen> {
                                     fs: 12.rf(context),
                                     fw: FontWeight.w600,
                                   ),
-                                  CupertinoActivityIndicator(),
+                                  const CupertinoActivityIndicator(),
                                 ],
                               ),
                             ),

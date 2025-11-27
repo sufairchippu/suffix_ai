@@ -198,8 +198,8 @@ class TopBackgroundPainter extends CustomPainter {
 
     // final wavePaint = Paint()..color = waveColor.withValues(alpha: .3);
     final wavePaint = Paint()
-  ..color = waveColor.withOpacity(0.3)
-  ..style = PaintingStyle.fill;
+      ..color = waveColor.withValues(alpha: 0.3)
+      ..style = PaintingStyle.fill;
     canvas.drawPath(wavePath, wavePaint);
 
     // Floating particles

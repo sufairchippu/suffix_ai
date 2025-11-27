@@ -1,6 +1,4 @@
 import 'dart:developer';
-
-import 'package:clean_architutre_learn/core/constants/core_constants.dart';
 import 'package:clean_architutre_learn/features/authentication/business/entities/user_entity.dart';
 import 'package:clean_architutre_learn/features/authentication/business/repo/auth_repo.dart';
 import 'package:clean_architutre_learn/features/authentication/business/usecases/current_user_usecase.dart';
@@ -91,7 +89,7 @@ class AuthProviderNotifier extends AsyncNotifier<UserEntity?> {
   Future<void> currentUser() async {
     state = const AsyncLoading();
     try {
-      final user = await _getUser();
+      final user = _getUser();
       state = AsyncData(user);
       ref.read(authErrorProvider.notifier).state =
           '${user!.email} has logged in';
@@ -166,7 +164,7 @@ class AuthProviderNotifier extends AsyncNotifier<UserEntity?> {
     state = const AsyncLoading();
     try {
       await _sendemailLink(email);
-      state = AsyncData(null);
+      state = const AsyncData(null);
       ref.read(authErrorProvider.notifier).state =
           'Sended mail to the email registered ';
     } on AuthApiException catch (e) {
@@ -183,7 +181,7 @@ class AuthProviderNotifier extends AsyncNotifier<UserEntity?> {
     state = const AsyncLoading();
     try {
       await _updatePass(newPass);
-      state = AsyncData(null);
+      state = const AsyncData(null);
       ref.read(authErrorProvider.notifier).state = 'Password changed ';
     } on AuthApiException catch (e) {
       ref.read(authErrorProvider.notifier).state = e.message;
@@ -194,4 +192,5 @@ class AuthProviderNotifier extends AsyncNotifier<UserEntity?> {
       log('$e------------------------------------------------');
     }
   }
+  
 }

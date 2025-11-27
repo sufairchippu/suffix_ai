@@ -173,9 +173,7 @@ final chatReadMoreProvider = StateProvider<bool>((ref) {
   return false;
 });
 
-final newChatNotifierProvider = StateProvider<bool>((ref) {
-  return true;
-});
+
 // final chatDrawrProvider = StateProvider<bool>((ref) {
 //   return false;
 // });

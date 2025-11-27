@@ -82,6 +82,7 @@ class Uiutils {
   }) {
     return Text(
       title,
+      // textWidthBasis: TextWidthBasis.parent,
       style: AppText.getStyle(
         color: color,
         fontSize: fs,

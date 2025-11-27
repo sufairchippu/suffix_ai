@@ -81,8 +81,8 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                                       fs: 25.rf(context),
                                       overFlow: TextOverflow.visible,
                                     ),
-                                    Spacer(),
-                                    Row(
+                                    const Spacer(),
+                                    const Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Icon(CupertinoIcons.play_fill),

@@ -33,7 +33,7 @@ class ChatBubbleModel extends Chatbubble {
     'id': id,
     'message': message,
     'time': time,
-    'msgtype': msgtype.index,
+    'msgtype': msgtype.name,
     'attachment': attachment != null
         ? jsonEncode(attachment!.map((e) => e.toMap()).toList())
         : null,
@@ -43,7 +43,7 @@ class ChatBubbleModel extends Chatbubble {
     id: map['id'],
     message: map['message'],
     time: map['time'],
-    msgtype: MessegeOwner.values[map['msgtype']],
+    msgtype: map['msgtype'] == 'ai' ? MessegeOwner.ai : MessegeOwner.user,
     attachment: map['attachment'] != null
         ? (jsonDecode(map['attachment']) as List)
               .map((e) => Attachment.fromMap(e))

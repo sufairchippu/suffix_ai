@@ -251,7 +251,7 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                           }
                           final reply = data.last;
                           if (isloading) {
-                            return ThinkingWidget();
+                            return const ThinkingWidget();
                           }
 
                           return GestureDetector(
@@ -282,7 +282,7 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                           ],
                         ),
                         loading: () =>
-                            Center(child: CupertinoActivityIndicator()),
+                            const Center(child: CupertinoActivityIndicator()),
                       );
                     },
                   ),

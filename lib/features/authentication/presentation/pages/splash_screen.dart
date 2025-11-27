@@ -5,11 +5,9 @@ import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
-import 'package:clean_architutre_learn/features/authentication/presentation/provider/login_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

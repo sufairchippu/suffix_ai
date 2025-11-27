@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:clean_architutre_learn/core/constants/widgets/app_logo_widget.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
-import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
@@ -14,15 +13,14 @@ import 'package:clean_architutre_learn/features/authentication/presentation/widg
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart';
 
 class ForgetPassScreen extends ConsumerWidget {
   const ForgetPassScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController _emailController = TextEditingController();
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final TextEditingController emailController = TextEditingController();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final loginState = ref.watch(authNotifierProvider);
     return CupertinoPageScaffold(
       child: Stack(
@@ -39,7 +37,7 @@ class ForgetPassScreen extends ConsumerWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 28.rw(context)),
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -76,7 +74,7 @@ class ForgetPassScreen extends ConsumerWidget {
                       child: CustomTextFormField(
                         maxline: 1,
                         obscure: false,
-                        controller: _emailController,
+                        controller: emailController,
                         icon: CupertinoIcons.mail,
                         text: 'E-Mail',
                         hintText: "Enter your Email",
@@ -89,17 +87,20 @@ class ForgetPassScreen extends ConsumerWidget {
                       children: [
                         CustomButtonWIdget(
                           onTap: () {
-                            if (!_formKey.currentState!.validate()) return;
+                            if (!formKey.currentState!.validate()) return;
                             try {
                               ref
                                   .read(authNotifierProvider.notifier)
-                                  .sendemailLink(_emailController.text)
+                                  .sendemailLink(emailController.text)
                                   .then(
-                                    (value) => Timer(Duration(seconds: 2), () {
-                                      context.pop();
-                                    }),
+                                    (value) =>
+                                        Timer(const Duration(seconds: 2), () {
+                                          context.pop();
+                                        }),
                                   );
-                            } catch (e) {}
+                            } catch (e) {
+                              debugPrint('$e email sending erroroed');
+                            }
                           },
                           height: 35.rh(context),
                           width: 160.rw(context),
@@ -129,7 +130,7 @@ class ForgetPassScreen extends ConsumerWidget {
                                     fs: 12.rf(context),
                                     fw: FontWeight.w600,
                                   ),
-                                  CupertinoActivityIndicator(),
+                                  const CupertinoActivityIndicator(),
                                 ],
                               ),
                             ),

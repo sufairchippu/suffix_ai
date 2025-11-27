@@ -54,9 +54,10 @@ class AiMessgeNotifier extends StateNotifier<Content> {
               time: DateTime.now().toFormattedString(),
               // id: UniqueKey().hashCode, // or use any ID generator
               msgtype: MessegeOwner.ai,
-              chatSetID:
-                  LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID) ??
-                  'image_set_id', //Uiutils.generateUniqueId(),
+              chatSetID: LocalStorageService.getString(
+                LocalServiceKeys.CHAT_SET_ID,
+              ),
+              //Uiutils.generateUniqueId(),
               // Enum for AI messages
             );
 

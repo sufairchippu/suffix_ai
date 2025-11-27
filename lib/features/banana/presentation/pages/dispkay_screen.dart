@@ -31,11 +31,11 @@ class _NanoDisplayScreenState extends ConsumerState<NanoDisplayScreen> {
                   onTap: () {
                     context.pop();
                   },
-                  child: Icon(CupertinoIcons.back),
+                  child: const Icon(CupertinoIcons.back),
                 ),
 
                 // Spacer(),
-                AppLogoWidget(logoNeeded: false),
+                const AppLogoWidget(logoNeeded: false),
                 // Spacer(),
                 Column(
                   children: [
@@ -51,10 +51,10 @@ class _NanoDisplayScreenState extends ConsumerState<NanoDisplayScreen> {
                 ),
               ],
             ),
-            Container(
+            SizedBox(
               height: 600.rh(context),
               width: double.infinity,
-              child: Stack(children: [
+              child: const Stack(children: [
             
               
             ],),

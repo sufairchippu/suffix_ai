@@ -39,7 +39,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController inputController = TextEditingController();
   final SpeechService _speechService = SpeechService();
-  late final String chatSetID;
+  // late final String chatSetID;
   Future<void> _initSpeech() async {
     await Permission.microphone.request();
     await Permission.speech.request();
@@ -54,38 +54,39 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
 
-    _initSpeech();
-    final newchatProvider = ref.read(newChatNotifierProvider);
-    ref.read(supabaseChatSetNotifierProvider.notifier).fetchChatSets();
-    if (newchatProvider) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _initSpeech();
+      ref.read(chatListNotifierProvider.notifier).clearChats();
+
+      // final newchatProvider = ref.read(newChatNotifierProvider);
+      ref.read(supabaseChatSetNotifierProvider.notifier).fetchChatSets();
       LocalStorageService.setString(
         LocalServiceKeys.CHAT_SET_ID,
         Uiutils.generateUniqueId(),
       );
-    }
-    log("$newchatProvider---------------------");
-    chatSetID = LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID);
+      // chatSetID = LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final newchatProvider = ref.watch(newChatNotifierProvider);
-
     final isListening = ref.watch(voiceListenProvider);
     final spokenText = ref.watch(speakingTestProvider);
     final isdrawer = ref.watch(chatHistoryProvider);
     final asyncChats = ref.watch(chatListNotifierProvider);
     final asyncChatSet = ref.watch(supabaseChatSetNotifierProvider);
-
+    final loadingProgressor = ref.watch(remotchatLoading);
     final attachmentState = ref.watch(chatAttachmentProvider);
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
         if (isdrawer) {
           ref.read(chatHistoryProvider.notifier).state = false;
         } else if (attachmentState) {
           ref.read(chatAttachmentProvider.notifier).state = false;
         } else {
+          ref.read(chatListNotifierProvider.notifier).clearChats();
           context.pop();
         }
       },
@@ -183,12 +184,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     textInputAction: TextInputAction.newline,
                     onTap: () async {
                       try {
-                        if (asyncChats.value!.isNotEmpty &&
-                            asyncChats.value!.length >= 0) {
-                          ref.read(newChatNotifierProvider.notifier).state =
-                              false;
-                        }
-                        log("$newchatProvider----------------------");
+                        if (asyncChats.value!.isNotEmpty
+                        //         && asyncChats.value!.length >= 1
+                        ) {}
 
                         final text = inputController.text.trim();
                         if (text.isEmpty) return;
@@ -242,10 +240,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                   Uiutils.generateUniqueId(),
                                 );
                                 //add to fire base  whole this engineer
-                                ref
-                                        .watch(newChatNotifierProvider.notifier)
-                                        .state =
-                                    true;
+                                ref.read(chatHistoryProvider.notifier).state =
+                                    false;
                                 ref
                                     .read(chatListNotifierProvider.notifier)
                                     .clearChats();
@@ -278,8 +274,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         GestureDetector(
                           onTap: () {
                             ref
-                                .read(chatListNotifierProvider.notifier)
-                                .clearChats();
+                                .read(supabaseChatSetNotifierProvider.notifier)
+                                .clearAllChat();
+                            // ref
+                            //     .read(chatListNotifierProvider.notifier)
+                            //     .clearChats();
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -297,17 +296,87 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         SizedBox(height: 30.rh(context)),
 
                         asyncChatSet.when(
-                          data: (data) {
+                          data: (listData) {
+                            final data = listData.reversed.toList();
+                            log('$data-----------------------------');
                             return Expanded(
                               child: ListView.builder(
+                                // reverse: true,
                                 itemCount: data.length,
                                 itemBuilder: (context, index) {
+                                  final item = data[index];
                                   return CustomButtonWIdget(
+                                    onTap: () async {
+                                      try {
+                                        ref
+                                            .read(
+                                              chatListNotifierProvider.notifier,
+                                            )
+                                            .clearChats();
+                                        ref
+                                                .read(
+                                                  chatHistoryProvider.notifier,
+                                                )
+                                                .state =
+                                            false;
+                                        ref
+                                                .read(remotchatLoading.notifier)
+                                                .state =
+                                            true;
+                                        LocalStorageService.setString(
+                                          LocalServiceKeys.CHAT_SET_ID,
+                                          item.chatSetId,
+                                        );
+                                        final chats = await ref
+                                            .read(
+                                              supabaseChatNotifierProvider
+                                                  .notifier,
+                                            )
+                                            .fetchChats(item.chatSetId);
+                                        debugPrint('${item.chatSetId}');
+
+                                        debugPrint("${chats} is added to it");
+                                        for (Chatbubble chat in chats) {
+                                          debugPrint(
+                                            "${chat.msgtype} is added to it",
+                                          );
+
+                                          ref
+                                              .read(
+                                                chatListNotifierProvider
+                                                    .notifier,
+                                              )
+                                              .addChat(chat);
+                                        }
+                                        ref
+                                                .read(remotchatLoading.notifier)
+                                                .state =
+                                            false;
+                                      } catch (e) {
+                                        debugPrint(
+                                          "$e    error: fetching chat from supabase ",
+                                        );
+                                      }
+                                    },
+                                    color: index % 2 == 0
+                                        ? context.primaryColor.withValues(
+                                            alpha: .4,
+                                          )
+                                        : null,
+                                    borderRadius: 6,
+                                    height: 40.rh(context),
                                     widget: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        Uiutils.getTextWidget(
-                                          context,
-                                          data[index].msg,
+                                        SizedBox(
+                                          width: 260.rw(context),
+                                          height: 35.rh(context),
+                                          child: Uiutils.getTextWidget(
+                                            context,
+                                            item.msg,
+                                            maxline: 1,
+                                            overFlow: TextOverflow.fade,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -317,10 +386,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             );
                           },
                           error: (error, stackTrace) {
-                            return SizedBox();
+                            return const SizedBox();
                           },
                           loading: () {
-                            return CupertinoActivityIndicator();
+                            return const CupertinoActivityIndicator();
                           },
                         ),
                         SizedBox(height: 12.rh(context)),
@@ -338,6 +407,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               onTap: () {
                                 ref.read(chatHistoryProvider.notifier).state =
                                     false;
+                                // ref
+                                //     .read(chatListNotifierProvider.notifier)
+                                //     .clearChats();
                               },
                               child: const Icon(CupertinoIcons.arrow_left),
                             ),
@@ -349,6 +421,97 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 );
               },
             ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              left: 0,
+              right: 0,
+              top: loadingProgressor ? 0 : -MediaQuery.of(context).size.height,
+              bottom: loadingProgressor
+                  ? 0
+                  : MediaQuery.of(context).size.height,
+              child: Container(
+                color: context.mainDarkShadeColor.withValues(
+                  alpha: .4,
+                ), // FULL BACKGROUND
+                child: Center(
+                  child: Container(
+                    width: 250, // SMALL BOX WIDTH
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: context.mainLightShadeColor.withValues(alpha: .4), // INSIDE BOX COLOR
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Uiutils.getLottie(
+                          LottieConstant.chatScreen,
+                          height: 60.rf(context),
+                        ),
+                        const SizedBox(height: 12),
+                        Uiutils.getTextWidget(
+                          context,
+                          "Chat Data Is Fetching Wait Few Seconds",
+                        ),
+                        const SizedBox(height: 16),
+                        const CupertinoActivityIndicator(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // AnimatedPositioned(
+            //   duration: const Duration(milliseconds: 300),
+            //   curve: Curves.easeInOut,
+            //   left: 0,
+            //   right: 0,
+            //   top: loadingProgressor ? 0 : -MediaQuery.of(context).size.height,
+            //   bottom: loadingProgressor
+            //       ? 0
+            //       : MediaQuery.of(context).size.height, // ADDED
+            //   child: Container(
+            //     color: context.mainDarkShadeColor.withValues(alpha: .4),
+            //     child: Center(
+            //       // CENTER EVERYTHING
+            //       child: Column(
+            //         mainAxisSize: MainAxisSize.min,
+            //         children: [
+            //           Uiutils.getLottie(LottieConstant.chatScreen,height: 45.rf(context)),
+            //           Uiutils.getTextWidget(
+            //             context,
+            //             "Chat Data Is Fetching Wait Few Seconds",
+            //           ),
+            //           const SizedBox(height: 16),
+            //           const CupertinoActivityIndicator(),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // AnimatedPositioned(
+            //   duration: const Duration(milliseconds: 300),
+            //   curve: Curves.easeInOut,
+            //   top: 0,
+            //   bottom: 0,
+            //   left: loadingProgressor ? 0 : -500.rw(context),
+            //   child: Container(
+            //     color: context.mainDarkShadeColor.withValues(alpha: .4),
+            //     width: loadingProgressor ? 0 : 500.rw(context),
+            //     child: Column(
+            //       mainAxisAlignment:MainAxisAlignment.center,
+            //       children: [
+            //         Uiutils.getLottie(LottieConstant.chatScreen),
+            //         Uiutils.getTextWidget(
+            //           context,
+            //           "Chat Data Is Fetching Wait Few Seconds",
+            //         ),
+            //         const CupertinoActivityIndicator(),
+            //       ],
+            //     ),
+            //   ),
+            // ),
 
             ///attachment
             Positioned(
@@ -356,17 +519,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               bottom: 80.rh(context),
               child: Consumer(
                 builder: (context, ref, child) {
-                  final attachmentList = CoreConstants.listOfAttachment;
+                  const attachmentList = CoreConstants.listOfAttachment;
                   log('$attachmentState----------------attachment ');
                   return attachmentState
                       ? AnimatedContainer(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           // height: 100.rh(context),
                           // width: 300.rw(context),
                           duration: const Duration(microseconds: 300),
                           alignment: AlignmentGeometry.bottomLeft,
                           child: CustomButtonWIdget(
-                            height: 115.rh(context),
+                            height: 125.rh(context),
                             borderRadius: 14.rf(context),
                             padding: 12.rf(context),
                             width: 190.rw(context),
@@ -396,7 +559,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             ),
                           ),
                         )
-                      : SizedBox();
+                      : const SizedBox();
                 },
               ),
             ),
@@ -413,7 +576,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     File? documentFile,
   }) async {
     final chat = Chatbubble(
-      chatSetID: chatSetID,
+      chatSetID: LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID),
       message: text,
       time: DateTime.now().toFormattedString(),
       // attachment: [
@@ -518,7 +681,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           if (isLastUserMessage) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [bubble, ThinkingWidget()],
+              children: [bubble, const ThinkingWidget()],
             );
           } else {
             // 🟢 Default: just show the chat bubble

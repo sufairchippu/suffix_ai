@@ -63,15 +63,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
       }
 
-      final isLoggedIn = await LocalStorageService.getBool(
+      final isLoggedIn = LocalStorageService.getBool(
         LocalServiceKeys.IS_LOGGED_user,
       );
-
       if (isLoggedIn) {
         if (context.mounted) {
           context.pushReplacementNamed(RouteNames.home);
-          // ref.read(authRepoProvider)
-          // Uiutils.showSnackbar(context, 'Welcome back!');
         }
         _resetFormState();
       } else {
@@ -179,26 +176,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Row _buildSkipButton(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: () {
-            context.pushNamed(RouteNames.login);
-            _emailController.clear();
-            _passwordController.clear();
-            _confirmController.clear();
-            ref.read(loginPasswordProvider.notifier).state = true;
-            ref.read(loginConformPasswordProvider.notifier).state = true;
-            ref.read(loginMethodeProvider.notifier).state = false;
-          },
-          child: Uiutils.getTextWidget(context, 'Skip'),
-        ),
-        const Icon(CupertinoIcons.arrow_right_circle_fill),
-      ],
-    );
-  }
+  // Row _buildSkipButton(BuildContext context) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.end,
+  //     children: [
+  //       GestureDetector(
+  //         onTap: () {
+  //           context.pushNamed(RouteNames.login);
+  //           _emailController.clear();
+  //           _passwordController.clear();
+  //           _confirmController.clear();
+  //           ref.read(loginPasswordProvider.notifier).state = true;
+  //           ref.read(loginConformPasswordProvider.notifier).state = true;
+  //           ref.read(loginMethodeProvider.notifier).state = false;
+  //         },
+  //         child: Uiutils.getTextWidget(context, 'Skip'),
+  //       ),
+  //       const Icon(CupertinoIcons.arrow_right_circle_fill),
+  //     ],
+  //   );
+  // }
 
   Row _buildJoinChooseMethode(BuildContext context, bool isCreateACState) {
     return Row(
@@ -211,15 +208,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
         GestureDetector(
           onTap: () {
-            ref.read(authErrorProvider.notifier).state = '';
-            ref.read(loginMethodeProvider.notifier).state = !ref
-                .read(loginMethodeProvider.notifier)
-                .state;
-            _emailController.clear();
-            _passwordController.clear();
-            _confirmController.clear();
-            ref.read(loginPasswordProvider.notifier).state = true;
-            ref.read(loginConformPasswordProvider.notifier).state = true;
+            _resetFormState();
+            ref.read(loginMethodeProvider.notifier).state = !isCreateACState;
           },
           child: Uiutils.getTextWidget(
             context,
@@ -281,7 +271,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       fs: 22.rf(context),
                       fw: FontWeight.w600,
                     ),
-                    CupertinoActivityIndicator(),
+                    const CupertinoActivityIndicator(),
                   ],
                 ),
               ),

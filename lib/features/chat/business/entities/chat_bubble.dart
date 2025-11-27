@@ -23,7 +23,7 @@ class Chatbubble {
     "chat_set_id": chatSetID,
     "message": message,
     "time": time,
-    "msg_type": msgtype.name, // enum → string
+    "msgtype": msgtype.name, // enum → string
     "attachments": attachment?.map((a) => a.toMap()).toList(),
   };
 
@@ -34,7 +34,7 @@ class Chatbubble {
     message: json["message"] ?? "",
     time: json["time"] ?? "",
     msgtype: MessegeOwner.values.firstWhere(
-      (element) => element.name == json["msg_type"],
+      (element) => element.name == json["msgtype"],
       orElse: () => MessegeOwner.user,
     ),
     attachment: json["attachments"] != null

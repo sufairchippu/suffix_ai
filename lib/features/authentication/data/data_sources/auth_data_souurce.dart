@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
