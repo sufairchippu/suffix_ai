@@ -12,15 +12,12 @@ class AiResponseRepoImpl implements AiResponceRepository {
   @override
   Future<Either<Failure, Content>> getMessage({
     required String data,
-    File? imageFile,
-    File? documentFile,
+    List<File>? files,
   }) async {
     try {
-      
       final getData = await aidata.getAiResponse(
         userAsking: data,
-        documentFile: documentFile,
-        imageFile: imageFile,
+        files: files,
       );
       return right(getData!);
     } catch (e) {

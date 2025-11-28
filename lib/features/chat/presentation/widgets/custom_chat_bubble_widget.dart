@@ -10,7 +10,7 @@ import '../../business/entities/chat_bubble.dart';
 import '../provider/chat_provider.dart';
 import '../provider/tts_provider.dart';
 import 'chat_bubble_painter.dart';
-
+// jdshjsdh
 ///needed to ontap navigate new screen copy the output specfically
 class CustomChatBubbleWidget extends ConsumerStatefulWidget {
   const CustomChatBubbleWidget({super.key, required this.chat, this.maxline});

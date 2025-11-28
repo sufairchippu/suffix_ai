@@ -208,8 +208,8 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                             .read(aiMessgeNotifierProvider.notifier)
                             .getAiReply(
                               data: '',
-                              imageFile: File(imageState.valueOrNull!.path),
-                            );
+                              files: [File(imageState.valueOrNull!.path),
+                                            ]                            );
                       }
                     },
                     height: 40.rh(context),

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Validators {
   static FormFieldValidator<String> emptyPasswordValidator() {
@@ -139,4 +142,75 @@ class Validators {
       return null;
     };
   }
+
+  static String fileType(XFile file) {
+    final ext = file.name.toLowerCase();
+    if (ext.endsWith('.jpg') ||
+        ext.endsWith('.jpeg') ||
+        ext.endsWith('.png') ||
+        ext.endsWith('.gif')) {
+      return "image";
+    } else if (ext.endsWith('.pdf')) {
+      return "pdf";
+    } else if (ext.endsWith('.docx')) {
+      return "doc";
+    } else if (ext.endsWith('.xlsx')) {
+      return "excel";
+    } else if (ext.endsWith('.zip')) {
+      return "zip";
+    }
+    return "other";
+  }
+
+  static IconData fileIcon(String type) {
+    switch (type) {
+      case "image":
+        return CupertinoIcons.photo;
+      case "pdf":
+        return CupertinoIcons.doc_on_clipboard_fill;
+      case "doc":
+        return CupertinoIcons.doc_text_fill;
+      case "excel":
+        return CupertinoIcons.table;
+      case "zip":
+        return CupertinoIcons.archivebox_fill;
+      default:
+        return CupertinoIcons.doc;
+    }
+  }
+
+  static String fileTypeForLocal(File file) {
+    final name = file.path.toLowerCase(); // use file path
+
+    // IMAGE
+    if (_imageExt.any(name.endsWith)) return "image";
+
+    // VIDEO
+    if (_videoExt.any(name.endsWith)) return "video";
+
+    // PDF
+    if (name.endsWith('.pdf')) return "pdf";
+
+    // DOCUMENT
+    if (_docExt.any(name.endsWith)) return "doc";
+
+    // EXCEL
+    if (_excelExt.any(name.endsWith)) return "excel";
+
+    // ZIP
+    if (_zipExt.any(name.endsWith)) return "zip";
+
+    return "other";
+  }
+
+  // Supported extensions:
+  static const _imageExt = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+
+  static const _videoExt = ['.mp4', '.mov', '.mkv', '.avi', '.flv', '.wmv'];
+
+  static const _docExt = ['.doc', '.docx', '.txt', '.rtf', '.ppt', '.pptx'];
+
+  static const _excelExt = ['.xls', '.xlsx'];
+
+  static const _zipExt = ['.zip', '.rar', '.7z'];
 }

@@ -25,16 +25,16 @@ class AiMessgeNotifier extends StateNotifier<Content> {
 
   Future<void> getAiReply({
     required String data,
-    File? imageFile,
-    File? documentFile,
+    List<File>? files,
+
   }) async {
     // ref.read(chatListNotifierProvider.notifier).loadChats();
 
     ref.read(loadingmsgProvider.notifier).state = true;
     final reply = await _messge(
       data: data,
-      documentFile: documentFile,
-      imageFile: imageFile,
+      files: files,
+
     );
 
     reply.fold(

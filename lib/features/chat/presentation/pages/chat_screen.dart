@@ -11,12 +11,14 @@ import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.d
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
+import 'package:clean_architutre_learn/core/utils/validation.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/custom_textform_field.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/chat_provider.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/supabase_provider.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/provider/attachment_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -77,7 +79,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final asyncChatSet = ref.watch(supabaseChatSetNotifierProvider);
     final loadingProgressor = ref.watch(remotchatLoading);
     final attachmentState = ref.watch(chatAttachmentProvider);
-
+    final attachemntProvider = ref.watch(attachementNotifierProvider);
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
@@ -153,50 +155,239 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
 
                   // --- Input Field ---
-                  CustomTextFormField(
-                    onHold: () async {
-                      if (isListening) {
-                        _speechService.stopListening();
-                        ref.read(voiceListenProvider.notifier).state = false;
-                        if (spokenText.isNotEmpty) {
-                          _sendMessage(ref, spokenText);
-                        }
-                      } else {
-                        _speechService.startListening((text) {
-                          ref.read(speakingTestProvider.notifier).state = text;
-                        });
-                        ref.read(voiceListenProvider.notifier).state = true;
-                      }
-                    },
-                    prefixOntap: () {
-                      ref.read(chatAttachmentProvider.notifier).state =
-                          !attachmentState;
-                    },
-                    fillcolor: context.dynamicColor4,
-                    obscure: false,
-                    icon: CupertinoIcons.add_circled,
-                    hintText: "Ask Me Anything",
-                    controller: inputController,
-                    // loadingOnsomething: loadingAiMsg,
-                    iconColor: context.subTextColor,
-                    isWantsuffix: true,
-                    maxline: null,
-                    textInputAction: TextInputAction.newline,
-                    onTap: () async {
-                      try {
-                        if (asyncChats.value!.isNotEmpty
-                        //         && asyncChats.value!.length >= 1
-                        ) {}
+                  attachemntProvider.when(
+                    data: (files) {
+                      return Column(
+                        children: [
+                          if (files.isNotEmpty) ...[
+                            Wrap(
+                              spacing: 10.rf(context),
+                              children: files.map((file) {
+                                final type = Validators.fileType(file);
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      width: 80.rw(context),
+                                      height: 80.rh(context),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: context.buttnColor,
+                                      ),
+                                      child: type == "image"
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.file(
+                                                File(file.path),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                          : Center(
+                                              child: Icon(
+                                                Validators.fileIcon(type),
+                                                size: 34.rf(context),
+                                              ),
+                                            ),
+                                    ),
 
-                        final text = inputController.text.trim();
-                        if (text.isEmpty) return;
-                        await _sendMessage(ref, text);
-                        inputController.clear();
-                      } catch (e) {
-                        log('$e');
-                      }
+                                    // Close button
+                                    Positioned(
+                                      right: 0,
+                                      top: 0,
+                                      child: GestureDetector(
+                                        onTap: () => ref
+                                            .read(
+                                              attachementNotifierProvider
+                                                  .notifier,
+                                            )
+                                            .removeAttachment(file),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: context.mainDarkShadeColor
+                                                .withValues(alpha: 0.5),
+                                          ),
+                                          padding: EdgeInsets.all(
+                                            2.rf(context),
+                                          ),
+                                          child: Icon(
+                                            CupertinoIcons.delete,
+                                            size: 16.rf(context),
+                                            color: context.primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                          CustomTextFormField(
+                            onHold: () async {
+                              if (isListening) {
+                                _speechService.stopListening();
+                                ref.read(voiceListenProvider.notifier).state =
+                                    false;
+                                if (spokenText.isNotEmpty) {
+                                  _sendMessage(ref, spokenText);
+                                }
+                              } else {
+                                _speechService.startListening((text) {
+                                  ref
+                                          .read(speakingTestProvider.notifier)
+                                          .state =
+                                      text;
+                                });
+                                ref.read(voiceListenProvider.notifier).state =
+                                    true;
+                              }
+                            },
+                            prefixOntap: () {
+                              ref.read(chatAttachmentProvider.notifier).state =
+                                  !attachmentState;
+                            },
+                            fillcolor: context.dynamicColor4,
+                            obscure: false,
+                            icon: CupertinoIcons.add_circled,
+                            hintText: "Ask Me Anything",
+                            controller: inputController,
+                            // loadingOnsomething: loadingAiMsg,
+                            iconColor: context.subTextColor,
+                            isWantsuffix: true,
+                            maxline: null,
+                            textInputAction: TextInputAction.newline,
+                            onTap: () async {
+                              try {
+                                if (asyncChats.value!.isNotEmpty
+                                //         && asyncChats.value!.length >= 1
+                                ) {}
+
+                                final text = inputController.text.trim();
+                                if (text.isEmpty) return;
+                                await _sendMessage(
+                                  ref,
+                                  text,
+                                  files: files
+                                      .map((e) => File(e.path))
+                                      .toList(),
+                                );
+                                inputController.clear();
+                              } catch (e) {
+                                log('$e');
+                              }
+                            },
+                            suffixIcon: CupertinoIcons.paperplane_fill,
+                          ),
+                        ],
+                      );
                     },
-                    suffixIcon: CupertinoIcons.paperplane_fill,
+                    error: (e, _) => Column(
+                      children: [
+                        Uiutils.getTextWidget(context, "Error: $e", maxline: 4),
+                        CustomTextFormField(
+                          onHold: () async {
+                            if (isListening) {
+                              _speechService.stopListening();
+                              ref.read(voiceListenProvider.notifier).state =
+                                  false;
+                              if (spokenText.isNotEmpty) {
+                                _sendMessage(ref, spokenText);
+                              }
+                            } else {
+                              _speechService.startListening((text) {
+                                ref.read(speakingTestProvider.notifier).state =
+                                    text;
+                              });
+                              ref.read(voiceListenProvider.notifier).state =
+                                  true;
+                            }
+                          },
+                          prefixOntap: () {
+                            ref.read(chatAttachmentProvider.notifier).state =
+                                !attachmentState;
+                          },
+                          fillcolor: context.dynamicColor4,
+                          obscure: false,
+                          icon: CupertinoIcons.add_circled,
+                          hintText: "Ask Me Anything",
+                          controller: inputController,
+                          // loadingOnsomething: loadingAiMsg,
+                          iconColor: context.subTextColor,
+                          isWantsuffix: true,
+                          maxline: null,
+                          textInputAction: TextInputAction.newline,
+                          onTap: () async {
+                            try {
+                              if (asyncChats.value!.isNotEmpty
+                              //         && asyncChats.value!.length >= 1
+                              ) {}
+
+                              final text = inputController.text.trim();
+                              if (text.isEmpty) return;
+                              await _sendMessage(ref, text);
+                              inputController.clear();
+                            } catch (e) {
+                              log('$e');
+                            }
+                          },
+                          suffixIcon: CupertinoIcons.paperplane_fill,
+                        ),
+                      ],
+                    ),
+                    loading: () => Column(
+                      children: [
+                        const CupertinoActivityIndicator(),
+                        CustomTextFormField(
+                          onHold: () async {
+                            if (isListening) {
+                              _speechService.stopListening();
+                              ref.read(voiceListenProvider.notifier).state =
+                                  false;
+                              if (spokenText.isNotEmpty) {
+                                _sendMessage(ref, spokenText);
+                              }
+                            } else {
+                              _speechService.startListening((text) {
+                                ref.read(speakingTestProvider.notifier).state =
+                                    text;
+                              });
+                              ref.read(voiceListenProvider.notifier).state =
+                                  true;
+                            }
+                          },
+                          prefixOntap: () {
+                            ref.read(chatAttachmentProvider.notifier).state =
+                                !attachmentState;
+                          },
+                          fillcolor: context.dynamicColor4,
+                          obscure: false,
+                          icon: CupertinoIcons.add_circled,
+                          hintText: "Ask Me Anything",
+                          controller: inputController,
+                          // loadingOnsomething: loadingAiMsg,
+                          iconColor: context.subTextColor,
+                          isWantsuffix: true,
+                          maxline: null,
+                          textInputAction: TextInputAction.newline,
+                          onTap: () async {
+                            try {
+                              if (asyncChats.value!.isNotEmpty
+                              //         && asyncChats.value!.length >= 1
+                              ) {}
+
+                              final text = inputController.text.trim();
+                              if (text.isEmpty) return;
+                              await _sendMessage(ref, text);
+                              inputController.clear();
+                            } catch (e) {
+                              log('$e');
+                            }
+                          },
+                          suffixIcon: CupertinoIcons.paperplane_fill,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -273,9 +464,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
                         GestureDetector(
                           onTap: () {
-                            ref
-                                .read(supabaseChatSetNotifierProvider.notifier)
-                                .clearAllChat();
+                            try {
+                              ref
+                                  .read(
+                                    supabaseChatSetNotifierProvider.notifier,
+                                  )
+                                  .clearAllChat();
+                            } catch (e) {
+                              log('$e');
+                            }
                             // ref
                             //     .read(chatListNotifierProvider.notifier)
                             //     .clearChats();
@@ -333,9 +530,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                                   .notifier,
                                             )
                                             .fetchChats(item.chatSetId);
-                                        debugPrint('${item.chatSetId}');
+                                        debugPrint(item.chatSetId);
 
-                                        debugPrint("${chats} is added to it");
+                                        debugPrint("$chats is added to it");
                                         for (Chatbubble chat in chats) {
                                           debugPrint(
                                             "${chat.msgtype} is added to it",
@@ -439,7 +636,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     width: 250, // SMALL BOX WIDTH
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: context.mainLightShadeColor.withValues(alpha: .4), // INSIDE BOX COLOR
+                      color: context.mainLightShadeColor.withValues(
+                        alpha: .4,
+                      ), // INSIDE BOX COLOR
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -462,58 +661,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
               ),
             ),
-            // AnimatedPositioned(
-            //   duration: const Duration(milliseconds: 300),
-            //   curve: Curves.easeInOut,
-            //   left: 0,
-            //   right: 0,
-            //   top: loadingProgressor ? 0 : -MediaQuery.of(context).size.height,
-            //   bottom: loadingProgressor
-            //       ? 0
-            //       : MediaQuery.of(context).size.height, // ADDED
-            //   child: Container(
-            //     color: context.mainDarkShadeColor.withValues(alpha: .4),
-            //     child: Center(
-            //       // CENTER EVERYTHING
-            //       child: Column(
-            //         mainAxisSize: MainAxisSize.min,
-            //         children: [
-            //           Uiutils.getLottie(LottieConstant.chatScreen,height: 45.rf(context)),
-            //           Uiutils.getTextWidget(
-            //             context,
-            //             "Chat Data Is Fetching Wait Few Seconds",
-            //           ),
-            //           const SizedBox(height: 16),
-            //           const CupertinoActivityIndicator(),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // AnimatedPositioned(
-            //   duration: const Duration(milliseconds: 300),
-            //   curve: Curves.easeInOut,
-            //   top: 0,
-            //   bottom: 0,
-            //   left: loadingProgressor ? 0 : -500.rw(context),
-            //   child: Container(
-            //     color: context.mainDarkShadeColor.withValues(alpha: .4),
-            //     width: loadingProgressor ? 0 : 500.rw(context),
-            //     child: Column(
-            //       mainAxisAlignment:MainAxisAlignment.center,
-            //       children: [
-            //         Uiutils.getLottie(LottieConstant.chatScreen),
-            //         Uiutils.getTextWidget(
-            //           context,
-            //           "Chat Data Is Fetching Wait Few Seconds",
-            //         ),
-            //         const CupertinoActivityIndicator(),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-
-            ///attachment
+            //!            ///attachment
             Positioned(
               left: 35.rw(context),
               bottom: 80.rh(context),
@@ -545,15 +693,45 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                 index,
                               ) {
                                 final item = attachmentList[index];
-                                return Row(
-                                  spacing: 10.rh(context),
-                                  children: [
-                                    Icon(
-                                      item.icon,
-                                      color: context.primaryColor,
-                                    ),
-                                    Uiutils.getTextWidget(context, item.name),
-                                  ],
+                                return GestureDetector(
+                                  onTap: () {
+                                    index == 0
+                                        ? ref
+                                              .read(
+                                                attachementNotifierProvider
+                                                    .notifier,
+                                              )
+                                              .cameraImage()
+                                        : index == 1
+                                        ? ref
+                                              .read(
+                                                attachementNotifierProvider
+                                                    .notifier,
+                                              )
+                                              .pickMultiImageGallery()
+                                        : ref
+                                              .read(
+                                                attachementNotifierProvider
+                                                    .notifier,
+                                              )
+                                              .pickDocument();
+                                    ref
+                                            .read(
+                                              chatAttachmentProvider.notifier,
+                                            )
+                                            .state =
+                                        false;
+                                  },
+                                  child: Row(
+                                    spacing: 10.rh(context),
+                                    children: [
+                                      Icon(
+                                        item.icon,
+                                        color: context.primaryColor,
+                                      ),
+                                      Uiutils.getTextWidget(context, item.name),
+                                    ],
+                                  ),
                                 );
                               }),
                             ),
@@ -572,13 +750,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Future<void> _sendMessage(
     WidgetRef ref,
     String text, {
-    File? imageFile,
-    File? documentFile,
+    List<File>? files,
   }) async {
     final chat = Chatbubble(
       chatSetID: LocalStorageService.getString(LocalServiceKeys.CHAT_SET_ID),
       message: text,
       time: DateTime.now().toFormattedString(),
+      attachment:
+          files?.map((file) {
+            final mimeType = Validators.fileTypeForLocal(file);
+            return Attachment(
+              path: file.path,
+              type: mimeType,
+              name: file.path.split('/').first,
+            );
+          }).toList() ??
+          [],
       // attachment: [
       //   // AttachmentFile(
       //   //   path: imageFile!.path,
@@ -594,6 +781,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       await ref.read(chatListNotifierProvider.notifier).addChat(chat);
       await ref.read(supabaseChatNotifierProvider.notifier).addChats(chat);
       // 1️⃣ Add user's message immediately
+      ref.read(attachementNotifierProvider.notifier).clear();
       inputController.clear();
 
       // 2️⃣ Show loading state for AI reply
@@ -604,8 +792,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           .read(aiMessgeNotifierProvider.notifier)
           .getAiReply(
             data: chat.message,
-            documentFile: documentFile,
-            imageFile: imageFile,
+            files: chat.attachment!.isNotEmpty
+                ? chat.attachment!.map((e) => File(e.path)).toList()
+                : null,
           );
 
       // 4️⃣ Stop loading once AI reply is done

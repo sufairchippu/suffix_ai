@@ -65,8 +65,7 @@ class AiDataSource {
 
   Future<Content?> getAiResponse({
     required String userAsking,
-    File? imageFile,
-    File? documentFile,
+    List<File>? files,
   }) async {
     try {
       ///here fetch the sqlite data and store in the>>>>>>>>>>>>>>>> conversationHistory
@@ -76,25 +75,27 @@ class AiDataSource {
         {"text": userAsking},
       ];
 
-      if (imageFile != null) {
-        final mimeType = _getMimeType(imageFile.path);
-        userParts.add({
-          "inline_data": {
-            "mime_type": mimeType,
-            "data": base64Encode(await imageFile.readAsBytes()),
-          },
-        });
+      if (files != null) {
+        for (File file in files) {
+          final mimeType = _getMimeType(file.path);
+          userParts.add({
+            "inline_data": {
+              "mime_type": mimeType,
+              "data": base64Encode(await file.readAsBytes()),
+            },
+          });
+        }
       }
 
-      if (documentFile != null) {
-        final mimeType = _getMimeType(documentFile.path);
-        userParts.add({
-          "inline_data": {
-            "mime_type": mimeType,
-            "data": base64Encode(await documentFile.readAsBytes()),
-          },
-        });
-      }
+      // if (documentFile != null) {
+      //   final mimeType = _getMimeType(documentFile.path);
+      //   userParts.add({
+      //     "inline_data": {
+      //       "mime_type": mimeType,
+      //       "data": base64Encode(await documentFile.readAsBytes()),
+      //     },
+      //   });
+      // }
 
       // ✅ Add the user message to chat history
       conversationHistory.add({"role": "user", "parts": userParts});

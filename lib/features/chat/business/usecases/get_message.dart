@@ -11,13 +11,8 @@ class GetMessage {
   GetMessage(this.repo);
   Future<Either<Failure, Content>> call({
     required String data,
-    File? imageFile,
-    File? documentFile,
+    List<File>? files,
   }) {
-    return repo.getMessage(
-      data: data,
-      documentFile: documentFile,
-      imageFile: imageFile,
-    );
+    return repo.getMessage(data: data, files: files);
   }
 }
