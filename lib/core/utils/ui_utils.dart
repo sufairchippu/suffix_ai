@@ -79,6 +79,7 @@ class Uiutils {
     double? fs,
     FontWeight? fw,
     TextStyleType? textStyle,
+    TextWidthBasis? textWidthBasis,
   }) {
     return Text(
       title,
@@ -90,6 +91,7 @@ class Uiutils {
         context,
         textStyle ?? TextStyleType.mediumRegular,
       ),
+      textWidthBasis: textWidthBasis, //TextWidthBasis.parent
       maxLines: maxline,
       overflow: overFlow ?? TextOverflow.ellipsis,
     );
@@ -254,8 +256,6 @@ class Uiutils {
       },
     );
   }
-
-
 }
 
 enum Diffculty { easy, medium, hard }

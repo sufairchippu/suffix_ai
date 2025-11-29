@@ -34,22 +34,29 @@ class ChatBubbleModel extends Chatbubble {
     'message': message,
     'time': time,
     'msgtype': msgtype.name,
-    'attachment': attachment != null
-        ? jsonEncode(attachment!.map((e) => e.toMap()).toList())
-        : null,
+    'attachment': attachment == null
+        ? null
+        : jsonEncode(attachment!.map((e) => e.toMap()).toList()),
   };
 
-  factory ChatBubbleModel.fromMap(Map<String, dynamic> map) => ChatBubbleModel(
-    id: map['id'],
-    message: map['message'],
-    time: map['time'],
-    msgtype: map['msgtype'] == 'ai' ? MessegeOwner.ai : MessegeOwner.user,
-    attachment: map['attachment'] != null
-        ? (jsonDecode(map['attachment']) as List)
-              .map((e) => Attachment.fromMap(e))
-              .toList()
-        : null,
+  factory ChatBubbleModel.fromMap(Map<String, dynamic> map) {
+    final rawAttachment = map['attachment'];
+    List<Attachment>? parsedAttachments;
 
-    chatSetID: map['chat_set_id'],
-  );
+    if (rawAttachment != null &&
+        rawAttachment is String &&
+        rawAttachment.isNotEmpty) {
+      final decoded = jsonDecode(rawAttachment) as List;
+      parsedAttachments = decoded.map((e) => Attachment.fromMap(e)).toList();
+    }
+    return ChatBubbleModel(
+      id: map['id'],
+      message: map['message'],
+      time: map['time'],
+      msgtype: map['msgtype'] == 'ai' ? MessegeOwner.ai : MessegeOwner.user,
+      attachment: parsedAttachments,
+
+      chatSetID: map['chat_set_id'],
+    );
+  }
 }

@@ -43,6 +43,8 @@ class RemoteDataSource {
     debugPrint("chatSetID      = $chatSetID");
     debugPrint("Supabase response: $respo");
     final chat = respo.map((e) => ChatBubbleModel.fromMap(e)).toList();
+
+    log('${chat}');
     return chat;
   }
 

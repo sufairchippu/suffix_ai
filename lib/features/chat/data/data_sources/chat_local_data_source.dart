@@ -49,45 +49,67 @@ class ChatLocalDataSource {
   // ✅ Insert
   Future<int> insertChat(ChatBubbleModel chat) async {
     log('message insertinnggg>>>>>>>>>>>>>>.');
-    final db = await database;
-    return await db.insert(
-      _tableName,
-      chat.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      final db = await database;
+      return await db.insert(
+        _tableName,
+        chat.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      log('error to add chat $e');
+      return 0;
+    }
   }
 
   // ✅ Get all
   Future<List<ChatBubbleModel>> getAllChats() async {
-    final db = await database;
-    final result = await db.query(_tableName, orderBy: "time ASC");
-    return result.map((map) => ChatBubbleModel.fromMap(map)).toList();
+    try {
+      final db = await database;
+      final result = await db.query(_tableName, orderBy: "time ASC");
+      return result.map((map) => ChatBubbleModel.fromMap(map)).toList();
+    } catch (e) {
+      log('error to get all chats :$e');
+
+      return [];
+    }
   }
 
   Future<ChatBubbleModel?> getSinglChat(int id) async {
-    final db = await database;
-    final result = await db.query(
-      _tableName,
-      where: "id = ?",
-      whereArgs: [id],
-      limit: 1,
-    );
+    try {
+      final db = await database;
+      final result = await db.query(
+        _tableName,
+        where: "id = ?",
+        whereArgs: [id],
+        limit: 1,
+      );
 
-    if (result.isNotEmpty) {
-      return ChatBubbleModel.fromMap(result.first);
+      if (result.isNotEmpty) {
+        return ChatBubbleModel.fromMap(result.first);
+      }
+      return null;
+    } catch (e) {
+      log('Error ');
+      // return ;
     }
     return null;
   }
 
   // ✅ Update
   Future<int> updateChat(ChatBubbleModel chat) async {
-    final db = await database;
-    return await db.update(
-      _tableName,
-      chat.toMap(),
-      where: "id = ?",
-      whereArgs: [chat.id],
-    );
+    try {
+      final db = await database;
+      return await db.update(
+        _tableName,
+        chat.toMap(),
+        where: "id = ?",
+        whereArgs: [chat.id],
+      );
+    } catch (e) {
+      log('Error');
+      return 0;
+    }
   }
 
   // ✅ Delete

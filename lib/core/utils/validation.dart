@@ -145,11 +145,24 @@ class Validators {
 
   static String fileType(XFile file) {
     final ext = file.name.toLowerCase();
+
     if (ext.endsWith('.jpg') ||
         ext.endsWith('.jpeg') ||
         ext.endsWith('.png') ||
         ext.endsWith('.gif')) {
       return "image";
+    } else if (ext.endsWith('.mp4') ||
+        ext.endsWith('.mov') ||
+        ext.endsWith('.avi') ||
+        ext.endsWith('.mkv') ||
+        ext.endsWith('.webm')) {
+      return "video";
+    } else if (ext.endsWith('.mp3') ||
+        ext.endsWith('.wav') ||
+        ext.endsWith('.aac') ||
+        ext.endsWith('.m4a') ||
+        ext.endsWith('.ogg')) {
+      return "audio";
     } else if (ext.endsWith('.pdf')) {
       return "pdf";
     } else if (ext.endsWith('.docx')) {
@@ -159,6 +172,7 @@ class Validators {
     } else if (ext.endsWith('.zip')) {
       return "zip";
     }
+
     return "other";
   }
 
@@ -166,14 +180,25 @@ class Validators {
     switch (type) {
       case "image":
         return CupertinoIcons.photo;
+
+      case "video":
+        return CupertinoIcons.videocam_circle;
+
+      case "audio":
+        return CupertinoIcons.music_note_2; // 🎧 audio icon
+
       case "pdf":
         return CupertinoIcons.doc_on_clipboard_fill;
+
       case "doc":
         return CupertinoIcons.doc_text_fill;
+
       case "excel":
         return CupertinoIcons.table;
+
       case "zip":
         return CupertinoIcons.archivebox_fill;
+
       default:
         return CupertinoIcons.doc;
     }
@@ -187,6 +212,9 @@ class Validators {
 
     // VIDEO
     if (_videoExt.any(name.endsWith)) return "video";
+
+    // AUDIO
+    if (_audioExt.any(name.endsWith)) return "audio";
 
     // PDF
     if (name.endsWith('.pdf')) return "pdf";
@@ -207,6 +235,8 @@ class Validators {
   static const _imageExt = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
 
   static const _videoExt = ['.mp4', '.mov', '.mkv', '.avi', '.flv', '.wmv'];
+
+  static const _audioExt = ['.mp3', '.wav', '.aac', '.m4a', '.ogg', '.flac'];
 
   static const _docExt = ['.doc', '.docx', '.txt', '.rtf', '.ppt', '.pptx'];
 

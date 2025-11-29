@@ -16,6 +16,7 @@ class AttachmentNotifier extends StateNotifier<AsyncValue<List<XFile>>> {
   static const int maxximumattamentCount = 3;
   static const int maxfilesizeInMB = 5;
   static const int maxfilesizeInByte = maxfilesizeInMB + 1024 * 1024;
+  bool _isPicking = false;
 
   bool _validatFile(XFile file) {
     final filesize = File(file.path).lengthSync();
@@ -41,6 +42,8 @@ class AttachmentNotifier extends StateNotifier<AsyncValue<List<XFile>>> {
   }
 
   Future<void> pickMultiImageGallery() async {
+    if (_isPicking) return; // prevent double trigger
+    _isPicking = true;
     try {
       final List<XFile>? medias = await _picker.pickMultiImage();
       if (medias != null && medias.isNotEmpty) {
@@ -48,10 +51,14 @@ class AttachmentNotifier extends StateNotifier<AsyncValue<List<XFile>>> {
       }
     } catch (e, st) {
       state = AsyncValue.error(e, st);
+    } finally {
+      _isPicking = false;
     }
   }
 
   Future<void> cameraImage() async {
+    if (_isPicking) return; // prevent double trigger
+    _isPicking = true;
     try {
       final image = await _picker.pickImage(source: ImageSource.camera);
       if (image != null) {
@@ -59,10 +66,14 @@ class AttachmentNotifier extends StateNotifier<AsyncValue<List<XFile>>> {
       }
     } catch (e, st) {
       state = AsyncValue.error(e, st);
+    } finally {
+      _isPicking = false;
     }
   }
 
   Future<void> pickDocument() async {
+    if (_isPicking) return; // prevent double trigger
+    _isPicking = true;
     try {
       final result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
@@ -78,6 +89,8 @@ class AttachmentNotifier extends StateNotifier<AsyncValue<List<XFile>>> {
       }
     } catch (e, st) {
       state = AsyncValue.error(e, st);
+    } finally {
+      _isPicking = false;
     }
   }
 

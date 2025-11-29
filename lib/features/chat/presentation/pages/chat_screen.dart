@@ -143,6 +143,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   // --- Chat List ---
                   asyncChats.when(
                     data: (chats) {
+                      log('${chats.length}');
                       final chatList = chats.reversed.toList();
                       return _buildChatList(chatList, ref, context);
                     },
@@ -762,7 +763,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             return Attachment(
               path: file.path,
               type: mimeType,
-              name: file.path.split('/').first,
+              name: file.path.split('/').last,
             );
           }).toList() ??
           [],
