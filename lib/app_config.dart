@@ -12,4 +12,5 @@ class AppConfig {
   static String get superbasePubishKey =>
       dotenv.env['SUPERBASE_PUBLISHABLE'] ?? '';
   static String get aiApiKey => dotenv.env[ApiUrl.kAIAPI] ?? '';
+  static String get imaginAPIToken => dotenv.env[ApiUrl.kIMAGINEAPI]??'';
 }

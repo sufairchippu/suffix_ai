@@ -11,6 +11,8 @@ class SvgConstants {
   static const String faceBokk = '${basePath}facebook.svg';
 
   static const String profilUndefined = '${basePath}profile.svg';
-  static const String save = '${basePath}activity.svg';
+  static const String acitvity = '${basePath}activity.svg';
+  static const String save = '${basePath}save.svg';
+  
 
 }

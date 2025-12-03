@@ -1,4 +1,5 @@
 import 'package:clean_architutre_learn/core/constants/core_constants.dart';
+import 'package:clean_architutre_learn/core/constants/svg_constants.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/carousal/custom_carousal_widget.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/carousal/providers.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
@@ -37,10 +38,46 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
             Align(
               alignment: AlignmentGeometry.center,
               child: Padding(
-                padding: EdgeInsets.only(top: 220.rh(context)),
+                padding: EdgeInsets.only(
+                  top: 50.rh(context),
+                  left: 10.rw(context),
+                  right: 10.rw(context),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      spacing: 5.rw(context),
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: Icon(
+                            CupertinoIcons.back,
+                            color: context.mainDarkShadeColor,
+                          ),
+                        ),
+                        Spacer(),
+                        Uiutils.getTextWidget(
+                          context,
+                          'Hostory',
+                          textStyle: TextStyleType.mediumSemiBold,
+                        ),
+                        Uiutils.getSvg(
+                          SvgConstants.save,
+                          height: 18.rh(context),
+                          width: 15.rw(context),
+                          // color: ColorFilter.mode(
+                          //   context.green,
+                          //   BlendMode.modulate,
+                          // ),
+                        ),
+                        SizedBox(width: 10.rw(context)),
+                      ],
+                    ),
+                    SizedBox(height: 100.rh(context)),
                     Uiutils.getTextWidget(
                       context,
                       'Swipe towaord needed',
@@ -78,8 +115,9 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                                       context,
                                       eValue.description,
                                       textStyle: TextStyleType.mediumSemiBold,
+                                      maxline: 4,
                                       fs: 25.rf(context),
-                                      overFlow: TextOverflow.visible,
+                                      // overFlow: TextOverflow.,
                                     ),
                                     const Spacer(),
                                     const Row(
@@ -93,7 +131,7 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                                 onTap: () {
                                   context.pushNamed(
                                     RouteNames.nanoBananaDisplay,
-                                    pathParameters: {'specilization':'$index' },
+                                    pathParameters: {'specilization': '$index'},
                                   );
                                 },
                               );

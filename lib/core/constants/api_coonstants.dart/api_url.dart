@@ -6,4 +6,6 @@ class ApiUrl {
   static const String kSUPERBASEANON = 'SUPERBASE_ANON';
   static const String kSUPERBASEPUBLISHABLE = 'SUPERBASE_PUBLISHABLE';
   static const String kAIAPI = 'AI_API';
+  static const String kIMAGINEAPI = 'IMAGINE_TOKEN';
+
 }

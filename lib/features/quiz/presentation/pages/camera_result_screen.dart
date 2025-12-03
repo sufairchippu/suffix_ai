@@ -99,7 +99,7 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                                           image: file != null
                                               ? FileImage(File(file.path))
                                               : const AssetImage(
-                                                      'assets/images/no_imagee.avif',
+                                                       'assets/images/no_imagee.avif',
                                                     )
                                                     as ImageProvider,
                                           fit: BoxFit.cover,
@@ -135,7 +135,7 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                                           ref
                                               .read(
                                                 imagePickerNotifierProvider
-                                                    .notifier,
+                                                   .notifier,
                                               )
                                               .clear();
                                         },

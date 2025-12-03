@@ -80,9 +80,11 @@ class Uiutils {
     FontWeight? fw,
     TextStyleType? textStyle,
     TextWidthBasis? textWidthBasis,
+    TextAlign? textAlign,
   }) {
     return Text(
       title,
+      textAlign: textAlign,
       // textWidthBasis: TextWidthBasis.parent,
       style: AppText.getStyle(
         color: color,

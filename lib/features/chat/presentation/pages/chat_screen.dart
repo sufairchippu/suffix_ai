@@ -415,6 +415,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     // height: double.infinity,
                     width: 350.rw(context),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 30.rh(context)),
