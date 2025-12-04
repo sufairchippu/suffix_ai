@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:clean_architutre_learn/core/constants/app_constants.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
@@ -66,7 +65,8 @@ class SupaBaseChatSetNotifier extends AsyncNotifier<List<ChatSetModel>> {
     final result = await _getChatSet();
     return result.fold((failure) => [], (chats) => chats);
   }
-    void _startRealtimeListener() {
+
+  void _startRealtimeListener() {
     _channel = Supabase.instance.client.channel('chat_messages_channel')
       ..onPostgresChanges(
         event: PostgresChangeEvent.all,
@@ -78,20 +78,20 @@ class SupaBaseChatSetNotifier extends AsyncNotifier<List<ChatSetModel>> {
       )
       ..subscribe();
   }
-//   void _startRealtimeListener() {
-//   final channel = Supabase.instance.client.channel('chat_messages_channel')
-//     .onPostgresChanges(
-//       event: PostgresChangeEvent.all,
-//       schema: 'public',
-//       table: 'chat_messages',
-//       callback: (payload) {
-//         fetchAndUpdate(); // refresh RPC result
-//       },
-//     )
-//     .subscribe();
+  //   void _startRealtimeListener() {
+  //   final channel = Supabase.instance.client.channel('chat_messages_channel')
+  //     .onPostgresChanges(
+  //       event: PostgresChangeEvent.all,
+  //       schema: 'public',
+  //       table: 'chat_messages',
+  //       callback: (payload) {
+  //         fetchAndUpdate(); // refresh RPC result
+  //       },
+  //     )
+  //     .subscribe();
 
-//   _subscription = channel.stream.listen((_) {});
-// }
+  //   _subscription = channel.stream.listen((_) {});
+  // }
 
   // void _startRealtimeListener() {
   //   // Avoid creating multiple channels
@@ -134,12 +134,11 @@ class SupaBaseChatSetNotifier extends AsyncNotifier<List<ChatSetModel>> {
     await _deleteChat(chatSetID);
     await _refreshChatSet();
     // state = await AsyncValue.guard(() async => await fetchChatSets());
-
   }
 
   Future<void> clearAllChat() async {
     await _clearALlChats();
-     await _refreshChatSet();
+    await _refreshChatSet();
     // state = await AsyncValue.guard(() async => await fetchChatSets());
   }
 }

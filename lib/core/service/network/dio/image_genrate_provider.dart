@@ -10,7 +10,7 @@ final dioClientImagineProvider = Provider<DioClientGemini>((ref) {
   return DioClientGemini(dio);
 });
 final dioImagineNotifier = Provider<Dio>((ref) {
-  final dio = Dio(BaseOptions(baseUrl: 'Bearer ${AppConfig.imaginAPIToken}'));
+  final dio = Dio(BaseOptions(baseUrl: AppConfig.imaginAIKey));
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
