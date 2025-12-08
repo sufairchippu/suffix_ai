@@ -8,7 +8,7 @@ import 'package:dartz/dartz.dart';
 class ImageToImageUscase {
   final ImageGenrationRepo repo;
   ImageToImageUscase(this.repo);
- Future<Either<Failure,Uint8List?>> call(
+ Future<Either<Failure,Uint8List>> call(
     String prompt,
     String imagePath,
 

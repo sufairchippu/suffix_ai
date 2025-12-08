@@ -1,10 +1,15 @@
+import 'dart:developer';
+import 'dart:typed_data';
+
 import 'package:clean_architutre_learn/core/error/failures.dart';
+import 'package:clean_architutre_learn/features/banana/bussiness/entities/image_entity.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_bubble.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_set_model.dart';
 import 'package:clean_architutre_learn/features/chat/business/repo/supabase_repository.dart';
 import 'package:clean_architutre_learn/features/chat/data/data_sources/remote_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/chat_bubble_model.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
 
 class SupabaseRepoImpl extends SupabaseRepository {
   final RemoteDataSource supaDataSource;
@@ -50,6 +55,27 @@ class SupabaseRepoImpl extends SupabaseRepository {
       return right(chatset);
     } catch (e) {
       return left(SomeSpecificError(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<UserImageEntity>>> getImages() async {
+    try {
+      final imagess = await supaDataSource.getAIImages();
+      final imageEntity = imagess.map((e) => e.toEntity()).toList();
+      return right(imageEntity);
+    } catch (e) {
+      return left(SomeSpecificError(e.toString()));
+    }
+  }
+
+  @override
+  Future<void> addImmage(Uint8List imageByte) async {
+    try {
+      await supaDataSource.addAiImage(imageByte);
+    } catch (e) {
+      debugPrint(e.toString());
+      log(e.toString());
     }
   }
 }

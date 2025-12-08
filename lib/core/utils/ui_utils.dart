@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
+import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
@@ -162,6 +164,52 @@ class Uiutils {
     } else {
       return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
     }
+  }
+
+  static void cupertinoSnackBar(
+    BuildContext context,
+    String message,
+    bool isRed,
+  ) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: 40.rh(context),
+        left: 20.rw(context),
+        right: 20.rw(context),
+        child: CupertinoPopupSurface(
+          isSurfacePainted: true,
+          child: AnimatedOpacity(
+            opacity: 1.0,
+            duration: const Duration(milliseconds: 250),
+            child: Container(
+              padding: EdgeInsets.all(14.rf(context)),
+              decoration: BoxDecoration(
+                color: isRed ? context.red : context.greyFirstColor,
+                borderRadius: BorderRadius.circular(12.rf(context)),
+              ),
+              child: getTextWidget(
+                context,
+                message,
+                textAlign: TextAlign.center,
+                // style:  TextStyle(
+                //   color: CupertinoColors.label,
+                //   fontSize: 15.rf(context),
+                // ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Insert snackbar into overlay
+    overlay.insert(overlayEntry);
+
+    // Auto remove after delay
+    Future.delayed(const Duration(seconds: 2)).then((_) {
+      overlayEntry.remove();
+    });
   }
 
   static void showAlert(

@@ -45,8 +45,8 @@ class AttachmentNotifier extends StateNotifier<AsyncValue<List<XFile>>> {
     if (_isPicking) return; // prevent double trigger
     _isPicking = true;
     try {
-      final List<XFile>? medias = await _picker.pickMultiImage();
-      if (medias != null && medias.isNotEmpty) {
+      final List<XFile> medias = await _picker.pickMultiImage();
+      if (medias.isNotEmpty) {
         _addMedias(medias);
       }
     } catch (e, st) {

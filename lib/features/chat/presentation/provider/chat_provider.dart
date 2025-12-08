@@ -127,7 +127,7 @@ class ChatListNotifier extends AsyncNotifier<List<Chatbubble>> {
   late final GetChats _getChats;
   late final AddChat _addChat;
   late final DeletChat _deleteChat;
-  late final ClearChats _clearChats;
+  late final ClearChats _clearChats; 
 
   @override
   Future<List<Chatbubble>> build() async {

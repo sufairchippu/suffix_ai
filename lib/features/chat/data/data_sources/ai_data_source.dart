@@ -51,14 +51,14 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:clean_architutre_learn/app_config.dart';
-import 'package:clean_architutre_learn/core/service/network/dio/dio_client_gemini.dart';
+import 'package:clean_architutre_learn/core/service/network/dio/dio_client_methods.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_coonstants.dart/api_url.dart';
 import '../model/ai_response_model.dart';
 
 class AiDataSource {
-  final DioClientGemini client;
+  final DioClientMethods client;
   AiDataSource(this.client);
 
   final List<Map<String, dynamic>> conversationHistory = [];

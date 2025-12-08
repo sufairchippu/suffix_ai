@@ -15,10 +15,11 @@ class PureCupertinoDropdown extends ConsumerWidget {
     required this.items,
     this.subHeading,
     this.bottomPadding,
+    this.validator,
     this.topPadding,
     required this.selectedValueProvider,
   });
-
+  final String? Function(String?)? validator;
   final List<String> items;
   final String? subHeading;
   final double? bottomPadding;
@@ -29,56 +30,85 @@ class PureCupertinoDropdown extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedValueProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: topPadding ?? 10.rh(context)),
+    return FormField<String>(
+      builder: (field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: topPadding ?? 10.rh(context)),
 
-        if (subHeading != null) ...[
-          Uiutils.getTextWidget(
-            context,
-            subHeading!,
-            textStyle: TextStyleType.mediumBold,
-            color: context.mainLightShadeColor,
-          ),
-          SizedBox(height: 10.rh(context)),
-        ],
-
-        CustomButtonWIdget(
-          height: 35.rh(context),
-          borderRadius: 10.rh(context),
-          boxshadowColor: context.secondaryColor,
-          bordercolor: context.subTextColor.withValues(alpha: .3),
-          onTap: () => _showSearchablePicker(context, ref),
-          widget: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Uiutils.getTextWidget(context, selected ?? 'Select a choice'),
-              const Icon(CupertinoIcons.chevron_down),
+            if (subHeading != null) ...[
+              Uiutils.getTextWidget(
+                context,
+                subHeading!,
+                textStyle: TextStyleType.mediumBold,
+                color: context.mainLightShadeColor,
+              ),
+              SizedBox(height: 10.rh(context)),
             ],
-          ),
-        ),
 
-        SizedBox(height: bottomPadding ?? 10.rh(context)),
-      ],
+            CustomButtonWIdget(
+              height: 35.rh(context),
+              borderRadius: 10.rh(context),
+              boxshadowColor: context.secondaryColor,
+              bordercolor: field.hasError
+              ? context.red
+              : context.subTextColor.withValues(alpha: .3),
+              onTap: () => _showSearchablePicker(context, ref,field),
+              widget: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Uiutils.getTextWidget(context, selected ?? 'Select a choice'),
+                  const Icon(CupertinoIcons.chevron_down),
+                ],
+              ),
+            ),
+            if (field.hasError)
+              Padding(
+                padding: EdgeInsetsGeometry.only(
+                  left: 4.rw(context),
+                  top: 4.rh(context),
+                ),
+                child: Uiutils.getTextWidget(context, field.errorText!),
+              ),
+            SizedBox(height: bottomPadding ?? 10.rh(context)),
+          ],
+        );
+      },
     );
   }
 
-  void _showSearchablePicker(BuildContext context, WidgetRef ref) {
+  void _showSearchablePicker(
+    BuildContext context,
+    WidgetRef ref,
+    FormFieldState<String> fieldState,
+  ) {
     ref.read(searchQueryProvider.notifier).state = '';
 
     showCupertinoModalPopup(
       context: context,
-      builder: (_) =>
-          _DropdownPopup(items: items, selectedValue: selectedValueProvider),
+      builder: (_) => _DropdownPopup(
+        items: items,
+        selectedValue: selectedValueProvider,
+
+        onSelect: (item) {
+          ref.read(selectedValueProvider.notifier).state = item;
+          fieldState.didChange(item);
+        },
+      ),
     );
   }
 }
 
 // 🔹 Separate widget for popup content
 class _DropdownPopup extends ConsumerWidget {
-  const _DropdownPopup({required this.items, required this.selectedValue});
+  const _DropdownPopup({
+    required this.items,
+    required this.selectedValue,
 
+    required this.onSelect,
+  });
+  final void Function(String) onSelect;
   final List<String> items;
   final StateProvider<String?> selectedValue;
 
@@ -140,6 +170,7 @@ class _DropdownPopup extends ConsumerWidget {
                     return CustomButtonWIdget(
                       onTap: () {
                         ref.read(selectedValue.notifier).state = item;
+                        onSelect(item);
                         Navigator.pop(context);
                       },
                       widget: Row(

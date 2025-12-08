@@ -20,6 +20,10 @@ class ImagePickerNotifier extends StateNotifier<AsyncValue<XFile?>> {
         maxHeight: 2000,
         imageQuality: 85,
       );
+      if (file == null) {
+        state = const AsyncData(null);
+              return; 
+      }
       state = AsyncData(file); // file may be null if user cancelled
     } catch (e, st) {
       state = AsyncError(e, st);

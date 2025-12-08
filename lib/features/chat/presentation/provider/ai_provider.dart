@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
-import 'package:clean_architutre_learn/core/service/network/dio/dio_client_gemini.dart';
+import 'package:clean_architutre_learn/core/service/network/dio/dio_client_methods.dart';
 import 'package:clean_architutre_learn/core/service/network/dio/gemini_provider.dart';
 import 'package:clean_architutre_learn/core/utils/extenstion.dart';
 
@@ -97,7 +97,7 @@ final aireposProvider = Provider<AiResponceRepository>((ref) {
 
 final aiDataSourceProvider = Provider<AiDataSource>((ref) {
   final dio = ref.read(dioProviderGemini);
-  final client = DioClientGemini(dio);
+  final client = DioClientMethods(dio);
   return AiDataSource(client);
 });
 final loadingmsgProvider = StateProvider<bool>((ref) {

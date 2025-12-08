@@ -1,12 +1,12 @@
 import 'package:clean_architutre_learn/app_config.dart';
-import 'package:clean_architutre_learn/core/service/network/dio/dio_client_gemini.dart';
+import 'package:clean_architutre_learn/core/service/network/dio/dio_client_methods.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
-final dioClientProviderGemini = Provider<DioClientGemini>((ref) {
+final dioClientProviderGemini = Provider<DioClientMethods>((ref) {
   final dio = ref.watch(dioProviderGemini);
-  return DioClientGemini(dio);
+  return DioClientMethods(dio);
 });
 
 final dioProviderGemini = Provider<Dio>((ref) {

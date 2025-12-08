@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:clean_architutre_learn/core/constants/app_constants.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
+import 'package:clean_architutre_learn/features/banana/data/model/image_model.dart';
 import 'package:clean_architutre_learn/features/chat/business/entities/chat_set_model.dart';
 import 'package:clean_architutre_learn/features/chat/data/model/chat_bubble_model.dart';
 import 'package:flutter/foundation.dart';
@@ -44,7 +45,7 @@ class RemoteDataSource {
     debugPrint("Supabase response: $respo");
     final chat = respo.map((e) => ChatBubbleModel.fromMap(e)).toList();
 
-    log('${chat}');
+    log('$chat');
     return chat;
   }
 
@@ -72,4 +73,26 @@ class RemoteDataSource {
   }
 
   // get wholechatset
+
+  Future<List<UserImageModel>> getAIImages() async {
+    final respo = await supabase
+        .from(AppConstants.imagesTable)
+        .select()
+        .eq('user_id', user.id)
+        .order('time', ascending: true);
+    final images = respo.map((e) => UserImageModel.fromMap(e)).toList();
+    log('images $images>>>>>>>>>>>>>>>>>>>');
+    return images;
+  }
+
+  Future<void> addAiImage(Uint8List imgeByte) async {
+    final imaeData = UserImageModel(
+      // id: Random().toString(),
+      userId: user.id,
+      time: DateTime.now(),
+      bytesData: imgeByte,
+      name: '${DateTime.now().toIso8601String()}/image',
+    ).toMap();
+    await supabase.from(AppConstants.imagesTable).insert(imaeData);
+  }
 }

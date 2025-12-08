@@ -9,7 +9,7 @@ import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.d
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/custom_textform_field.dart';
-import 'package:clean_architutre_learn/features/profile/presentation/provider/profile_provider.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/provider/home_screen_provider.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key,});
+  const ProfileScreen({super.key});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -99,7 +99,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   CupertinoActionSheetAction(
                     onPressed: () {
                       ref
-                          .read(profileImageNotifierProvider.notifier)
+                          .read(imagePickerNotifierProvider.notifier)
                           .pick(ImageSource.camera);
                       context.pop();
                     },
@@ -112,7 +112,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   CupertinoActionSheetAction(
                     onPressed: () {
                       ref
-                          .read(profileImageNotifierProvider.notifier)
+                          .read(imagePickerNotifierProvider.notifier)
                           .pick(ImageSource.gallery);
                       context.pop();
                     },
@@ -133,7 +133,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             },
             child: Consumer(
               builder: (context, ref, child) {
-                final imageState = ref.watch(profileImageNotifierProvider);
+                final imageState = ref.watch(imagePickerNotifierProvider);
                 return Stack(
                   children: [
                     imageState.when(

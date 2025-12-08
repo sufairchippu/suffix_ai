@@ -52,7 +52,7 @@ class SupaBaseChatSetNotifier extends AsyncNotifier<List<ChatSetModel>> {
     _deleteChat = ref.read(deletChatSupaBaseProvider);
     _getChatSet = ref.read(getChatSetSupaBaseProvider);
     _clearALlChats = ref.read(clearChatSetSupaBaseProvider);
-    _startRealtimeListener(); // 👈 ADD THIS
+    _startRealtimeListener(); 
 
     return await fetchChatSets();
   }

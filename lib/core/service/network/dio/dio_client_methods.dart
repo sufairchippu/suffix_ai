@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 
-class DioClientGemini {
+class DioClientMethods {
   final Dio _dio;
 
-  DioClientGemini(this._dio);
+  DioClientMethods(this._dio);
 
   Future<dynamic> get(
     String uri, {

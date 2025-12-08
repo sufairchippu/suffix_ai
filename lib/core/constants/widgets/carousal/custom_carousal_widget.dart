@@ -90,7 +90,7 @@ class _CustomCarousalWidgetState extends ConsumerState<CustomCarousalWidget> {
               height: 6.rh(context),
               decoration: BoxDecoration(
                 color: currentPage == index
-                    ? context.dynamicColor1
+                    ? context.greyFirstColor
                     : context.greySecondColor,
                 borderRadius: BorderRadius.circular(3.rf(context)),
               ),

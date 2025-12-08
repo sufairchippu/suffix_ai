@@ -10,7 +10,7 @@ class ImageGenrationRepoImpl implements ImageGenrationRepo {
   ImageGenrationRepoImpl(this.datasource);
 
   @override
-  Future<Either<Failure, Uint8List?>> genrateImageFromImage({
+  Future<Either<Failure, Uint8List>> genrateImageFromImage({
     required String imagePath,
     required String prompt,
   }) async {
@@ -19,23 +19,23 @@ class ImageGenrationRepoImpl implements ImageGenrationRepo {
         imagePath: imagePath,
         prompt: prompt,
       );
-      return right(getimage);
+      return right(getimage!);
     } catch (e) {
       return left(SomeSpecificError(e.toString()));
     }
   }
 
-  @override
-  Future<Either<Failure, Uint8List?>> genrateImageFromText(
-    String prompt,
-  ) async {
-    try {
-      final getimage = await datasource.genrateImageFromText(prompt: prompt);
-      return right(getimage);
-    } catch (e) {
-      return left(SomeSpecificError(e.toString()));
-    }
-  }
+  // @override
+  // Future<Either<Failure, Uint8List>> genrateImageFromText(
+  //   String prompt,
+  // ) async {
+  //   try {
+  //     final getimage = await datasource.genrateImageFromText(prompt: prompt);
+  //     return right(getimage!);
+  //   } catch (e) {
+  //     return left(SomeSpecificError(e.toString()));
+  //   }
+  // }
 
   // @override
   // Future<Response<dynamic>?> genrateVideoFromImage({
@@ -43,13 +43,13 @@ class ImageGenrationRepoImpl implements ImageGenrationRepo {
   //   required String prompt,
   //   String style,
   // }) {
-  //   // TODO: implement genrateVideoFromImage
+
   //   throw UnimplementedError();
   // }
 
   // @override
   // Future<Response<dynamic>?> genrateVideoFromText(String prompt, String style) {
-  //   // TODO: implement genrateVideoFromText
+
   //   throw UnimplementedError();
   // }
 }

@@ -13,5 +13,7 @@ class AppConfig {
       dotenv.env['SUPERBASE_PUBLISHABLE'] ?? '';
   static String get aiApiKey => dotenv.env[ApiUrl.kAIAPI] ?? '';
   static String get imaginAPIToken => dotenv.env[ApiUrl.kIMAGINEAPI] ?? '';
-  static String get imaginAIKey => 'https://generativelanguage.googleapis.com/v1beta/openai/';
+  static String get imaginAIUrl => 'https://api.vyro.ai/v2/';
+  static String get googleImagAIUrl =>
+      "https://generativelanguage.googleapis.com/v1beta/models/";
 }

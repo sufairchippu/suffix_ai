@@ -59,11 +59,14 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                             color: context.mainDarkShadeColor,
                           ),
                         ),
-                        Spacer(),
-                        Uiutils.getTextWidget(
-                          context,
-                          'Hostory',
-                          textStyle: TextStyleType.mediumSemiBold,
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () => context.pushNamed(RouteNames.imagelist),
+                          child: Uiutils.getTextWidget(
+                            context,
+                            'Hostory',
+                            textStyle: TextStyleType.mediumSemiBold,
+                          ),
                         ),
                         Uiutils.getSvg(
                           SvgConstants.save,
@@ -96,7 +99,7 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                               final eValue = element.value;
                               return CustomButtonWIdget(
                                 borderRadius: 12.rf(context),
-                                color: context.dynamicColor2,
+                                color: context.dynamicColor4,
                                 height: 100.rh(context),
                                 padding: 25.rf(context),
                                 left: 30.rw(context),
@@ -108,6 +111,9 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                                       context,
                                       eValue.title,
                                       textStyle: TextStyleType.heading,
+                                      color: context.textColor,
+
+                                      // color: context.subTextColor,
                                       fs: 26.rf(context),
                                     ),
                                     SizedBox(height: 70.rh(context)),
@@ -120,10 +126,13 @@ class _NanoBananaScreenState extends ConsumerState<NanoBananaScreen> {
                                       // overFlow: TextOverflow.,
                                     ),
                                     const Spacer(),
-                                    const Row(
+                                    Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        Icon(CupertinoIcons.play_fill),
+                                        Icon(
+                                          CupertinoIcons.play_fill,
+                                          color: context.primaryColor,
+                                        ),
                                       ],
                                     ),
                                   ],

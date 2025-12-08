@@ -4,8 +4,9 @@ import 'package:clean_architutre_learn/features/authentication/presentation/page
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/login_screen.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/pass_change_screen.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/pages/splash_screen.dart';
-import 'package:clean_architutre_learn/features/banana/presentation/pages/dispkay_screen.dart';
+import 'package:clean_architutre_learn/features/banana/presentation/pages/display_screen.dart';
 import 'package:clean_architutre_learn/features/banana/presentation/pages/nano_banana_screen.dart';
+import 'package:clean_architutre_learn/features/banana/presentation/pages/stored_imge_screen.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/pages/chat_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/profile_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/settings_screeen.dart';
@@ -95,6 +96,15 @@ final GoRouter appRouter = GoRouter(
             type: TransitionType.scale,
           ),
           routes: [
+                 GoRoute(
+          path: 'imagelist',
+          name: RouteNames.imagelist,
+          pageBuilder: (context, state) => customBuildTransitionPage(
+            child: const StoredImgeScreen(),
+            state: state,
+            type: TransitionType.slideFromLeft,
+          ),
+        ),
             GoRoute(
               path: 'nanoBananaDisplay/:specilization',
               name: RouteNames.nanoBananaDisplay,
