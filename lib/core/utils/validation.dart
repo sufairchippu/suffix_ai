@@ -243,4 +243,18 @@ class Validators {
   static const _excelExt = ['.xls', '.xlsx'];
 
   static const _zipExt = ['.zip', '.rar', '.7z'];
+
+  static String parseTime(int time) {
+    if (time >= 60) {
+      int hour = time ~/ 60;
+      int minutes = time % time;
+      if (minutes == 0) {
+        return '$hour Hour';
+      } else {
+        return '$hour Hour $minutes Minutes';
+      }
+    } else {
+      return '$time minutes';
+    }
+  }
 }

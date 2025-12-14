@@ -13,8 +13,10 @@ import 'package:clean_architutre_learn/features/profile/presentation/pages/setti
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/camera_result_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/generation_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/home_screen.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/pages/pdf_view_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/quiz_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -58,7 +60,7 @@ final GoRouter appRouter = GoRouter(
           path: 'new_pass',
           name: RouteNames.newPass,
           pageBuilder: (context, state) => customBuildTransitionPage(
-            child:  PassChangeScreen(),
+            child: PassChangeScreen(),
             state: state,
             type: TransitionType.slideFromRight,
           ),
@@ -96,15 +98,15 @@ final GoRouter appRouter = GoRouter(
             type: TransitionType.scale,
           ),
           routes: [
-                 GoRoute(
-          path: 'imagelist',
-          name: RouteNames.imagelist,
-          pageBuilder: (context, state) => customBuildTransitionPage(
-            child: const StoredImgeScreen(),
-            state: state,
-            type: TransitionType.slideFromLeft,
-          ),
-        ),
+            GoRoute(
+              path: 'imagelist',
+              name: RouteNames.imagelist,
+              pageBuilder: (context, state) => customBuildTransitionPage(
+                child: const StoredImgeScreen(),
+                state: state,
+                type: TransitionType.slideFromLeft,
+              ),
+            ),
             GoRoute(
               path: 'nanoBananaDisplay/:specilization',
               name: RouteNames.nanoBananaDisplay,
@@ -143,6 +145,20 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) {
             return customBuildTransitionPage(
               child: const QuizScreen(),
+              state: state,
+              type: TransitionType.slideFromRight,
+            );
+          },
+        ),
+        //! pdf review
+        GoRoute(
+          path: 'pdfrview',
+          name: RouteNames.pdfPreview,
+
+          pageBuilder: (context, state) {
+            final bytes = state.extra as Uint8List;
+            return customBuildTransitionPage(
+              child: PdfPreviewScreen(pdfBytes: bytes),
               state: state,
               type: TransitionType.slideFromRight,
             );

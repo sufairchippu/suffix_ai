@@ -31,6 +31,7 @@ class PureCupertinoDropdown extends ConsumerWidget {
     final selected = ref.watch(selectedValueProvider);
 
     return FormField<String>(
+      validator: validator,
       builder: (field) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,9 +53,9 @@ class PureCupertinoDropdown extends ConsumerWidget {
               borderRadius: 10.rh(context),
               boxshadowColor: context.secondaryColor,
               bordercolor: field.hasError
-              ? context.red
-              : context.subTextColor.withValues(alpha: .3),
-              onTap: () => _showSearchablePicker(context, ref,field),
+                  ? context.red
+                  : context.subTextColor.withValues(alpha: .3),
+              onTap: () => _showSearchablePicker(context, ref, field),
               widget: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

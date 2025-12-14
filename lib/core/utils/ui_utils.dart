@@ -256,13 +256,7 @@ class Uiutils {
     );
   }
 
-  static String creatingMCQpapper(int number, String topic, Diffculty diff) {
-    return 'Generate $number multiple-choice questions about $topic. Difficulty: $diff. Format in JSON with fields: question, options, correct_answer_index, difficulty';
-  }
 
-  static String creatingNormalpapper(int number, String topic, Diffculty diff) {
-    return "Generate an exam paper on '$topic'.\nDifficulty: $diff.\nNumber of Questions: $number.\nInclude a mix of:\n- Short Answer Questions\n- Multiple Choice Questions\n- Medium Long Answer Questions\n- Essay Questions\nin the ratio of 4:2:3:1.\n\nFormat the output as a valid JSON object with the following structure:\n{\n  \"exam_paper\": [\n    { \"type\": \"short_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"mcq\", \"question\": \"...\", \"options\": [\"...\"], \"answer_index\": \"...\" },\n    { \"type\": \"long_answer\", \"question\": \"...\", \"answer\": \"...\" },\n    { \"type\": \"essay\", \"question\": \"...\", \"answer\": \"...\" }\n  ]\n}";
-  }
 
   static modelBottomsheet(
     BuildContext context,
@@ -308,4 +302,3 @@ class Uiutils {
   }
 }
 
-enum Diffculty { easy, medium, hard }

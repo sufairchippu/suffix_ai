@@ -92,6 +92,7 @@ class CustomTextFormField extends StatelessWidget {
                       : 8.rw(context), // Extra space for suffix icon
                 ),
                 child: CupertinoTextFormFieldRow(
+                  
                   onChanged: onChange,
                   maxLines: maxline,
                   readOnly: loadingOnsomething,

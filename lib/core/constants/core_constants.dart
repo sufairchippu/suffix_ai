@@ -129,4 +129,17 @@ class CoreConstants {
             : 'Authentication failed. Please try again.';
     }
   }
+
+  static const List<String> qustionText = [
+    'Multiple Choice Question',
+    'One Word',
+    'TASC',
+    'University type',
+    'University type (1 Qn exception)',
+    // '',
+  ];
 }
+
+enum Diffculty { easy, medium, hard }
+
+enum QuestionPaperTYpe { mcq, normal, oneWord, tasc, universityException }
