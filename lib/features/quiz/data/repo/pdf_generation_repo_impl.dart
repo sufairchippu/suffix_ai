@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:clean_architutre_learn/core/error/failures.dart';
@@ -14,6 +15,12 @@ class PdfGenerationRepoImpl implements PdfGenrationRepo {
     String? subTopic,
     String? universityName,
     String? papperCode,
+    required String papperType,
+
+    String? topic,
+    String? time,
+    String? mark,
+ required   String questionData,
   }) async {
     try {
       final pdf = await dataSource.genratepdfQuestions(
@@ -21,9 +28,18 @@ class PdfGenerationRepoImpl implements PdfGenrationRepo {
         papperCode: papperCode,
         subTopic: subTopic,
         universityName: universityName,
+        // questionCount: questionCount,
+        // categeory: categeory,
+        // level: level,
+        mark: mark,
+        papperType: papperType,
+        time: time,
+        topic: topic,
+        questionData: questionData,
       );
       return right(pdf);
     } catch (e) {
+      log("error $e");
       return left(SomeSpecificError(e.toString()));
     }
   }

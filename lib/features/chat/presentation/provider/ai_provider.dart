@@ -27,16 +27,12 @@ class AiMessgeNotifier extends StateNotifier<Content> {
   Future<void> getAiReply({
     required String data,
     List<File>? files,
-
+    bool toSupabase = true,
   }) async {
     // ref.read(chatListNotifierProvider.notifier).loadChats();
 
     ref.read(loadingmsgProvider.notifier).state = true;
-    final reply = await _messge(
-      data: data,
-      files: files,
-
-    );
+    final reply = await _messge(data: data, files: files);
 
     reply.fold(
       (failure) {
@@ -69,7 +65,9 @@ class AiMessgeNotifier extends StateNotifier<Content> {
                 .then((value) {
                   ref.read(loadingmsgProvider.notifier).state = false;
                 });
-            ref.read(supabaseChatNotifierProvider.notifier).addChats(chat);
+            toSupabase
+                ? ref.read(supabaseChatNotifierProvider.notifier).addChats(chat)
+                : null;
 
             debugPrint('AI Reply: $message');
           }

@@ -27,7 +27,7 @@ final maxMarkProvider = StateProvider((ref) => 100);
 final timeNumberProvider = StateProvider((ref) => 120);
 
 final pdfGenrationDatasourceProvider = Provider(
-  (ref) => PdfGenrationDatasource(ref),
+  (ref) => PdfGenrationDatasource(),
 );
 final pdfGenarationRepoProvider = Provider<PdfGenrationRepo>((ref) {
   final dataSource = ref.read(pdfGenrationDatasourceProvider);
@@ -39,22 +39,34 @@ final pdfGenrationProvider = Provider((ref) {
 });
 //!  providers for each type pdf genration
 
-class PdfGenrationNotifier extends StateNotifier<AsyncValue<Uint8List>> {
+class PdfGenrationNotifier extends StateNotifier<AsyncValue<Uint8List?>> {
   final PdfGenrationUscase _genratePdf;
-  PdfGenrationNotifier(this._genratePdf) : super(const AsyncLoading());
+  PdfGenrationNotifier(this._genratePdf) : super(const AsyncValue.data(null));
   Future<void> genratePdf({
     String? description,
     String? subTopic,
     String? universityName,
     String? papperCode,
+    required String papperType,
+
+    String? topic,
+    String? time,
+    String? mark,
+    required String questionData,
   }) async {
     state = const AsyncLoading();
     final result = await _genratePdf(
+      papperType: papperType,
+      questionData: questionData,
+      mark: mark,
+      time: time,
+      topic: topic,
       description: description,
       papperCode: papperCode,
       subTopic: subTopic,
       universityName: universityName,
     );
+    
     return result.fold(
       (l) => state = AsyncError(l, StackTrace.current),
       (r) => state = AsyncData(r),
@@ -63,6 +75,6 @@ class PdfGenrationNotifier extends StateNotifier<AsyncValue<Uint8List>> {
 }
 
 final pdfGenrationNotifierProvider =
-    StateNotifierProvider<PdfGenrationNotifier, AsyncValue<Uint8List>>(
+    StateNotifierProvider<PdfGenrationNotifier, AsyncValue<Uint8List?>>(
       (ref) => PdfGenrationNotifier(ref.read(pdfGenrationProvider)),
     );

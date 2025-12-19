@@ -1,22 +1,35 @@
-class McqQuestion {
+class McqPaperModel {
+  final String type;
+  final List<McqQuestionModel> questions;
+
+  McqPaperModel({required this.type, required this.questions});
+
+  factory McqPaperModel.fromJson(Map<String, dynamic> json) {
+    return McqPaperModel(
+      type: json['type'] ?? 'mcq',
+      questions: (json['questions'] as List<dynamic>? ?? [])
+          .map((e) => McqQuestionModel.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class McqQuestionModel {
   final String question;
   final List<String> options;
-  final int correctAnswerIndex;
-  final String difficulty;
+  final int correctIndex;
 
-  McqQuestion({
+  McqQuestionModel({
     required this.question,
     required this.options,
-    required this.correctAnswerIndex,
-    required this.difficulty,
+    required this.correctIndex,
   });
 
-  factory McqQuestion.fromJson(Map<String, dynamic> json) {
-    return McqQuestion(
+  factory McqQuestionModel.fromJson(Map<String, dynamic> json) {
+    return McqQuestionModel(
       question: json['question'] ?? '',
       options: List<String>.from(json['options'] ?? []),
-      correctAnswerIndex: json['correct_answer_index'] ?? 0,
-      difficulty: json['difficulty'] ?? '',
+      correctIndex: json['correct_index'] ?? 0,
     );
   }
 
@@ -24,8 +37,7 @@ class McqQuestion {
     return {
       'question': question,
       'options': options,
-      'correct_answer_index': correctAnswerIndex,
-      'difficulty': difficulty,
+      'correct_index': correctIndex,
     };
   }
 }

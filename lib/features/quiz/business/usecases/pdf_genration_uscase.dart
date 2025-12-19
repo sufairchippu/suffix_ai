@@ -12,11 +12,23 @@ class PdfGenrationUscase {
     String? subTopic,
     String? universityName,
     String? papperCode,
+    required String papperType,
+
+    String? topic,
+    String? time,
+    String? mark,
+    required String questionData,
   }) async {
     return repo.genrateMCQpdf(
       papperCode: papperCode,
       subTopic: subTopic,
       universityName: universityName,
+      papperType: papperType,
+      questionData: questionData,
+      description: description,
+      mark: mark,
+      time: time,
+      topic: topic,
     );
   }
 }

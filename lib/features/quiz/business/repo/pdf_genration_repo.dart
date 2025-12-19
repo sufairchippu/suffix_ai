@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:clean_architutre_learn/core/constants/core_constants.dart';
 import 'package:clean_architutre_learn/core/error/failures.dart';
 import 'package:dartz/dartz.dart';
 
@@ -10,6 +9,12 @@ abstract class PdfGenrationRepo {
     String? subTopic,
     String? universityName,
     String? papperCode,
+    required String papperType,
+
+    String? topic,
+    String? time,
+    String? mark,
+    required String questionData,
   });
 }
   // Future<Uint8List> genrateNormalpdf();

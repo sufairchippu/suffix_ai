@@ -4,163 +4,189 @@ import 'dart:typed_data';
 
 import 'package:clean_architutre_learn/core/constants/core_constants.dart';
 import 'package:clean_architutre_learn/core/service/pdf/pdf_service.dart';
-import 'package:clean_architutre_learn/core/service/segment/segment_provider.dart';
-import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/mcq_paper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/short_answer_model.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/tasc_papper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/university_normal_model.dart';
-import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PdfGenrationDatasource {
-  final Ref ref;
-  PdfGenrationDatasource(this.ref);
+  // final Ref ref;
+  // PdfGenrationDatasource(this.ref);
 
   Future<Uint8List> genratepdfQuestions({
     String? description,
     String? subTopic,
     String? universityName,
     String? papperCode,
+    required String papperType,
+    // String? level,
+    String? topic,
+    String? time,
+    String? mark,
+    // String? categeory,
+    // required int questionCount,
+    required String questionData,
   }) async {
-    final papperType = ref.read(paperTypeOptionProvider);
-    final level = ref.read(segmentSelectionLevelProvider);
-    final topic = ref.read(topicOptionProvider);
-    final time = ref.read(timeNumberProvider);
-    final mark = ref.read(maxMarkProvider);
+    // final papperType = ref.read(paperTypeOptionProvider);
+    // final level = ref.read(segmentSelectionLevelProvider);
+    // final topic = ref.read(topicOptionProvider);
+    // final time = ref.read(timeNumberProvider);
+    // final mark = ref.read(maxMarkProvider);
+
     // final categrory = ref.read(categeoryOptionProvider);
 
-    final questionCount = ref.read(questionCountProvider);
-    String prompt = '';
-    if (papperType == CoreConstants.qustionText[0]) {
-      prompt =
-          'Generate $questionCount multiple-choice questions about flutter. Difficulty: $level. Format in JSON with fields: question, options, correct_answer_index, difficulty';
-    }
+    // final questionCount = ref.read(questionCountProvider);
+    //     String prompt = '';
+    //     if (papperType == CoreConstants.qustionText[0]) {
+    //       prompt =
+    //           'Generate $questionCount multiple-choice questions about $topic. Difficulty: $level. Format in JSON with fields: question, options, correct_answer_index, difficulty';
+    //     } else if (papperType == CoreConstants.qustionText[1]) {
+    //       prompt =
+    //           """
+    // Generate EXACTLY $questionCount questions on "$topic"
+    // ${(subTopic != null && subTopic.isNotEmpty) ? 'focused on "$subTopic"' : ''}.
 
-    if (ref.watch(paperTypeOptionProvider) == CoreConstants.qustionText[1]) {
-      prompt =
-          """
-Generate EXACTLY $questionCount questions on "$topic"
-${(subTopic != null && subTopic.isNotEmpty) ? 'focused on "$subTopic"' : ''}.
+    // Difficulty level: $level.
 
-Difficulty level: $level.
+    // Rules:
+    // - Each answer MUST be a single word or a single short line.
+    // - Do NOT include explanations.
+    // - Do NOT include markdown.
 
-Rules:
-- Each answer MUST be a single word or a single short line.
-- Do NOT include explanations.
-- Do NOT include markdown.
+    // Return STRICTLY valid JSON in the following format:
 
+    // {
+    //   "one_word_paper": [
+    //     {
+    //       "question": "string",
+    //       "answer": "string"
+    //     }
+    //   ]
+    // }
+    // """;
+    //     } else if (papperType == CoreConstants.qustionText[2]) {
+    //       prompt =
+    //           """
+    //                   Generate a TASC-style exam with $questionCount questions on "$topic"${(subTopic != null && subTopic.isNotEmpty) ? 'with $subTopic' : ''}.
+    //                   Difficulty: $level.
 
-Return STRICTLY valid JSON in the following format:
+    //                   Return STRICT JSON only:
+    //                   {
+    //                     "tasc_paper": [
+    //                       {
+    //                         "question": "string",
+    //                         "description": "string",
+    //                         "answer": "string"
+    //                       }
+    //                     ]
+    //                   }
 
-{
-  "one_word_paper": [
-    {
-      "question": "string",
-      "answer": "string"
-    }
-  ]
-}
-""";
-    }
-    if (ref.watch(paperTypeOptionProvider) == CoreConstants.qustionText[2]) {
-      prompt =
-          """
-                  Generate a TASC-style exam with $questionCount questions on "$topic"${(subTopic != null && subTopic.isNotEmpty) ? 'with $subTopic' : ''}.
-                  Difficulty: $level.
+    //                   """;
+    //     } else if (papperType == CoreConstants.qustionText[3]) {
+    //       const totalRatio = 4 + 2 + 3 + 1;
 
-                  Return STRICT JSON only:
-                  {
-                    "tasc_paper": [
-                      {
-                        "question": "string",
-                        "description": "string",
-                        "answer": "string"
-                      }
-                    ]
-                  }
-           
-                  """;
-    }
+    //       final shortAnswer = (questionCount * 4) ~/ totalRatio;
+    //       final mcq = (questionCount * 2) ~/ totalRatio;
+    //       final mediumLong = (questionCount * 3) ~/ totalRatio;
+    //       final essay = (questionCount * 1) ~/ totalRatio;
+    //       prompt =
+    //           """
+    //               Generate an exam paper on '$topic'${(subTopic != null && subTopic.isNotEmpty) ? 'with $subTopic' : ''}.
+    //               Difficulty: $level.
+    //               Number of Questions: $questionCount.
+    //               Include:
+    //               - Short Answer ($shortAnswer)
+    //               - MCQ ($mcq)
+    //               - Medium Long ($mediumLong)
+    //               - Essay ($essay)
 
-    if (ref.watch(paperTypeOptionProvider) == CoreConstants.qustionText[3]) {
-      prompt =
-          """
-              Generate an exam paper on '$topic'${(subTopic != null && subTopic.isNotEmpty) ? 'with $subTopic' : ''}.
-              Difficulty: $level.
-              Number of Questions: $questionCount.
-              Include:
-              - Short Answer (4)
-              - MCQ (2)
-              - Medium Long (3)
-              - Essay (1)
+    //               Return valid JSON:
+    //               {
+    //                 "exam_paper": [
+    //                   { "type": "short_answer", "question": "...", "answer": "..." },
+    //                   { "type": "mcq", "question": "...", "options": ["..."], "answer_index": "..." },
+    //                   { "type": "long_answer", "question": "...", "answer": "..." },
+    //                   { "type": "essay", "question": "...", "answer": "..." }
+    //                 ]
+    //               }
+    //                   """;
+    //     } else if (papperType == CoreConstants.qustionText[4]) {
+    //       const totalRatio = 4 + 2 + 3 + 1;
 
-              Return valid JSON:
-              {
-                "exam_paper": [
-                  { "type": "short_answer", "question": "...", "answer": "..." },
-                  { "type": "mcq", "question": "...", "options": ["..."], "answer_index": "..." },
-                  { "type": "long_answer", "question": "...", "answer": "..." },
-                  { "type": "essay", "question": "...", "answer": "..." }
-                ]
-              }
-                  """;
-    }
-    if (ref.watch(paperTypeOptionProvider) == CoreConstants.qustionText[4]) {
-      prompt =
-          """
-                  Generate a university-style exam on "$topic"${(subTopic != null && subTopic.isNotEmpty) ? 'with $subTopic' : ''}.
-                  Total questions required: $questionCount.
-                  1 question may be ignored (exception rule).
-                  Difficulty: $level.
+    //       final shortAnswer = (questionCount * 4) ~/ totalRatio;
+    //       final mcq = (questionCount * 2) ~/ totalRatio;
+    //       final mediumLong = (questionCount * 3) ~/ totalRatio;
+    //       final essay = (questionCount * 1) ~/ totalRatio;
+    //       prompt =
+    //           """
+    //                   Generate a university-style exam on "$topic"${(subTopic != null && subTopic.isNotEmpty) ? 'with $subTopic' : ''}.
+    //                   Total questions required: $questionCount.
+    //                   Difficulty: $level.
 
-                  Return STRICT JSON:
-                  {
-                    "university_paper": {
-                      "ignore_question_count": 1,
-                      "questions": [
-                        {
-                          "question": "string",
-                          "marks": 5,
-                          "              ": "string"
-                        }
-                      ]
-                    }
-                  }
-                  """;
-    }
-    await ref.read(aiMessgeNotifierProvider.notifier).getAiReply(data: prompt);
-    final reply = ref.watch(aiMessgeNotifierProvider);
+    //               Include:
+    //                   1 question may be ignored (exception rule).for every section
 
-    final response = reply.parts![0].text!
+    //               - Short Answer ($shortAnswer)
+    //               - MCQ ($mcq)
+    //               - Medium Long ($mediumLong)
+    //               - Essay ($essay)
+    //                  {
+    //                 "exam_paper": [
+    //                   { "type": "short_answer", "question": "...", "answer": "..." },
+    //                   { "type": "mcq", "question": "...", "options": ["..."], "answer_index": "..." },
+    //                   { "type": "long_answer", "question": "...", "answer": "..." },
+    //                   { "type": "essay", "question": "...", "answer": "..." }
+    //                 ]
+    //               }
+    //                   """;
+    //     } else {
+    //       prompt = '';
+    //     }
+    // await ref
+    //     .read(aiMessgeNotifierProvider.notifier)
+    //     .getAiReply(data: prompt, toSupabase: false);
+    // final reply = ref.read(aiMessgeNotifierProvider);
+
+    final response = questionData
         .replaceAll("```json", "")
         .replaceAll("```", "")
         .trim();
     log('$response............... reponse of aimsg');
-    dynamic questionData;
     final dynamic data = jsonDecode(response);
+    final modelData = _resplveModeldata(papperType: papperType, data: data);
 
-    if (papperType == CoreConstants.qustionText[0]) {
-      questionData = data.map((e) => McqQuestion.fromJson(e)).toList();
-    } else if (papperType == CoreConstants.qustionText[1]) {
-      questionData = ShortAnswerModel.fromJson(data).questionModel;
-    } else if (papperType == CoreConstants.qustionText[2]) {
-      questionData = TascPapperModel.fromJson(data).tasqPapper;
-    } else if (papperType == CoreConstants.qustionText[3]) {
-      questionData = UniversityTypeModel.fromJson(data).examPaper;
-    } else if (papperType == CoreConstants.qustionText[4]) {}
+    log("Building pdf page >>>>>>>>>>>>>>>>>>>>>>>>>>");
+
     return await PdfService.genratPdf(
-      questionData: questionData,
-      papperType: papperType!,
-      topic: topic!,
-      mark: mark.toString(),
+      questionData: modelData,
+      papperType: papperType,
+      topic: topic ?? 'GK',
+      mark: mark,
       subtopic: subTopic,
       pappercode: papperCode,
       discription: description,
-      time: time.toString(),
+      time: time,
       universityName: universityName,
     );
 
     // throw Exception("Unsupported paper type");
+  }
+
+  dynamic _resplveModeldata({
+    required String papperType,
+    required dynamic data,
+  }) {
+    if (papperType == CoreConstants.qustionText[0]) {
+      return McqPaperModel.fromJson(data).questions;
+    } else if (papperType == CoreConstants.qustionText[1]) {
+      return ShortAnswerModel.fromJson(data).questionModel;
+    } else if (papperType == CoreConstants.qustionText[2]) {
+      return TascPapperModel.fromJson(data).tasqPapper;
+    } else if (papperType == CoreConstants.qustionText[3] ||
+        papperType == CoreConstants.qustionText[4]) {
+      return UniversityTypeModel.fromJson(data).examPaper;
+    } else {
+      throw Exception('Unsupported paper type: $papperType');
+    }
   }
 }

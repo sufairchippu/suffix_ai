@@ -1,7 +1,6 @@
-import 'dart:convert';
+import 'dart:developer';
 
 import 'package:clean_architutre_learn/core/constants/core_constants.dart';
-import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/utils/validation.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/mcq_paper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/short_answer_model.dart';
@@ -26,6 +25,7 @@ class PdfService {
     pdf.addPage(
       pw.MultiPage(
         build: (context) {
+          log("Building pdf page >>>>>>>>>>>>>>>>>>>>>>>>>>");
           return [
             // ---------------------------
             pw.Center(
@@ -47,14 +47,14 @@ class PdfService {
                   topic != '' && topic.isNotEmpty
                       ? pw.Text(
                           "Subject: $topic",
-                          style: pw.TextStyle(fontSize: 16),
+                          style: const pw.TextStyle(fontSize: 16),
                         )
                       : pw.SizedBox(),
 
                   subtopic != '' && subtopic != null && subtopic.isNotEmpty
                       ? pw.Text(
                           "Subject: $subtopic",
-                          style: pw.TextStyle(fontSize: 16),
+                          style: const pw.TextStyle(fontSize: 16),
                         )
                       : pw.SizedBox(),
                   time != '' && time != null && time.isNotEmpty
@@ -63,7 +63,7 @@ class PdfService {
                           children: [
                             pw.Text(
                               "Exam Duration: ${Validators.parseTime(int.tryParse(time)!)}",
-                              style: pw.TextStyle(fontSize: 14),
+                              style: const pw.TextStyle(fontSize: 14),
                             ),
                           ],
                         )
@@ -130,16 +130,21 @@ class PdfService {
             if (papperType == CoreConstants.qustionText[3])
               _buildUniversityMethode(questionData: questionData),
             if (papperType == CoreConstants.qustionText[4])
-              pw.Column(
-                children: [
-                  pw.ListView.builder(
-                    itemBuilder: (context, index) {
-                      return pw.Text('text');
-                    },
-                    itemCount: 10,
-                  ),
-                ],
+              _buildUniversityMethode(
+                questionData: questionData,
+                isHavExption: true,
               ),
+            // if (papperType == CoreConstants.qustionText[4])
+            //   pw.Column(
+            //     children: [
+            //       pw.ListView.builder(
+            //         itemBuilder: (context, index) {
+            //           return pw.Text('text');
+            //         },
+            //         itemCount: 10,
+            //       ),
+            //     ],
+            //   ),
             pw.SizedBox(height: 20),
           ];
         },
@@ -150,13 +155,14 @@ class PdfService {
 
   static pw.Column _buildUniversityMethode({
     required List<ExamPaper> questionData,
+    bool isHavExption = false,
   }) {
     // final shortNaswer=
     return pw.Column(
       children: [
         pw.Center(
           child: pw.Text(
-            "Short Answer",
+            "Short Answer ${isHavExption ? "- with one exception question" : ""}",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
           ),
         ),
@@ -177,7 +183,7 @@ class PdfService {
               final value = e.value;
               final index = e.key;
               return pw.Padding(
-                padding: pw.EdgeInsets.all(12),
+                padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
                   children: [
                     pw.Text(
@@ -191,7 +197,7 @@ class PdfService {
 
         pw.Center(
           child: pw.Text(
-            "Multi-Choice Question",
+            "Multi-Choice Question ${isHavExption ? "- with one exception question" : ""} ",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
           ),
         ),
@@ -212,7 +218,7 @@ class PdfService {
               final value = e.value;
               final index = e.key;
               return pw.Padding(
-                padding: pw.EdgeInsets.all(12),
+                padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
                   children: [
                     pw.Text(
@@ -235,9 +241,9 @@ class PdfService {
                 ),
               );
             }),
-                    pw.Center(
+        pw.Center(
           child: pw.Text(
-            "Long Answers",
+            "Long Answers ${isHavExption ? "- with one exception question" : ""}",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
           ),
         ),
@@ -249,7 +255,7 @@ class PdfService {
         ),
         pw.Divider(),
         pw.SizedBox(height: 10),
-...questionData
+        ...questionData
             .where((element) => element.type == 'long_answer')
             .toList()
             .asMap()
@@ -258,7 +264,7 @@ class PdfService {
               final value = e.value;
               final index = e.key;
               return pw.Padding(
-                padding: pw.EdgeInsets.all(12),
+                padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
                   children: [
                     pw.Text(
@@ -282,9 +288,9 @@ class PdfService {
               );
             }),
 
-                    pw.Center(
+        pw.Center(
           child: pw.Text(
-            "Essay ",
+            "Essay ${isHavExption ? "- with one exception question" : ""}",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
           ),
         ),
@@ -296,7 +302,7 @@ class PdfService {
         ),
         pw.Divider(),
         pw.SizedBox(height: 10),
-...questionData
+        ...questionData
             .where((element) => element.type == 'essay')
             .toList()
             .asMap()
@@ -305,7 +311,7 @@ class PdfService {
               final value = e.value;
               final index = e.key;
               return pw.Padding(
-                padding: pw.EdgeInsets.all(12),
+                padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
                   children: [
                     pw.Text(
@@ -317,12 +323,12 @@ class PdfService {
                 ),
               );
             }),
-        pw.ListView.builder(
-          itemBuilder: (context, index) {
-            return pw.Text('text');
-          },
-          itemCount: 10,
-        ),
+        // pw.ListView.builder(
+        //   itemBuilder: (context, index) {
+        //     return pw.Text('text');
+        //   },
+        //   itemCount: 10,
+        // ),
       ],
     );
   }
@@ -359,7 +365,7 @@ class PdfService {
           final index = e.key;
           final value = e.value;
           return pw.Padding(
-            padding: pw.EdgeInsets.all(12),
+            padding: const pw.EdgeInsets.all(12),
             child: pw.Column(
               children: [
                 pw.Text(
@@ -387,7 +393,7 @@ class PdfService {
 
   //!1
   static pw.Widget _buildMcqQuestionMetode({
-    required List<McqQuestion> questionData,
+    required List<McqQuestionModel> questionData,
   }) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -429,7 +435,7 @@ class PdfService {
         pw.Wrap(
           spacing: 20,
           children: questionData.asMap().entries.map((e) {
-            return pw.Text('${e.key + 1}. ${e.value.correctAnswerIndex + 1}');
+            return pw.Text('${e.key + 1}. ${e.value.correctIndex + 1}');
           }).toList(),
         ),
       ],

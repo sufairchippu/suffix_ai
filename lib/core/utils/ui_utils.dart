@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:clean_architutre_learn/core/constants/core_constants.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
@@ -256,8 +257,6 @@ class Uiutils {
     );
   }
 
-
-
   static modelBottomsheet(
     BuildContext context,
     Widget title,
@@ -300,5 +299,250 @@ class Uiutils {
       },
     );
   }
-}
 
+  static String buildPrompt({
+    required String paperType,
+    required int questionCount,
+    required String topic,
+    required String level,
+    String? subTopic,
+    String? categeory,
+  }) {
+    if (paperType == CoreConstants.qustionText[0]) {
+      return mcqPrompt(
+        questionCount: questionCount,
+        topic: topic,
+        level: level,
+        subTopic: subTopic,
+        categeory: categeory,
+      );
+    } else if (paperType == CoreConstants.qustionText[1]) {
+      return oneWordPrompt(
+        questionCount: questionCount,
+        topic: topic,
+        level: level,
+        subTopic: subTopic,
+        categeory: categeory,
+      );
+    } else if (paperType == CoreConstants.qustionText[2]) {
+      return tascPrompt(
+        questionCount: questionCount,
+        topic: topic,
+        level: level,
+        subTopic: subTopic,
+        categeory: categeory,
+      );
+    } else if (paperType == CoreConstants.qustionText[3]) {
+      return mixedExamPrompt(
+        questionCount: questionCount,
+        topic: topic,
+        level: level,
+        subTopic: subTopic,
+        categeory: categeory,
+      );
+    } else if (paperType == CoreConstants.qustionText[4]) {
+      return universityPrompt(
+        questionCount: questionCount,
+        topic: topic,
+        level: level,
+        subTopic: subTopic,
+        categeory: categeory,
+      );
+    } else {
+      throw Exception("Unsupported paper type: $paperType");
+    }
+  }
+
+ static String mcqPrompt({
+    required int questionCount,
+    required String topic,
+    required String level,
+    String? subTopic,
+    String? categeory, //!
+  }) {
+    return '''
+Generate EXACTLY $questionCount multiple-choice questions.
+
+Topic: "$topic"
+${subTopic != null && subTopic.isNotEmpty ? 'Sub-topic: "$subTopic"' : ''}
+Difficulty: $level
+
+Rules:
+- Each question has exactly 4 options
+- Only ONE correct answer
+- No explanations
+- No markdown
+- STRICT JSON only
+
+Return this JSON format ONLY:
+
+{
+  "type": "mcq",
+  "questions": [
+    {
+      "question": "string",
+      "options": ["A", "B", "C", "D"],
+      "correct_index": 0
+    }
+  ]
+}
+''';
+  }
+
+static  String oneWordPrompt({
+    required int questionCount,
+    required String topic,
+    required String level,
+    String? subTopic,
+    String? categeory, //!
+  }) {
+    return '''
+Generate EXACTLY $questionCount one-word or very short-answer questions.
+
+Topic: "$topic"
+${subTopic != null && subTopic.isNotEmpty ? 'Sub-topic: "$subTopic"' : ''}
+Difficulty: $level
+
+Rules:
+- Answers must be ONE word or ONE short line
+- No explanations
+- No markdown
+- STRICT JSON only
+
+Return this format:
+
+{
+  "one_word_paper": [
+    {
+      "question": "string",
+      "answer": "string"
+    }
+  ]
+}
+''';
+  }
+
+static  String tascPrompt({
+    required int questionCount,
+    required String topic,
+    required String level,
+    String? subTopic,
+    String? categeory,
+  }) {
+    return '''
+Generate a TASC-style exam with EXACTLY $questionCount questions.
+
+Topic: "$topic"
+${subTopic != null && subTopic.isNotEmpty ? 'Sub-topic: "$subTopic"' : ''}
+Difficulty: $level
+
+Rules:
+- Each question must include a description
+- Answers should be concise
+- No markdown
+- STRICT JSON only
+
+Return this format:
+{
+  "type": "tasc",
+  "questions": [
+    {
+      "question": "string",
+      "description": "string",
+      "answer": "string"
+    }
+  ]
+}
+''';
+  }
+
+static  String mixedExamPrompt({
+    required int questionCount,
+    required String topic,
+    required String level,
+    String? subTopic,
+    String? categeory,
+  }) {
+    const totalRatio = 4 + 2 + 3 + 1;
+
+    final shortAnswer = (questionCount * 4) ~/ totalRatio;
+    final mcq = (questionCount * 2) ~/ totalRatio;
+    final medium = (questionCount * 3) ~/ totalRatio;
+    final essay = (questionCount * 1) ~/ totalRatio;
+
+    return '''
+Generate an exam paper.
+
+Topic: "$topic"
+${subTopic != null && subTopic.isNotEmpty ? 'Sub-topic: "$subTopic"' : ''}
+Difficulty: $level
+
+Include:
+- Short Answer: $shortAnswer
+- MCQ: $mcq
+- Medium Answer: $medium
+- Essay: $essay
+
+Rules:
+- No explanations
+- No markdown
+- STRICT JSON only
+
+Return this format:
+
+     {
+                "exam_paper": [
+                  { "type": "short_answer", "question": "...", "answer": "..." },
+                  { "type": "mcq", "question": "...", "options": ["..."], "answer_index": "..." },
+                  { "type": "long_answer", "question": "...", "answer": "..." },
+                  { "type": "essay", "question": "...", "answer": "..." }
+                ]
+              }
+''';
+  }
+
+ static String universityPrompt({
+    required int questionCount,
+    required String topic,
+    required String level,
+    String? subTopic,
+    String? categeory,
+  }) {
+    const totalRatio = 4 + 2 + 3 + 1;
+
+    final shortAnswer = (questionCount * 4) ~/ totalRatio;
+    final mcq = (questionCount * 2) ~/ totalRatio;
+    final medium = (questionCount * 3) ~/ totalRatio;
+    final essay = (questionCount * 1) ~/ totalRatio;
+
+    return '''
+Generate a university-style exam paper.
+
+Topic: "$topic"
+${subTopic != null && subTopic.isNotEmpty ? 'Sub-topic: "$subTopic"' : ''}
+Difficulty: $level
+Total Questions: $questionCount
+
+Rules:
+- Each section may ignore ONE optional question
+- No explanations
+- No markdown
+- question count
+  > short answer - $shortAnswer
+  > mcq - $mcq
+  > long_answer - $medium
+  > essay - $essay
+- STRICT JSON only
+
+Return this format:
+         {
+                "exam_paper": [
+                  { "type": "short_answer", "question": "...", "answer": "..." },
+                  { "type": "mcq", "question": "...", "options": ["..."], "answer_index": "..." },
+                  { "type": "long_answer", "question": "...", "answer": "..." },
+                  { "type": "essay", "question": "...", "answer": "..." }
+                ]
+              }
+''';
+  }
+}
