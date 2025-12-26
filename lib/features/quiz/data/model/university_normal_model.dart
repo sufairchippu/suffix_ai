@@ -3,13 +3,20 @@ class UniversityTypeModel {
 
   UniversityTypeModel({this.examPaper});
 
-  UniversityTypeModel.fromJson(Map<String, dynamic> json) {
-    if (json['exam_paper'] != null) {
-      examPaper = <ExamPaper>[];
-      json['exam_paper'].forEach((v) {
-        examPaper!.add(ExamPaper.fromJson(v));
-      });
-    }
+  factory UniversityTypeModel.fromJson(Map<String, dynamic> json) {
+    final raw = json['exam_paper'];
+    if (raw is! List) return UniversityTypeModel(examPaper: []);
+    return UniversityTypeModel(
+      examPaper: raw
+          .map((e) => ExamPaper.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+    // if (json['exam_paper'] != null) {
+    //   examPaper = <ExamPaper>[];
+    //   json['exam_paper'].forEach((v) {
+    //     examPaper!.add(ExamPaper.fromJson(v));
+    //   });
+    // }
   }
 
   Map<String, dynamic> toJson() {
@@ -22,26 +29,30 @@ class UniversityTypeModel {
 }
 
 class ExamPaper {
-  String? type;
-  String? question;
-  String? answer;
-  List<String>? options;
-  String? answerIndex;
+  final String type;
+  final String question;
+  final String answer;
+  final List<String>? options;
+  final String? answerIndex;
 
   ExamPaper({
-    this.type,
-    this.question,
-    this.answer,
+    required this.type,
+    required this.question,
+    required this.answer,
     this.options,
     this.answerIndex,
   });
 
-  ExamPaper.fromJson(Map<String, dynamic> json) {
-    type = json['type'];
-    question = json['question'];
-    answer = json['answer'];
-    options = json['options'] as List<String>;
-    answerIndex = json['answer_index'];
+  factory ExamPaper.fromJson(Map<String, dynamic> json) {
+    return ExamPaper(
+      type: json['type'] ?? '',
+      question: json['question'] ?? '',
+      answer: json['answer'] ?? '',
+      options: json['options'] != null
+          ? List<String>.from(json['options'])
+          : null,
+      answerIndex: json['answer_index']?.toString(),
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -54,10 +65,6 @@ class ExamPaper {
     return data;
   }
 }
-
-
-
-
 
 // To parse this JSON data, do
 //

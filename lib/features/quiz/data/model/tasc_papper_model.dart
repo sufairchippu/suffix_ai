@@ -1,11 +1,20 @@
 class TascPapperModel {
+  final String type;
   final List<TascQuestionModel> tasqPapper;
-  TascPapperModel({required this.tasqPapper});
+  TascPapperModel({required this.tasqPapper, required this.type});
   factory TascPapperModel.fromJson(Map<String, dynamic> json) {
-    return TascPapperModel(tasqPapper: json['tasc_paper']);
+    return TascPapperModel(
+      type: json['type'] as String,
+      tasqPapper: (json['questions'] as List<dynamic>)
+          .map((e) => TascQuestionModel.fromjson(e as Map<String,dynamic>))
+          .toList(),
+    );
   }
   Map<String, dynamic> toJson() {
-    return {'tasc_paper': tasqPapper.map((e) => e.toJson())};
+    return {
+      'type': type,
+      'questions': tasqPapper.map((e) => e.toJson()).toList(),
+    };
   }
 }
 

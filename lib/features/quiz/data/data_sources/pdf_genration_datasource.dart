@@ -27,7 +27,54 @@ class PdfGenrationDatasource {
     // required int questionCount,
     required String questionData,
   }) async {
-    // final papperType = ref.read(paperTypeOptionProvider);
+    final response = questionData
+        .replaceAll("```json", "")
+        .replaceAll("```", "")
+        .trim();
+    log('$response............... reponse of aimsg');
+    final dynamic data = jsonDecode(response);
+    final modelData = _resplveModeldata(papperType: papperType, data: data);
+
+    log("Building pdf page >>>>>>>>>>>>>>>>>>>>>>>>>>$modelData");
+
+    return await PdfService.genratPdf(
+      questionData: modelData,
+      papperType: papperType,
+      topic: topic ?? 'GK',
+      mark: mark,
+      subtopic: subTopic,
+      pappercode: papperCode,
+      discription: description,
+      time: time,
+      universityName: universityName,
+    );
+
+    // throw Exception("Unsupported paper type");
+  }
+
+  dynamic _resplveModeldata({
+    required String papperType,
+    required dynamic data,
+  }) {
+    if (papperType == CoreConstants.qustionText[0]) {
+      return McqPaperModel.fromJson(data).questions;
+    } else if (papperType == CoreConstants.qustionText[1]) {
+      return ShortAnswerModel.fromJson(data).questionModel;
+    } else if (papperType == CoreConstants.qustionText[2]) {
+      return TascPapperModel.fromJson(data).tasqPapper;
+    } else if (papperType == CoreConstants.qustionText[3] ||
+        papperType == CoreConstants.qustionText[4]) {
+      return UniversityTypeModel.fromJson(data).examPaper;
+    } else {
+      throw Exception('Unsupported paper type: $papperType');
+    }
+  }
+}
+
+
+
+
+ // final papperType = ref.read(paperTypeOptionProvider);
     // final level = ref.read(segmentSelectionLevelProvider);
     // final topic = ref.read(topicOptionProvider);
     // final time = ref.read(timeNumberProvider);
@@ -146,47 +193,5 @@ class PdfGenrationDatasource {
     //     .read(aiMessgeNotifierProvider.notifier)
     //     .getAiReply(data: prompt, toSupabase: false);
     // final reply = ref.read(aiMessgeNotifierProvider);
-
-    final response = questionData
-        .replaceAll("```json", "")
-        .replaceAll("```", "")
-        .trim();
-    log('$response............... reponse of aimsg');
-    final dynamic data = jsonDecode(response);
-    final modelData = _resplveModeldata(papperType: papperType, data: data);
-
-    log("Building pdf page >>>>>>>>>>>>>>>>>>>>>>>>>>");
-
-    return await PdfService.genratPdf(
-      questionData: modelData,
-      papperType: papperType,
-      topic: topic ?? 'GK',
-      mark: mark,
-      subtopic: subTopic,
-      pappercode: papperCode,
-      discription: description,
-      time: time,
-      universityName: universityName,
-    );
-
-    // throw Exception("Unsupported paper type");
-  }
-
-  dynamic _resplveModeldata({
-    required String papperType,
-    required dynamic data,
-  }) {
-    if (papperType == CoreConstants.qustionText[0]) {
-      return McqPaperModel.fromJson(data).questions;
-    } else if (papperType == CoreConstants.qustionText[1]) {
-      return ShortAnswerModel.fromJson(data).questionModel;
-    } else if (papperType == CoreConstants.qustionText[2]) {
-      return TascPapperModel.fromJson(data).tasqPapper;
-    } else if (papperType == CoreConstants.qustionText[3] ||
-        papperType == CoreConstants.qustionText[4]) {
-      return UniversityTypeModel.fromJson(data).examPaper;
-    } else {
-      throw Exception('Unsupported paper type: $papperType');
-    }
-  }
-}
+    //! [log] error type 'Null' is not a subtype of type 'String'
+    //!  errror happening before this.

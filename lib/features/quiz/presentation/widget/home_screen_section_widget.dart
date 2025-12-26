@@ -15,22 +15,19 @@ class HomeScreenSecotionWidget extends StatelessWidget {
     this.pathIcon,
     this.icon,
     this.generateType = true,
+    this.ontap,
   });
   final String text;
   final String? firstLetter;
   final String? pathIcon;
   final IconData? icon;
   final bool generateType;
+  final void Function()? ontap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        context.pushNamed(
-          RouteNames.generate,
-          // extra: {'generateType': generateType},
-        );
-      },
+      onTap: ontap,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.rf(context)),

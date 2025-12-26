@@ -3,6 +3,7 @@ import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
+import 'package:clean_architutre_learn/features/quiz/data/model/mcq_paper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/widget/custom_paint_container.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,8 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class QuizScreen extends ConsumerStatefulWidget {
-  const QuizScreen({super.key});
-
+  const QuizScreen({super.key, required this.quizdata});
+  final List<McqQuestionModel> quizdata;
   @override
   ConsumerState<QuizScreen> createState() => _QuizScreenState();
 }
@@ -19,6 +20,10 @@ class QuizScreen extends ConsumerStatefulWidget {
 class _QuizScreenState extends ConsumerState<QuizScreen> {
   @override
   Widget build(BuildContext context) {
+    final questionNumber = ref.watch(quizQuestionNumber);
+    final selectedOption = ref.watch(quizselectedAnswerProvider);
+    int correctAnswerIndex = widget.quizdata[questionNumber].correctIndex;
+    var correctedanswerCount = 0;
     return PopScope(
       canPop: true,
       // onPopInvokedWithResult: (didPop, result) {},
@@ -74,7 +79,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                           ),
                           Uiutils.getTextWidget(
                             context,
-                            '7/10',
+                            '${widget.quizdata.length}/${widget.quizdata.length}',
                             textStyle: TextStyleType.mediumSemiBold,
                             color: context.mainDarkShadeColor,
                           ),
@@ -83,7 +88,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       ),
                       SizedBox(height: 50.rh(context)),
                       CustomButtonWIdget(
-                        titile: 'What is the Language of flutter',
+                        titile: widget.quizdata[questionNumber].question,
                         textStyle: TextStyleType.mediumSemiBold,
                         textColor: context.textColor,
                         height: 110.rh(context),
@@ -99,18 +104,17 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: 4,
+                            itemCount:
+                                widget.quizdata[questionNumber].options.length,
                             separatorBuilder: (context, index) =>
                                 SizedBox(height: 15.rh(context)),
                             itemBuilder: (context, index) {
-                              String valuee = ref.watch(
-                                quizselectedAnswerProvider,
-                              );
-
-                              String? option = 'Option ${index + 1}';
+                              String? option = widget
+                                  .quizdata[questionNumber]
+                                  .options[index];
                               return CustomButtonWIdget(
                                 top: 10.rh(context),
-                                color: valuee == option
+                                color: selectedOption == index
                                     ? context.scaffoldColor
                                     : context.primaryColor,
                                 onTap: () {
@@ -119,7 +123,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                             quizselectedAnswerProvider.notifier,
                                           )
                                           .state =
-                                      option;
+                                      index;
                                 },
                                 widget: CupertinoListTile(
                                   title: Uiutils.getTextWidget(
@@ -128,7 +132,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                     textStyle: TextStyleType.mediumBold,
                                   ),
                                   trailing: Icon(
-                                    valuee == option
+                                    selectedOption == index
                                         ? CupertinoIcons
                                               .check_mark_circled_solid
                                         : CupertinoIcons.circle,
@@ -159,16 +163,23 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       SizedBox(height: 17.rh(context)),
 
                       const Spacer(),
-                      CustomButtonWIdget(
-                        titile: 'Wrong Answer ❌',
-                        // textColor: context.mainDarkShadeColor,s
-                        // color: context.red.withValues(alpha: .4),
-                        borderRadius: 12.rf(context),
-                      ),
+                      // CustomButtonWIdget(
+                      //   titile: 'Wrong Answer ❌',
+                      //   // textColor: context.mainDarkShadeColor,s
+                      //   // color: context.red.withValues(alpha: .4),
+                      //   borderRadius: 12.rf(context),
+                      // ),
                       SizedBox(height: 17.rh(context)),
 
                       CustomButtonWIdget(
-                        onTap: () {},
+                        onTap: () {
+                          if (selectedOption == correctAnswerIndex) {
+                            ++correctedanswerCount;
+                          }
+                          ref.invalidate(quizselectedAnswerProvider);
+                          ref.read(quizQuestionNumber.notifier).state =
+                              questionNumber + 1;
+                        },
                         titile: 'Next',
                         color: context.primaryColor,
                       ),

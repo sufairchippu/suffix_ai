@@ -24,7 +24,7 @@ class AiMessgeNotifier extends StateNotifier<Content> {
   final Ref ref;
   final GetMessage _messge;
 
-  Future<void> getAiReply({
+  Future<String> getAiReply({
     required String data,
     List<File>? files,
     bool toSupabase = true,
@@ -34,9 +34,10 @@ class AiMessgeNotifier extends StateNotifier<Content> {
     ref.read(loadingmsgProvider.notifier).state = true;
     final reply = await _messge(data: data, files: files);
 
-    reply.fold(
+    return reply.fold(
       (failure) {
         debugPrint('Error: ${failure.message}');
+        return '';
       },
       (content) async {
         // Update StateNotifier state with new content
@@ -59,19 +60,25 @@ class AiMessgeNotifier extends StateNotifier<Content> {
             );
 
             // Add to chat list via another provider
-            await ref
-                .read(chatListNotifierProvider.notifier)
-                .addChat(chat)
-                .then((value) {
-                  ref.read(loadingmsgProvider.notifier).state = false;
-                });
-            toSupabase
-                ? ref.read(supabaseChatNotifierProvider.notifier).addChats(chat)
-                : null;
+            if (toSupabase) {
+              await ref
+                  .read(chatListNotifierProvider.notifier)
+                  .addChat(chat)
+                  .then((value) {
+                    ref.read(loadingmsgProvider.notifier).state = false;
+                  });
+              // : null;
+              // toSupabase
+              //?
+              ref.read(supabaseChatNotifierProvider.notifier).addChats(chat);
+            }
 
-            debugPrint('AI Reply: $message');
+            ref.read(loadingmsgProvider.notifier).state = false;
+
+            print('AI Reply: $message');
           }
         }
+        return content.parts!.first.text ?? '';
       },
     );
   }

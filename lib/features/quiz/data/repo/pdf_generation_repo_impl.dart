@@ -20,26 +20,31 @@ class PdfGenerationRepoImpl implements PdfGenrationRepo {
     String? topic,
     String? time,
     String? mark,
- required   String questionData,
+    required String questionData,
   }) async {
     try {
+      if (questionData.trim().isEmpty) {
+        log('$questionData>>>>>>>>');
+        return left(SomeSpecificError('AI returned empty question data'));
+      }
+      log('eroor happaning hehre');
       final pdf = await dataSource.genratepdfQuestions(
-        description: description,
-        papperCode: papperCode,
-        subTopic: subTopic,
-        universityName: universityName,
+        description: description ?? '',
+        papperCode: papperCode ?? '',
+        subTopic: subTopic ?? '',
+        universityName: universityName ?? '',
         // questionCount: questionCount,
         // categeory: categeory,
         // level: level,
-        mark: mark,
+        mark: mark ?? '',
         papperType: papperType,
-        time: time,
-        topic: topic,
+        time: time ?? '',
+        topic: topic ?? '',
         questionData: questionData,
       );
       return right(pdf);
     } catch (e) {
-      log("error $e");
+      log("error $e >>>>>>.");
       return left(SomeSpecificError(e.toString()));
     }
   }

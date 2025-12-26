@@ -1,15 +1,16 @@
+import 'dart:developer';
 import 'dart:typed_data';
-
-import 'package:camera/camera.dart';
 import 'package:clean_architutre_learn/features/quiz/business/repo/pdf_genration_repo.dart';
 import 'package:clean_architutre_learn/features/quiz/business/usecases/pdf_genration_uscase.dart';
 import 'package:clean_architutre_learn/features/quiz/data/data_sources/pdf_genration_datasource.dart';
 import 'package:clean_architutre_learn/features/quiz/data/repo/pdf_generation_repo_impl.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final quizselectedAnswerProvider = StateProvider<String>((ref) {
-  return '';
+final testYourKnwoldgeoption = StateProvider((ref) => false);
+final quizQuestionNumber = StateProvider<int>((ref) => 0);
+
+final quizselectedAnswerProvider = StateProvider<int?>((ref) {
+  return null;
 });
 final paperTypeOptionProvider = StateProvider<String?>((ref) {
   return;
@@ -42,7 +43,7 @@ final pdfGenrationProvider = Provider((ref) {
 class PdfGenrationNotifier extends StateNotifier<AsyncValue<Uint8List?>> {
   final PdfGenrationUscase _genratePdf;
   PdfGenrationNotifier(this._genratePdf) : super(const AsyncValue.data(null));
-  Future<void> genratePdf({
+  Future<Uint8List?> genratePdf({
     String? description,
     String? subTopic,
     String? universityName,
@@ -66,11 +67,19 @@ class PdfGenrationNotifier extends StateNotifier<AsyncValue<Uint8List?>> {
       subTopic: subTopic,
       universityName: universityName,
     );
-    
+
     return result.fold(
-      (l) => state = AsyncError(l, StackTrace.current),
-      (r) => state = AsyncData(r),
+      (l) {
+        state = AsyncError(l, StackTrace.current);
+        return null;
+      },
+      (r) {
+        log(r.toString());
+        state = AsyncData(r);
+        return r;
+      },
     );
+    // return
   }
 }
 

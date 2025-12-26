@@ -1,3 +1,4 @@
+import 'package:clean_architutre_learn/core/constants/core_constants.dart';
 import 'package:clean_architutre_learn/core/constants/image_constants.dart';
 import 'package:clean_architutre_learn/core/constants/widgets/app_logo_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
@@ -6,6 +7,7 @@ import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.d
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -74,15 +76,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           'use thes to help youhh',
                         ),
                         SizedBox(height: 5.rh(context)),
-                        const HomeScreenSecotionWidget(
+                        HomeScreenSecotionWidget(
                           generateType: false,
+                          ontap: () {
+                            ref.read(paperTypeOptionProvider.notifier).state =
+                                CoreConstants.qustionText[1];
+                            ref.read(testYourKnwoldgeoption.notifier).state =
+                                true;
+                            context.pushNamed(
+                              RouteNames.generate,
+                              // extra: {'generateType': generateType},
+                            );
+                          },
                           text: 'test Your Knwoledge',
                         ),
                         SizedBox(height: 15.rh(context)),
 
-                        const HomeScreenSecotionWidget(
+                        HomeScreenSecotionWidget(
                           generateType: true,
-
+                          ontap: () {
+                            context.pushNamed(
+                              RouteNames.generate,
+                              // extra: {'generateType': generateType},
+                            );
+                          },
                           text: 'Generate Question Paper',
                         ),
                         SizedBox(height: 20.rh(context)),

@@ -10,6 +10,7 @@ import 'package:clean_architutre_learn/features/banana/presentation/pages/stored
 import 'package:clean_architutre_learn/features/chat/presentation/pages/chat_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/profile_screen.dart';
 import 'package:clean_architutre_learn/features/profile/presentation/pages/settings_screeen.dart';
+import 'package:clean_architutre_learn/features/quiz/data/model/mcq_paper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/camera_result_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/generation_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/home_screen.dart';
@@ -143,8 +144,19 @@ final GoRouter appRouter = GoRouter(
           path: 'quiz',
           name: RouteNames.quiz,
           pageBuilder: (context, state) {
+            final quizData = state.extra;
+            // extra
+            if (quizData == null || quizData is! List<McqQuestionModel>) {
+              return const NoTransitionPage(
+                child: CupertinoPageScaffold(
+                  child: Center(
+                    child: Text('Something went wrong ,cant make the test'),
+                  ),
+                ),
+              );
+            }
             return customBuildTransitionPage(
-              child: const QuizScreen(),
+              child: QuizScreen(quizdata: quizData),
               state: state,
               type: TransitionType.slideFromRight,
             );
@@ -156,7 +168,14 @@ final GoRouter appRouter = GoRouter(
           name: RouteNames.pdfPreview,
 
           pageBuilder: (context, state) {
-            final bytes = state.extra as Uint8List;
+            final bytes = state.extra;
+            if (bytes == null || bytes is! Uint8List) {
+              return const NoTransitionPage(
+                child: CupertinoPageScaffold(
+                  child: Center(child: Text('Invalid PDF data')),
+                ),
+              );
+            }
             return customBuildTransitionPage(
               child: PdfPreviewScreen(pdfBytes: bytes),
               state: state,

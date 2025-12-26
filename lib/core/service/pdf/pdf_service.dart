@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:clean_architutre_learn/core/constants/core_constants.dart';
+import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/utils/validation.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/mcq_paper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/short_answer_model.dart';
@@ -159,6 +160,7 @@ class PdfService {
   }) {
     // final shortNaswer=
     return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Center(
           child: pw.Text(
@@ -170,7 +172,7 @@ class PdfService {
 
         pw.Text(
           "Write Answers in minimum of word 3 to 5 words",
-          style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 16),
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
         ),
         pw.Divider(),
         pw.SizedBox(height: 10),
@@ -185,16 +187,18 @@ class PdfService {
               return pw.Padding(
                 padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
                       '${index + 1}. ${value.question}',
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                     ),
                   ],
                 ),
               );
             }),
-
+        pw.SizedBox(height: 10),
+        pw.Divider(),
         pw.Center(
           child: pw.Text(
             "Multi-Choice Question ${isHavExption ? "- with one exception question" : ""} ",
@@ -205,7 +209,7 @@ class PdfService {
 
         pw.Text(
           "Pick right one from options",
-          style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 16),
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
         ),
         pw.Divider(),
         pw.SizedBox(height: 10),
@@ -220,10 +224,11 @@ class PdfService {
               return pw.Padding(
                 padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
                       '${index + 1}. ${value.question}',
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.normal),
                     ),
                     pw.SizedBox(height: 6),
 
@@ -241,6 +246,8 @@ class PdfService {
                 ),
               );
             }),
+        pw.SizedBox(height: 10),
+        pw.Divider(),
         pw.Center(
           child: pw.Text(
             "Long Answers ${isHavExption ? "- with one exception question" : ""}",
@@ -266,6 +273,7 @@ class PdfService {
               return pw.Padding(
                 padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
                       '${index + 1}. ${value.question}',
@@ -287,14 +295,14 @@ class PdfService {
                 ),
               );
             }),
-
+        pw.SizedBox(height: 10),
+        pw.Divider(),
         pw.Center(
           child: pw.Text(
             "Essay ${isHavExption ? "- with one exception question" : ""}",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16),
           ),
         ),
-        pw.SizedBox(height: 5),
 
         pw.Text(
           "Write 6 to 8 paragraph as answers",
@@ -313,6 +321,7 @@ class PdfService {
               return pw.Padding(
                 padding: const pw.EdgeInsets.all(12),
                 child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
                       '${index + 1}. ${value.question}',
@@ -338,11 +347,13 @@ class PdfService {
     required List<TascQuestionModel> questionData,
   }) {
     return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         ...questionData.asMap().entries.map((e) {
           final index = e.key;
           final value = e.value;
           return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text('$index .   ${value.question}'),
               pw.SizedBox(height: 12),
@@ -360,6 +371,8 @@ class PdfService {
     required List<QuestionModel> questionData,
   }) {
     return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+
       children: [
         ...questionData.asMap().entries.map((e) {
           final index = e.key;
@@ -367,6 +380,7 @@ class PdfService {
           return pw.Padding(
             padding: const pw.EdgeInsets.all(12),
             child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text(
                   '${index + 1}. ${value.qestion}',
@@ -376,15 +390,18 @@ class PdfService {
             ),
           );
         }),
+
         pw.SizedBox(height: 20),
         pw.Text('Answers', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
         pw.Divider(),
         pw.SizedBox(height: 6),
         pw.Wrap(
+          crossAxisAlignment: pw.WrapCrossAlignment.center,
+          spacing: 20,
           children: questionData
               .asMap()
               .entries
-              .map((e) => pw.Text("${e.key}  ${e.value.answer}"))
+              .map((e) => pw.Text("${e.key + 1}. ${e.value.answer}"))
               .toList(),
         ),
       ],
@@ -419,7 +436,7 @@ class PdfService {
                   children: mcq.options.asMap().entries.map((opt) {
                     return pw.SizedBox(
                       width: 250,
-                      child: pw.Text('${opt.key + 1}) ${opt.value}'),
+                      child: pw.Text(' ${opt.value}'), //${opt.key + 1})
                     );
                   }).toList(),
                 ),
@@ -435,7 +452,8 @@ class PdfService {
         pw.Wrap(
           spacing: 20,
           children: questionData.asMap().entries.map((e) {
-            return pw.Text('${e.key + 1}. ${e.value.correctIndex + 1}');
+            const list = ['A', 'B', 'C', 'D'];
+            return pw.Text('${e.key + 1}. ${list[e.value.correctIndex]}');
           }).toList(),
         ),
       ],

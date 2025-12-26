@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:clean_architutre_learn/core/constants/core_constants.dart';
@@ -14,7 +15,9 @@ import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/custom_textform_field.dart';
 import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_provider.dart';
 import 'package:clean_architutre_learn/features/drop_down/presentation/widget/custom_drop_down_widget.dart';
+import 'package:clean_architutre_learn/features/quiz/data/model/mcq_paper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,27 +89,29 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ref.listen(pdfGenrationNotifierProvider, (previous, next) {
+    //   next.whenOrNull(
+    //     data: (data) {
+    //       if (!mounted) return;
+    //       if (previous?.hasValue == true) return;
+    //       context.pushNamed(RouteNames.pdfPreview, extra: data);
+    //     },
+    //     error: (error, stackTrace) =>
+    //         Uiutils.cupertinoSnackBar(context, error.toString(), true),
+    //   );
+    // });
     final category = ref.watch(categeoryOptionProvider);
-
-    final typeProvider = ref.watch(paperTypeOptionProvider);
+    final typeProvider = ref.watch(paperTypeOptionProvider) ?? '';
     final level = ref.watch(segmentSelectionLevelProvider);
-    final topic = ref.watch(topicOptionProvider);
+    final topic = ref.watch(topicOptionProvider) ?? '';
     final questinCOunt = ref.watch(questionCountProvider);
     final timeNumber = ref.watch(timeNumberProvider);
     final maxMark = ref.watch(maxMarkProvider);
     final genratepdfProvider = ref.watch(pdfGenrationNotifierProvider);
     final optional = ref.watch(optionalFormfieldProvider);
-    ref.listen(pdfGenrationNotifierProvider, (previous, next) {
-      next.whenOrNull(
-        data: (data) {
-          if (!mounted) return;
-          if (previous?.hasValue == true) return;
-          context.pushNamed(RouteNames.pdfPreview, extra: data);
-        },
-        error: (error, stackTrace) =>
-            Uiutils.cupertinoSnackBar(context, error.toString(), true),
-      );
-    });
+    final isPDFLoading = genratepdfProvider.isLoading;
+    final isAiLoading = ref.watch(loadingmsgProvider);
+    final istestYourKnwoldge = ref.watch(testYourKnwoldgeoption);
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
@@ -116,6 +121,7 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
         ref.invalidate(pdfGenrationNotifierProvider);
         ref.invalidate(topicOptionProvider);
         ref.invalidate(segmentSelectionLevelProvider);
+        ref.invalidate(testYourKnwoldgeoption);
       },
       child: CustomFrameBodyWidget(
         child: SingleChildScrollView(
@@ -151,19 +157,19 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                   ),
                 ),
                 SizedBox(height: 20.rh(context)),
-
-                PureCupertinoDropdown(
-                  subHeading: "Questionn paper  Type ",
-                  items: CoreConstants.qustionText, // '',
-                  selectedValueProvider: paperTypeOptionProvider,
-                  bottomPadding: 0,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Select a Paper Type";
-                    }
-                    return null;
-                  },
-                ),
+                if (!istestYourKnwoldge)
+                  PureCupertinoDropdown(
+                    subHeading: "Questionn paper  Type ",
+                    items: CoreConstants.qustionText, // '',
+                    selectedValueProvider: paperTypeOptionProvider,
+                    bottomPadding: 0,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Select a Paper Type";
+                      }
+                      return null;
+                    },
+                  ),
                 Row(
                   children: [
                     Uiutils.getTextWidget(
@@ -400,47 +406,125 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                 SizedBox(height: 12.rh(context)),
                 // Spacer(),
                 CustomButtonWIdget(
+                  widget: (isPDFLoading || isAiLoading)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Uiutils.getTextWidget(context, 'Generating'),
+                            CupertinoActivityIndicator(
+                              color: context.textColor,
+                            ),
+                          ],
+                        )
+                      : null,
                   titile: 'Generate',
                   color: AppColors.primary,
                   textColor: AppColors.containerGray,
                   textStyle: TextStyleType.mediumBold,
-                  onTap: () async {
-                    if (!formKey.currentState!.validate()) return;
-                    try {
-                      final prompt = Uiutils.buildPrompt(
-                        paperType: typeProvider!,
-                        questionCount: questinCOunt,
-                        topic: topic!,
-                        level: Diffculty.values[level].name,
-                        categeory: category,
-                        subTopic: subTopicCOntroller.text,
-                      );
-                      ref
-                          .read(aiMessgeNotifierProvider.notifier)
-                          .getAiReply(data: prompt);
-                      final response = ref
-                          .watch(aiMessgeNotifierProvider)
-                          .parts!
-                          .first
-                          .text;
+                  onTap: (isPDFLoading || isAiLoading)
+                      ? null
+                      : () async {
+                          if (!formKey.currentState!.validate()) return;
+                          try {
+                            final prompt = Uiutils.buildPrompt(
+                              paperType: typeProvider,
+                              questionCount: questinCOunt,
+                              topic: topic,
+                              level: Diffculty.values[level].name,
+                              categeory: category,
+                              subTopic: subTopicCOntroller.text,
+                            );
 
-                      ref
-                          .read(pdfGenrationNotifierProvider.notifier)
-                          .genratePdf(
-                            description: descriptionCOntroller.text,
-                            papperCode: paperCOdeCOntroller.text,
-                            subTopic: subTopicCOntroller.text,
-                            universityName: univercityController.text,
-                            papperType: typeProvider,
-                            questionData: response??'',
-                            mark: '$maxMark',
-                            time: '$timeNumber',
-                            topic: topic,
-                          );
-                    } catch (e) {
-                      debugPrint(e.toString());
-                    }
-                  },
+                            final mesgeProvider = await ref
+                                .read(aiMessgeNotifierProvider.notifier)
+                                .getAiReply(data: prompt, toSupabase: false);
+                            // = ref.watch(
+                            //   aiMessgeNotifierProvider,
+                            // );
+
+                            // .then((value) async {
+                            final response = (mesgeProvider.isNotEmpty) == true
+                                ? mesgeProvider
+                                : null;
+                            if (response == null) {
+                              Uiutils.cupertinoSnackBar(
+                                context,
+                                "Somthing Went wrong ,Can't genrate the questions",
+                                true,
+                              );
+                              return;
+                            } else {
+                              if (istestYourKnwoldge) {
+                                final quizQuestions = McqPaperModel.fromJson(
+                                  jsonDecode(
+                                    response
+                                        .replaceAll("```json", "")
+                                        .replaceAll("```", "")
+                                        .trim(),
+                                  ),
+                                ).questions;
+                                context.pushNamed(
+                                  RouteNames.quiz,
+                                  extra: quizQuestions,
+                                );
+                              } else {
+                                print(response);
+                                final pdfUnit8list = await ref
+                                    .read(pdfGenrationNotifierProvider.notifier)
+                                    .genratePdf(
+                                      description: descriptionCOntroller.text,
+                                      papperCode: paperCOdeCOntroller.text,
+                                      subTopic: subTopicCOntroller.text,
+                                      universityName: univercityController.text,
+                                      papperType: typeProvider,
+                                      questionData: response,
+                                      mark: '$maxMark',
+                                      time: '$timeNumber',
+                                      topic: topic,
+                                    );
+                                if (pdfUnit8list != null &&
+                                    pdfUnit8list.isNotEmpty) {
+                                  context.pushNamed(
+                                    RouteNames.pdfPreview,
+                                    extra: pdfUnit8list,
+                                  );
+                                } else {
+                                  Uiutils.cupertinoSnackBar(
+                                    context,
+                                    "Somthing Went wrong ,Can't genrate the pdf",
+                                    true,
+                                  );
+                                }
+                              }
+                            }
+                            // .then(
+                            //   (_) => genratepdfProvider.when(
+                            //     data: (data) {
+                            //       print(
+                            //         '$data >>>>>>>>>>>>>>>>> unitlist',
+                            //       );
+                            // return context.pushNamed(
+                            //   RouteNames.pdfPreview,
+                            //   extra: data,
+                            // );
+                            //     },
+                            //     error: (error, stackTrace) =>
+                            // Uiutils.cupertinoSnackBar(
+                            //   context,
+                            //   error.toString(),
+                            //   true,
+                            // ),
+                            //     loading: () =>
+                            //         const CupertinoActivityIndicator(),
+                            //   ),
+                            // );
+
+                            // });
+                            // ref.listen(aiMessgeNotifierProvider, (previous, next) {
+                          } catch (e) {
+                            print('$e>>>>>>>>>>>>>>');
+                          }
+                        },
                 ),
               ],
             ),
