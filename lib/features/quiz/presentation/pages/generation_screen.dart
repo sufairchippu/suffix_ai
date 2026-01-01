@@ -113,8 +113,9 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
     final isAiLoading = ref.watch(loadingmsgProvider);
     final istestYourKnwoldge = ref.watch(testYourKnwoldgeoption);
     return PopScope(
+      canPop: true,
       onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
+        if (!didPop) return;
         ref.invalidate(questionCountProvider);
         ref.invalidate(timeNumberProvider);
         ref.invalidate(maxMarkProvider);
@@ -131,7 +132,7 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
             key: formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 8.rh(context),
+              spacing: istestYourKnwoldge ? 25.rh(context) : 8.rh(context),
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -145,19 +146,20 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                   ],
                 ),
                 SizedBox(height: 22.rh(context)),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.rw(context)),
-                  child: Uiutils.getTextWidget(
-                    context,
+                if (!istestYourKnwoldge) ...[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.rw(context)),
+                    child: Uiutils.getTextWidget(
+                      context,
 
-                    "💡 ${CoreConstants.infoTexts[Random().nextInt(CoreConstants.infoTexts.length)]}",
-                    color: context.primaryColor,
-                    overFlow: TextOverflow.visible,
-                    textStyle: TextStyleType.mediumBold,
+                      "💡 ${CoreConstants.infoTexts[Random().nextInt(CoreConstants.infoTexts.length)]}",
+                      color: context.primaryColor,
+                      overFlow: TextOverflow.visible,
+                      textStyle: TextStyleType.mediumBold,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20.rh(context)),
-                if (!istestYourKnwoldge)
+                  SizedBox(height: 20.rh(context)),
+
                   PureCupertinoDropdown(
                     subHeading: "Questionn paper  Type ",
                     items: CoreConstants.qustionText, // '',
@@ -170,6 +172,7 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                       return null;
                     },
                   ),
+                ],
                 Row(
                   children: [
                     Uiutils.getTextWidget(
@@ -181,13 +184,24 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                     SizedBox(width: 10.rw(context)),
                     Expanded(
                       child: CustomTextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter the number of Questions';
+                          } else if (int.tryParse(value.trim()) == null) {
+                            return 'Accepts Numbers Only';
+                          } else if (int.tryParse(value.trim())! < 5) {
+                            return 'Minimum 5 Number of question';
+                          }
+                          return null;
+                        },
+
                         ///!give tha cpondtion for mcq and university exam minimum question count in the 53 lineimpiment constion of corecosntant.paprtype ==papertype provider value give value as minimum to specific
                         onChange: (value) {
                           final parsed = int.tryParse(value.trim());
                           if (parsed != null) {
                             ref.read(questionCountProvider.notifier).state =
                                 parsed;
-                          }
+                          } //else {}
                         },
                         downPadding: 0,
                         titileStyle: TextStyleType.mediumBold,
@@ -266,102 +280,113 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                 ),
                 SizedBox(height: 9.rh(context)),
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomTextFormField(
-                        titileStyle: TextStyleType.mediumBold,
-                        downPadding: 10.rh(context),
-                        textColor: context.mainLightShadeColor,
+                // Spacer(),
+                if (!istestYourKnwoldge) ...[
+                  if (optional) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextFormField(
+                            titileStyle: TextStyleType.mediumBold,
+                            downPadding: 10.rh(context),
+                            textColor: context.mainLightShadeColor,
 
-                        borderRadius: 4,
-                        boxColor: context.secondaryColor,
-                        borderColor: context.subTextColor.withValues(alpha: .3),
-                        controller: timeController,
-                        onChange: (value) {
-                          final parsed = int.tryParse(value.trim());
-                          if (parsed != null) {
-                            ref.read(timeNumberProvider.notifier).state =
-                                parsed;
-                          }
-                        },
-                        prefixOntap: () {
-                          if (timeNumber > 15) {
-                            ref.read(timeNumberProvider.notifier).state =
-                                timeNumber - 1;
-                            timeController.text = (timeNumber - 1)
-                                .toString(); // timeController.text = (--timeControllerCount)
-                            //     .toString();
-                          }
-                        },
-                        onTap: () {
-                          ref.read(timeNumberProvider.notifier).state =
-                              timeNumber + 1;
-                          timeController.text = (timeNumber + 1).toString();
-                          // timeController.text = (++timeControllerCount)
-                          //     .toString();
-                        },
-                        suffixIcon: CupertinoIcons.add_circled,
-                        isWantsuffix: true,
-                        icon: CupertinoIcons.minus_circled,
+                            borderRadius: 4,
+                            boxColor: context.secondaryColor,
+                            borderColor: context.subTextColor.withValues(
+                              alpha: .3,
+                            ),
+                            controller: timeController,
+                            onChange: (value) {
+                              final parsed = int.tryParse(value.trim());
+                              if (parsed != null) {
+                                ref.read(timeNumberProvider.notifier).state =
+                                    parsed;
+                              }
+                            },
+                            prefixOntap: () {
+                              if (timeNumber > 15) {
+                                ref.read(timeNumberProvider.notifier).state =
+                                    timeNumber - 1;
+                                timeController.text = (timeNumber - 1)
+                                    .toString(); // timeController.text = (--timeControllerCount)
+                                //     .toString();
+                              }
+                            },
+                            onTap: () {
+                              ref.read(timeNumberProvider.notifier).state =
+                                  timeNumber + 1;
+                              timeController.text = (timeNumber + 1).toString();
+                              // timeController.text = (++timeControllerCount)
+                              //     .toString();
+                            },
+                            suffixIcon: CupertinoIcons.add_circled,
+                            isWantsuffix: true,
+                            icon: CupertinoIcons.minus_circled,
 
-                        text: "Time (Minutes)",
-                      ),
+                            text: "Time (Minutes)",
+                          ),
+                        ),
+                        SizedBox(width: 20.rw(context)),
+                        Expanded(
+                          child: CustomTextFormField(
+                            titileStyle: TextStyleType.mediumBold,
+                            textColor: context.mainLightShadeColor,
+
+                            borderRadius: 12,
+                            boxColor: context.secondaryColor,
+                            borderColor: context.subTextColor.withValues(
+                              alpha: .3,
+                            ),
+                            onChange: (value) {
+                              final parsed = int.tryParse(value.trim());
+                              if (parsed != null) {
+                                ref.read(maxMarkProvider.notifier).state =
+                                    parsed;
+                              }
+                            },
+                            controller: maxMArkController,
+                            onTap: () {
+                              ref.read(maxMarkProvider.notifier).state =
+                                  maxMark + 1;
+                              maxMArkController.text = (maxMark + 1).toString();
+                            },
+                            suffixIcon: CupertinoIcons.add_circled,
+                            isWantsuffix: true,
+                            downPadding: 0.rh(context),
+                            icon: CupertinoIcons.minus_circled,
+                            prefixOntap: () {
+                              if (maxMark > 10) {
+                                ref.read(maxMarkProvider.notifier).state =
+                                    maxMark - 1;
+                                maxMArkController.text = (maxMark - 1)
+                                    .toString();
+                              }
+                            },
+                            text: 'Maximum Mark',
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 20.rw(context)),
-                    Expanded(
-                      child: CustomTextFormField(
-                        titileStyle: TextStyleType.mediumBold,
-                        textColor: context.mainLightShadeColor,
-
-                        borderRadius: 12,
-                        boxColor: context.secondaryColor,
-                        borderColor: context.subTextColor.withValues(alpha: .3),
-                        onChange: (value) {
-                          final parsed = int.tryParse(value.trim());
-                          if (parsed != null) {
-                            ref.read(maxMarkProvider.notifier).state = parsed;
-                          }
-                        },
-                        controller: maxMArkController,
-                        onTap: () {
-                          ref.read(maxMarkProvider.notifier).state =
-                              maxMark + 1;
-                          maxMArkController.text = (maxMark + 1).toString();
-                        },
-                        suffixIcon: CupertinoIcons.add_circled,
-                        isWantsuffix: true,
-                        downPadding: 0.rh(context),
-                        icon: CupertinoIcons.minus_circled,
-                        prefixOntap: () {
-                          if (maxMark > 10) {
-                            ref.read(maxMarkProvider.notifier).state =
-                                maxMark - 1;
-                            maxMArkController.text = (maxMark - 1).toString();
-                          }
-                        },
-                        text: 'Maximum Mark',
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Uiutils.getTextWidget(context, '(optional*)'),
+                        GestureDetector(
+                          onTap: () =>
+                              ref
+                                      .read(optionalFormfieldProvider.notifier)
+                                      .state =
+                                  !optional,
+                          child: Icon(
+                            optional
+                                ? CupertinoIcons.chevron_up
+                                : CupertinoIcons.chevron_down,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Uiutils.getTextWidget(context, '(optional*)'),
-                    GestureDetector(
-                      onTap: () =>
-                          ref.read(optionalFormfieldProvider.notifier).state =
-                              !optional,
-                      child: Icon(
-                        optional
-                            ? CupertinoIcons.chevron_up
-                            : CupertinoIcons.chevron_down,
-                      ),
-                    ),
-                  ],
-                ),
-                if (optional) ...[
                   CustomTextFormField(
                     titileStyle: TextStyleType.mediumBold,
                     textColor: context.mainLightShadeColor,
@@ -404,7 +429,6 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                   ),
                 ],
                 SizedBox(height: 12.rh(context)),
-                // Spacer(),
                 CustomButtonWIdget(
                   widget: (isPDFLoading || isAiLoading)
                       ? Row(
@@ -454,6 +478,9 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                               );
                               return;
                             } else {
+                              print(
+                                '$response. questions length>>>>>>>>>>>>>>>>',
+                              );
                               if (istestYourKnwoldge) {
                                 final quizQuestions = McqPaperModel.fromJson(
                                   jsonDecode(
@@ -463,6 +490,9 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                                         .trim(),
                                   ),
                                 ).questions;
+                                print(
+                                  '${quizQuestions.length}. questions length>>>>>>>>>>>>>>>>',
+                                );
                                 context.pushNamed(
                                   RouteNames.quiz,
                                   extra: quizQuestions,

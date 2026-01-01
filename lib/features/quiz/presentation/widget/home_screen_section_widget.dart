@@ -1,8 +1,7 @@
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
-import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
+
 
 import '../../../../core/utils/ui_utils.dart';
 import '../../../authentication/presentation/widget/connect_with_widget.dart';

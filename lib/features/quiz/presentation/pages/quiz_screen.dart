@@ -1,5 +1,6 @@
 import 'package:clean_architutre_learn/core/constants/widgets/custom_button_widget.dart';
 import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
+import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
@@ -20,12 +21,20 @@ class QuizScreen extends ConsumerStatefulWidget {
 class _QuizScreenState extends ConsumerState<QuizScreen> {
   @override
   Widget build(BuildContext context) {
-    final questionNumber = ref.watch(quizQuestionNumber);
-    final selectedOption = ref.watch(quizselectedAnswerProvider);
-    int correctAnswerIndex = widget.quizdata[questionNumber].correctIndex;
-    var correctedanswerCount = 0;
+    print('building build methode');
+
+    // var correctedanswerCount = 0;
+    // ref.listen(provider, listener)
     return PopScope(
       canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) return;
+        ref.invalidate(quizselectedAnswerProvider);
+        ref.invalidate(quizQuestionNumber);
+        // ref.invalidate(quizselectedAnswerProvider);
+        // ref.invalidate(quizQuestionNumber);
+      },
+
       // onPopInvokedWithResult: (didPop, result) {},
       child: CupertinoPageScaffold(
         resizeToAvoidBottomInset: true,
@@ -68,6 +77,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                           GestureDetector(
                             onTap: () {
                               context.pop();
+                              ref.invalidate(quizselectedAnswerProvider);
+                              ref.invalidate(quizQuestionNumber);
 
                               ///>>>>>>>>>>>>>>>>>>>>>>>>>>>>> make condition her for when its quiz give an alert box to exit
                             },
@@ -77,89 +88,123 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                               color: context.primaryColor,
                             ),
                           ),
-                          Uiutils.getTextWidget(
-                            context,
-                            '${widget.quizdata.length}/${widget.quizdata.length}',
-                            textStyle: TextStyleType.mediumSemiBold,
-                            color: context.mainDarkShadeColor,
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final questionNumber = ref.watch(
+                                quizQuestionNumber,
+                              );
+                              final selectedOption = ref.watch(
+                                quizselectedAnswerProvider,
+                              );
+                              int correctAnswerIndex =
+                                  widget.quizdata[questionNumber].correctIndex;
+                              // final questionNumber = ref.watch(
+                              //   quizQuestionNumber,
+                              // );
+                              return Column(
+                                children: [
+                                  Uiutils.getTextWidget(
+                                    context,
+                                    '${questionNumber + 1}/${widget.quizdata.length}',
+                                    textStyle: TextStyleType.mediumSemiBold,
+                                    color: context.mainDarkShadeColor,
+                                  ),
+
+                                  SizedBox(height: 50.rh(context)),
+                                  CustomButtonWIdget(
+                                    titile: widget
+                                        .quizdata[questionNumber]
+                                        .question,
+                                    textStyle: TextStyleType.mediumSemiBold,
+                                    textColor: context.textColor,
+                                    height: 110.rh(context),
+                                    boxshadowColor: context.textColor
+                                        .withValues(alpha: .3),
+                                    color: context.dynamicColor3,
+                                    maxline: 9,
+                                  ),
+                                  const Spacer(),
+                                  ListView.separated(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: widget
+                                        .quizdata[questionNumber]
+                                        .options
+                                        .length,
+                                    separatorBuilder: (context, index) =>
+                                        SizedBox(height: 15.rh(context)),
+                                    itemBuilder: (context, index) {
+                                      String? option = widget
+                                          .quizdata[questionNumber]
+                                          .options[index];
+                                      return CustomButtonWIdget(
+                                        height: 65.rh(context),
+                                        top: 10.rh(context),
+                                        color: selectedOption == index
+                                            ? context.scaffoldColor
+                                            : context.primaryColor,
+                                        onTap: () {
+                                          ref
+                                                  .read(
+                                                    quizselectedAnswerProvider
+                                                        .notifier,
+                                                  )
+                                                  .state =
+                                              index;
+                                        },
+                                        widget: Center(
+                                          child: CupertinoListTile(
+                                            title: Uiutils.getTextWidget(
+                                              context,
+                                              option,
+                                              maxline: 2,
+                                              textStyle:
+                                                  TextStyleType.mediumBold,
+                                            ),
+                                            trailing: Icon(
+                                              selectedOption == index
+                                                  ? CupertinoIcons
+                                                        .check_mark_circled_solid
+                                                  : CupertinoIcons.circle,
+                                            ),
+                                            // CupertinoRadio(
+                                            //   value: option,
+                                            //   onChanged: (String? value) {
+                                            //     // setState(() {
+                                            //     //   valuee = value;
+                                            //     // });
+                                            //   },
+                                            //   groupValue: valuee,
+                                            // ),
+                                          ),
+                                        ),
+                                      );
+                                      // CustomButtonWIdget(
+                                      //   widget: Row(
+                                      //     children: [
+                                      //       Uiutils.getTextWidget(context, "Optiion${index + 1}"),
+                                      //       Spacer(),
+                                      //     ],
+                                      //   ),
+                                      // );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(),
                         ],
                       ),
-                      SizedBox(height: 50.rh(context)),
-                      CustomButtonWIdget(
-                        titile: widget.quizdata[questionNumber].question,
-                        textStyle: TextStyleType.mediumSemiBold,
-                        textColor: context.textColor,
-                        height: 110.rh(context),
-                        boxshadowColor: context.textColor.withValues(alpha: .3),
-                        color: context.dynamicColor3,
-                      ),
-                      const Spacer(),
 
                       // SizedBox(height: 40.rh(context)),
-                      Consumer(
-                        builder: (context, ref, child) {
-                          return ListView.separated(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount:
-                                widget.quizdata[questionNumber].options.length,
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 15.rh(context)),
-                            itemBuilder: (context, index) {
-                              String? option = widget
-                                  .quizdata[questionNumber]
-                                  .options[index];
-                              return CustomButtonWIdget(
-                                top: 10.rh(context),
-                                color: selectedOption == index
-                                    ? context.scaffoldColor
-                                    : context.primaryColor,
-                                onTap: () {
-                                  ref
-                                          .read(
-                                            quizselectedAnswerProvider.notifier,
-                                          )
-                                          .state =
-                                      index;
-                                },
-                                widget: CupertinoListTile(
-                                  title: Uiutils.getTextWidget(
-                                    context,
-                                    option,
-                                    textStyle: TextStyleType.mediumBold,
-                                  ),
-                                  trailing: Icon(
-                                    selectedOption == index
-                                        ? CupertinoIcons
-                                              .check_mark_circled_solid
-                                        : CupertinoIcons.circle,
-                                  ),
-                                  // CupertinoRadio(
-                                  //   value: option,
-                                  //   onChanged: (String? value) {
-                                  //     // setState(() {
-                                  //     //   valuee = value;
-                                  //     // });
-                                  //   },
-                                  //   groupValue: valuee,
-                                  // ),
-                                ),
-                              );
-                              // CustomButtonWIdget(
-                              //   widget: Row(
-                              //     children: [
-                              //       Uiutils.getTextWidget(context, "Optiion${index + 1}"),
-                              //       Spacer(),
-                              //     ],
-                              //   ),
-                              // );
-                            },
-                          );
-                        },
-                      ),
+                      // Consumer(
+                      //   builder: (context, ref, child) {
+                      //     return;
+                      //   },
+                      // ),
                       SizedBox(height: 17.rh(context)),
 
                       const Spacer(),
@@ -171,17 +216,52 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       // ),
                       SizedBox(height: 17.rh(context)),
 
-                      CustomButtonWIdget(
-                        onTap: () {
-                          if (selectedOption == correctAnswerIndex) {
-                            ++correctedanswerCount;
-                          }
-                          ref.invalidate(quizselectedAnswerProvider);
-                          ref.read(quizQuestionNumber.notifier).state =
-                              questionNumber + 1;
+                      Consumer(
+                        builder: (context, ref, child) {
+                          return CustomButtonWIdget(
+                            onTap: () {
+                              final correctedanswerCount = ref.watch(
+                                quizAnswerCountProvider,
+                              );
+                              final questionNumber = ref.watch(
+                                quizQuestionNumber,
+                              );
+                              final selectedOption = ref.watch(
+                                quizselectedAnswerProvider,
+                              );
+                              int correctAnswerIndex =
+                                  widget.quizdata[questionNumber].correctIndex;
+                              print(
+                                'correctanswrer count $correctedanswerCount',
+                              );
+                              if (questionNumber >=
+                                  widget.quizdata.length - 1) {
+                                context.pushNamed(
+                                  RouteNames.resultScreen,
+                                  extra: {
+                                    'answerCount': correctedanswerCount,
+                                    'totalQuestion': widget.quizdata.length,
+                                  },
+                                );
+                                ref.invalidate(quizselectedAnswerProvider);
+                                ref.invalidate(quizQuestionNumber);
+                                ref.invalidate(quizAnswerCountProvider);
+
+                                ///! scor showing screnn
+                              } else {
+                                if (selectedOption == correctAnswerIndex) {
+                                  ++ref
+                                      .read(quizAnswerCountProvider.notifier)
+                                      .state;
+                                }
+                                ref.invalidate(quizselectedAnswerProvider);
+                                ref.read(quizQuestionNumber.notifier).state++;
+                              }
+                            },
+                            titile: 'Next',
+                            color: context.primaryColor,
+                          );
                         },
-                        titile: 'Next',
-                        color: context.primaryColor,
                       ),
                       SizedBox(height: 22.rh(context)),
                     ],

@@ -13,6 +13,5 @@ class SvgConstants {
   static const String profilUndefined = '${basePath}profile.svg';
   static const String acitvity = '${basePath}activity.svg';
   static const String save = '${basePath}save.svg';
-  
-
+  static const String result = '${basePath}result.svg';
 }

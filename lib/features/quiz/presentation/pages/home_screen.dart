@@ -31,7 +31,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     bool topic = true;
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (didPop, result) {},
       child: CupertinoPageScaffold(
         child: Stack(
@@ -80,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           generateType: false,
                           ontap: () {
                             ref.read(paperTypeOptionProvider.notifier).state =
-                                CoreConstants.qustionText[1];
+                                CoreConstants.qustionText[0];
                             ref.read(testYourKnwoldgeoption.notifier).state =
                                 true;
                             context.pushNamed(
@@ -94,7 +94,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                         HomeScreenSecotionWidget(
                           generateType: true,
+
                           ontap: () {
+                            ref.read(testYourKnwoldgeoption.notifier).state =
+                                false;
                             context.pushNamed(
                               RouteNames.generate,
                               // extra: {'generateType': generateType},

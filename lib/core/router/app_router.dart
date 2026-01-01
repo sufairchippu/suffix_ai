@@ -16,6 +16,7 @@ import 'package:clean_architutre_learn/features/quiz/presentation/pages/generati
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/home_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/pdf_view_screen.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/pages/quiz_screen.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/pages/quizscore_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
@@ -161,6 +162,24 @@ final GoRouter appRouter = GoRouter(
               type: TransitionType.slideFromRight,
             );
           },
+          routes: [
+            GoRoute(
+              path: 'result',
+              name: RouteNames.resultScreen,
+              pageBuilder: (context, state) {
+                final data = state.extra as Map<String, dynamic>;
+                final answerCount = data['answerCount'];
+                final totalQuestion = data['totalQuestion'];
+                return customBuildTransitionPage(
+                  child: QuizScoreScreen(
+                    answerCount: answerCount,
+                    totalQuestion: totalQuestion,
+                  ),
+                  state: state,
+                );
+              },
+            ),
+          ],
         ),
         //! pdf review
         GoRoute(

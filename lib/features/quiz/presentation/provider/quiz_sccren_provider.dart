@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final testYourKnwoldgeoption = StateProvider((ref) => false);
 final quizQuestionNumber = StateProvider<int>((ref) => 0);
+final quizAnswerCountProvider = StateProvider<int>((ref) => 0);
+
 
 final quizselectedAnswerProvider = StateProvider<int?>((ref) {
   return null;

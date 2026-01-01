@@ -81,16 +81,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final attachmentState = ref.watch(chatAttachmentProvider);
     final attachemntProvider = ref.watch(attachementNotifierProvider);
     return PopScope(
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        if (isdrawer) {
-          ref.read(chatHistoryProvider.notifier).state = false;
-        } else if (attachmentState) {
-          ref.read(chatAttachmentProvider.notifier).state = false;
-        } else {
-          ref.read(chatListNotifierProvider.notifier).clearChats();
-          context.pop();
+        if (isdrawer || attachmentState) {
+          ref.invalidate(chatHistoryProvider); //.state = false;
+          ref.invalidate(chatAttachmentProvider); //.state = false;
+          return;
+          // } else if (attachmentState) {
         }
+        ref.invalidate(chatListNotifierProvider); //.clearChats();
+        context.pop();
       },
       child: CupertinoPageScaffold(
         child: Stack(
@@ -125,12 +126,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       const Spacer(),
                       GestureDetector(
                         onTap: () {
-                          if (isdrawer) {
-                            ref.read(chatHistoryProvider.notifier).state =
-                                false;
-                          } else {
-                            context.pop();
-                          }
+                          ref.invalidate(chatHistoryProvider); //.state = false;
+                          ref.invalidate(
+                            chatAttachmentProvider,
+                          ); //.state = false;
+                          ref.invalidate(chatListNotifierProvider);
+                          context.pop();
                         },
                         child: Icon(
                           CupertinoIcons.xmark_circle,

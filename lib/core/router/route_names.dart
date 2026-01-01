@@ -5,11 +5,9 @@ class RouteNames {
   static const String passForget = '/pass_forget';
   static const String newPass = '/new_pass';
 
-
   static const String chat = '/chat';
   static const String imagelist = '/imagelist';
   static const String pdfPreview = '/pdfrview';
-
 
   static const String home = '/home';
   static const String profile = '/profile';
@@ -19,5 +17,5 @@ class RouteNames {
   static const String generate = '/generate';
   static const String nanoBanana = '/nanoBanana';
   static const String nanoBananaDisplay = '/nanoBananaDisplay';
-
+  static const String resultScreen = '/result';
 }

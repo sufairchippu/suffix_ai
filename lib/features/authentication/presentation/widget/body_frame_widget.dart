@@ -23,7 +23,7 @@ class BodyFrameWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           if (onBackTap != null) {

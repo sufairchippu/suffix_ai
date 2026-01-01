@@ -24,6 +24,7 @@ class CustomButtonWIdget extends StatelessWidget {
     this.right,
     this.bottom,
     this.bordercolor,
+    this.maxline,
   });
 
   final double? height;
@@ -42,6 +43,7 @@ class CustomButtonWIdget extends StatelessWidget {
   final double? right;
   final double? bottom;
   final double? width;
+  final int? maxline;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -83,6 +85,7 @@ class CustomButtonWIdget extends StatelessWidget {
                 child:
                     widget ??
                     Uiutils.getTextWidget(
+                      maxline: maxline,
                       context,
                       titile ?? "Topic",
                       textStyle: textStyle,

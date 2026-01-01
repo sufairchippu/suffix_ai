@@ -18,7 +18,7 @@ class _CustomFrameBodyWidgetState extends ConsumerState<CustomFrameBodyWidget> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      // canPop: true,
 
       child: CupertinoPageScaffold(
         child: Stack(

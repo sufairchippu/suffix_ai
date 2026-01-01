@@ -51,6 +51,7 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) return;
         ref.read(chatListNotifierProvider.notifier).clearChats();
         ref.read(imagePickerNotifierProvider.notifier).clear();
       },
@@ -99,7 +100,7 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                                           image: file != null
                                               ? FileImage(File(file.path))
                                               : const AssetImage(
-                                                       'assets/images/no_imagee.avif',
+                                                      'assets/images/no_imagee.avif',
                                                     )
                                                     as ImageProvider,
                                           fit: BoxFit.cover,
@@ -135,7 +136,7 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                                           ref
                                               .read(
                                                 imagePickerNotifierProvider
-                                                   .notifier,
+                                                    .notifier,
                                               )
                                               .clear();
                                         },
@@ -155,6 +156,12 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                             child: GestureDetector(
                               onTap: () {
                                 context.pop();
+                                ref
+                                    .read(chatListNotifierProvider.notifier)
+                                    .clearChats();
+                                ref
+                                    .read(imagePickerNotifierProvider.notifier)
+                                    .clear();
                               },
                               child: Icon(
                                 size: 27.rf(context),
@@ -208,8 +215,8 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
                             .read(aiMessgeNotifierProvider.notifier)
                             .getAiReply(
                               data: '',
-                              files: [File(imageState.valueOrNull!.path),
-                                            ]                            );
+                              files: [File(imageState.valueOrNull!.path)],
+                            );
                       }
                     },
                     height: 40.rh(context),

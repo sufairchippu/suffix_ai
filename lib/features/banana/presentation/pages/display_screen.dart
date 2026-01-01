@@ -39,11 +39,17 @@ class _NanoDisplayScreenState extends ConsumerState<NanoDisplayScreen> {
         CoreConstants.listofnanBananaSelction[widget.specificationsIndex];
     return CupertinoPageScaffold(
       child: PopScope(
+        canPop: false,
         onPopInvokedWithResult: (didPop, result) {
-          if (didPop) {
+          if (didPop) return;
+          if (genrateImage.hasValue || image.hasValue) {
             ref.read(imaginNotifierProvider.notifier).clear();
             ref.read(imagePickerNotifierProvider.notifier).clear();
+          } else {
+            context.pop();
           }
+          // ref.read(imaginNotifierProvider.notifier).clear();
+          // ref.read(imagePickerNotifierProvider.notifier).clear();
         },
         child: SafeArea(
           child: Padding(
@@ -91,7 +97,7 @@ class _NanoDisplayScreenState extends ConsumerState<NanoDisplayScreen> {
                             )
                           : const SizedBox(),
                       error: (error, stackTrace) => const SizedBox(),
-                      loading: () =>const CircularProgressIndicator(),
+                      loading: () => const CircularProgressIndicator(),
                     ),
                   ],
                 ),
