@@ -5,6 +5,7 @@ import 'package:clean_architutre_learn/features/quiz/business/usecases/pdf_genra
 import 'package:clean_architutre_learn/features/quiz/data/data_sources/pdf_genration_datasource.dart';
 import 'package:clean_architutre_learn/features/quiz/data/repo/pdf_generation_repo_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 final testYourKnwoldgeoption = StateProvider((ref) => false);
 final quizQuestionNumber = StateProvider<int>((ref) => 0);

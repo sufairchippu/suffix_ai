@@ -13,6 +13,7 @@ import 'package:clean_architutre_learn/features/banana/data/repo/image_genration
 import 'package:clean_architutre_learn/features/chat/presentation/provider/supabase_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 final imaginDatasourceProvider = Provider((ref) {
   final dio = ref.read(dioClientImagineProvider);

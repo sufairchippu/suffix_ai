@@ -12,6 +12,7 @@ import 'package:clean_architutre_learn/features/chat/business/usecases/get_chat_
 import 'package:clean_architutre_learn/features/chat/data/data_sources/remote_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/repo/supabase_repo_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final chatSupabaseDataSourceProvider = Provider((ref) => RemoteDataSource());

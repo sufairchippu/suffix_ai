@@ -1,6 +1,7 @@
 // import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:image_picker/image_picker.dart';
 
 // State type: AsyncValue<XFile?> - null means "no image selected"
@@ -22,7 +23,7 @@ class ImagePickerNotifier extends StateNotifier<AsyncValue<XFile?>> {
       );
       if (file == null) {
         state = const AsyncData(null);
-              return; 
+        return;
       }
       state = AsyncData(file); // file may be null if user cancelled
     } catch (e, st) {
@@ -52,7 +53,7 @@ final imagePickerNotifierProvider =
     StateNotifierProvider<ImagePickerNotifier, AsyncValue<XFile?>>(
       (ref) => ImagePickerNotifier(),
     );
-
+final topicSelecetedProvider = StateProvider((ref) => false);
 //         import 'dart:io';
 // import 'package:camera/camera.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';

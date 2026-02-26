@@ -95,6 +95,7 @@ import 'package:clean_architutre_learn/features/chat/business/usecases/get_chats
 import 'package:clean_architutre_learn/features/chat/business/repo/chat_bubble_repository.dart';
 import 'package:clean_architutre_learn/features/chat/data/data_sources/chat_local_data_source.dart';
 import 'package:clean_architutre_learn/features/chat/data/repo/chat_bubble_repo_impl.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 /// --- Providers for dependencies ---
 final chatLocalDataSourceProvider = Provider((ref) => ChatLocalDataSource());

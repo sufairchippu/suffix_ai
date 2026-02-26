@@ -31,9 +31,7 @@
 //   );
 // }
 
-
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 /// Fake data repository for demo (replace with Firestore fetch later)
 final dropdownDataProvider = StateProvider<List<String>>((ref) {

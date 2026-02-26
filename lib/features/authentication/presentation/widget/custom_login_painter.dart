@@ -263,14 +263,16 @@ class _AuthBackgroundAnimationState extends State<AuthBackgroundAnimation>
     // );
     return AnimatedBuilder(
       animation: _controller,
-      builder: (_, __) {
-        return CustomPaint(
-          painter: TopBackgroundPainter(
-            animationValue: _controller.value * 2 * pi,
-            waveColor: widget.waveColor ?? AppColors.card,
-            particleColor: widget.particleColor ?? AppColors.card,
+      builder: (_, _) {
+        return RepaintBoundary(
+          child: CustomPaint(
+            painter: TopBackgroundPainter(
+              animationValue: _controller.value * 2 * pi,
+              waveColor: widget.waveColor ?? AppColors.card,
+              particleColor: widget.particleColor ?? AppColors.card,
+            ),
+            size: Size.infinite,
           ),
-          size: Size.infinite,
         );
       },
     );

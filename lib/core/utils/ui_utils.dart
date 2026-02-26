@@ -300,6 +300,73 @@ class Uiutils {
     );
   }
 
+  static String mcqDailyPrompt() {
+    return '''
+You are a system that generates quiz questions.
+
+Generate EXACTLY 5 multiple-choice questions.
+
+Topic: General Knowledge (past, present, and future related facts)
+Difficulty: Mixed (suitable for general users)
+
+Rules:
+- Each question MUST have exactly 4 options
+- ONLY ONE option is correct
+- Do NOT include explanations
+- Do NOT include markdown
+- Output MUST be valid JSON
+- Do NOT include any extra text before or after JSON
+
+Return ONLY this JSON structure:
+
+{
+  "type": "mcq",
+  "questions": [
+    {
+      "question": "string",
+      "options": ["string", "string", "string", "string"],
+      "correct_index": 0
+    }
+  ]
+}
+''';
+  }
+  //   static String mcqDailyPrompt({
+  //     // required int questionCount,
+  //     // required String topic,
+  //     // required String level,
+  //     // String? subTopic,
+  //     // String? categeory, //!
+  //   }) {
+  //     return '''
+  // Generate EXACTLY 5 multiple-choice questions.
+
+  // Topic: "GK(Like presnt , future past evrything)"
+  // 'Sub-topic:''
+  // Difficulty:'' //define latee :-level chose by user age declare or question number leavel
+
+  // Rules:
+  // - Each question has exactly 4 options
+  // - Only ONE correct answer
+  // - No explanations
+  // - No markdown
+  // - STRICT JSON only
+
+  // Return this JSON format ONLY:
+
+  // {
+  //   "type": "mcq",
+  //   "questions": [
+  //     {
+  //       "question": "string",
+  //       "options": ["A", "B", "C", "D"],
+  //       "correct_index": 0
+  //     }
+  //   ]
+  // }
+  // ''';
+  //   }
+
   static String buildPrompt({
     required String paperType,
     required int questionCount,
@@ -353,7 +420,7 @@ class Uiutils {
     }
   }
 
- static String mcqPrompt({
+  static String mcqPrompt({
     required int questionCount,
     required String topic,
     required String level,
@@ -389,7 +456,7 @@ Return this JSON format ONLY:
 ''';
   }
 
-static  String oneWordPrompt({
+  static String oneWordPrompt({
     required int questionCount,
     required String topic,
     required String level,
@@ -422,7 +489,7 @@ Return this format:
 ''';
   }
 
-static  String tascPrompt({
+  static String tascPrompt({
     required int questionCount,
     required String topic,
     required String level,
@@ -456,7 +523,7 @@ Return this format:
 ''';
   }
 
-static  String mixedExamPrompt({
+  static String mixedExamPrompt({
     required int questionCount,
     required String topic,
     required String level,
@@ -501,7 +568,7 @@ Return this format:
 ''';
   }
 
- static String universityPrompt({
+  static String universityPrompt({
     required int questionCount,
     required String topic,
     required String level,

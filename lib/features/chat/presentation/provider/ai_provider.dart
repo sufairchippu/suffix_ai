@@ -13,6 +13,7 @@ import 'package:clean_architutre_learn/features/chat/data/repo/ai_response_repo_
 import 'package:clean_architutre_learn/features/chat/presentation/provider/supabase_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../../business/entities/chat_bubble.dart';
 import '../../business/repo/ai_responce_repository.dart';

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:clean_architutre_learn/core/router/route_names.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_keys.dart';
 import 'package:clean_architutre_learn/core/service/local_storage/local_storage_service.dart';
@@ -26,7 +28,6 @@ abstract class AuthDataSouurce {
 class AuthDataSouurceImpl implements AuthDataSouurce {
   final SupabaseClient client = Supabase.instance.client;
 
-  ///FORGET PASSWORD LIK SENDING FUCNTION
   @override
   UserEntity? currentUser() {
     final user = client.auth.currentUser;
@@ -39,22 +40,32 @@ class AuthDataSouurceImpl implements AuthDataSouurce {
   @override
   Future<UserEntity?> login(String email, String password) async {
     try {
-      final response = await client.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
-      final user = response.user;
+      final response = await client.auth
+          .signInWithPassword(email: email, password: password)
+          .timeout(Duration(minutes: 1));
+      final user =response.user;
       if (user == null) {
         throw AuthApiException(
           'Invalid login credentials ',
           statusCode: '400',
           code: 'invalid_credentials',
         );
-
-      } else {
-        LocalStorageService.setBool(LocalServiceKeys.IS_LOGGED_user, true);
-        return UserEntity(id: user.id, email: email);
       }
+      LocalStorageService.setBool(LocalServiceKeys.IS_LOGGED_user, true);
+      return UserEntity(id: user.id, email: email);
+    } on TimeoutException {
+      throw AuthApiException('Connection timed out. Please try again.');
+    } on AuthRetryableFetchException catch (e) {
+      debugPrint('Supabase unreachable: ${e.message}');
+      throw AuthApiException(
+        'Server is temporarily unavailable. Please try again.',
+      );
+    } on HandshakeException catch (e) {
+      // This confirms it's a network/SSL issue
+      print('SSL Handshake failed: ${e.message}');
+      throw AuthApiException(
+        'Network security error. Please check your connection.',
+      );
     } on AuthException catch (e) {
       throw AuthApiException(e.message, statusCode: e.statusCode);
     } catch (e) {
@@ -74,7 +85,7 @@ class AuthDataSouurceImpl implements AuthDataSouurce {
       final response = await client.auth.signUp(
         email: email,
         password: password,
-        emailRedirectTo: 'cleanarch:/${RouteNames.login}'
+        emailRedirectTo: 'cleanarch:/${RouteNames.login}',
       );
       final user = response.user;
       if (user == null) {

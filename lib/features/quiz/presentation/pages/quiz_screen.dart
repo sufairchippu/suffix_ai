@@ -19,9 +19,17 @@ class QuizScreen extends ConsumerStatefulWidget {
 }
 
 class _QuizScreenState extends ConsumerState<QuizScreen> {
+  // @override
+  // void dispose() {
+  //   ref.invalidate(quizselectedAnswerProvider);
+  //   ref.invalidate(quizQuestionNumber);
+  //   ref.invalidate(quizAnswerCountProvider);
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
-    print('building build methode');
+    // print('building build methode');
 
     // var correctedanswerCount = 0;
     // ref.listen(provider, listener)
@@ -29,8 +37,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) return;
-        ref.invalidate(quizselectedAnswerProvider);
-        ref.invalidate(quizQuestionNumber);
+        // ref.invalidate(quizselectedAnswerProvider);
+        // ref.invalidate(quizQuestionNumber);
         // ref.invalidate(quizselectedAnswerProvider);
         // ref.invalidate(quizQuestionNumber);
       },
@@ -64,15 +72,16 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 duration: const Duration(seconds: 3),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 38.rw(context),
+                    horizontal: 40.rw(context),
                     vertical: 6.rh(context),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 60.rh(context)),
+                      SizedBox(height: 70.rh(context)),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           GestureDetector(
                             onTap: () {
@@ -96,8 +105,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                               final selectedOption = ref.watch(
                                 quizselectedAnswerProvider,
                               );
-                              int correctAnswerIndex =
-                                  widget.quizdata[questionNumber].correctIndex;
+                              // int correctAnswerIndex =
+                              //     widget.quizdata[questionNumber].correctIndex;
                               // final questionNumber = ref.watch(
                               //   quizQuestionNumber,
                               // );
@@ -110,8 +119,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                     color: context.mainDarkShadeColor,
                                   ),
 
-                                  SizedBox(height: 50.rh(context)),
+                                  SizedBox(height: 40.rh(context)),
                                   CustomButtonWIdget(
+                                    width: 340.rw(context),
                                     titile: widget
                                         .quizdata[questionNumber]
                                         .question,
@@ -123,52 +133,59 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                     color: context.dynamicColor3,
                                     maxline: 9,
                                   ),
-                                  const Spacer(),
-                                  ListView.separated(
-                                    padding: EdgeInsets.zero,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: widget
-                                        .quizdata[questionNumber]
-                                        .options
-                                        .length,
-                                    separatorBuilder: (context, index) =>
-                                        SizedBox(height: 15.rh(context)),
-                                    itemBuilder: (context, index) {
-                                      String? option = widget
+                                  SizedBox(height: 100.rh(context)),
+                                  Column(
+                                    children: List.generate(
+                                      // padding: EdgeInsets.zero,
+                                      // shrinkWrap: true,
+                                      // physics:
+                                      //     const NeverScrollableScrollPhysics(),
+                                      widget
                                           .quizdata[questionNumber]
-                                          .options[index];
-                                      return CustomButtonWIdget(
-                                        height: 65.rh(context),
-                                        top: 10.rh(context),
-                                        color: selectedOption == index
-                                            ? context.scaffoldColor
-                                            : context.primaryColor,
-                                        onTap: () {
-                                          ref
-                                                  .read(
-                                                    quizselectedAnswerProvider
-                                                        .notifier,
-                                                  )
-                                                  .state =
-                                              index;
-                                        },
-                                        widget: Center(
-                                          child: CupertinoListTile(
-                                            title: Uiutils.getTextWidget(
-                                              context,
-                                              option,
-                                              maxline: 2,
-                                              textStyle:
-                                                  TextStyleType.mediumBold,
-                                            ),
-                                            trailing: Icon(
-                                              selectedOption == index
-                                                  ? CupertinoIcons
-                                                        .check_mark_circled_solid
-                                                  : CupertinoIcons.circle,
-                                            ),
+                                          .options
+                                          .length,
+                                      (index) {
+                                        // separatorBuilder: (context, index) =>
+                                        //     SizedBox(height: 15.rh(context)),
+                                        // itemBuilder: (context, index) {
+                                        String? option = widget
+                                            .quizdata[questionNumber]
+                                            .options[index];
+                                        return CustomButtonWIdget(bottom: 15.rf(context),
+                                          padding: 20.rf(context),
+                                          width: 340.rw(context),
+                                          height: 65.rh(context),
+                                          // top: 10.rh(context),
+                                          color: selectedOption == index
+                                              ? context.scaffoldColor
+                                              : context.primaryColor,
+                                          onTap: () {
+                                            ref
+                                                    .read(
+                                                      quizselectedAnswerProvider
+                                                          .notifier,
+                                                    )
+                                                    .state =
+                                                index;
+                                          },
+                                          widget: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Uiutils.getTextWidget(
+                                                context,
+                                                option,
+                                                maxline: 2,
+                                                textStyle:
+                                                    TextStyleType.mediumBold,
+                                              ),
+                                              Icon(
+                                                selectedOption == index
+                                                    ? CupertinoIcons
+                                                          .check_mark_circled_solid
+                                                    : CupertinoIcons.circle,
+                                              ),
+                                            ],
                                             // CupertinoRadio(
                                             //   value: option,
                                             //   onChanged: (String? value) {
@@ -179,23 +196,23 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                             //   groupValue: valuee,
                                             // ),
                                           ),
-                                        ),
-                                      );
-                                      // CustomButtonWIdget(
-                                      //   widget: Row(
-                                      //     children: [
-                                      //       Uiutils.getTextWidget(context, "Optiion${index + 1}"),
-                                      //       Spacer(),
-                                      //     ],
-                                      //   ),
-                                      // );
-                                    },
+                                        );
+                                        // CustomButtonWIdget(
+                                        //   widget: Row(
+                                        //     children: [
+                                        //       Uiutils.getTextWidget(context, "Optiion${index + 1}"),
+                                        //       Spacer(),
+                                        //     ],
+                                        //   ),
+                                        // );
+                                      },
+                                    ),
                                   ),
                                 ],
                               );
                             },
                           ),
-                          const SizedBox(),
+                          // const SizedBox(),
                         ],
                       ),
 
@@ -205,32 +222,31 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       //     return;
                       //   },
                       // ),
-                      SizedBox(height: 17.rh(context)),
+                      SizedBox(height: 30.rh(context)),
 
-                      const Spacer(),
+                      // const Spacer(),
                       // CustomButtonWIdget(
                       //   titile: 'Wrong Answer ❌',
                       //   // textColor: context.mainDarkShadeColor,s
                       //   // color: context.red.withValues(alpha: .4),
                       //   borderRadius: 12.rf(context),
                       // ),
-                      SizedBox(height: 17.rh(context)),
+                      SizedBox(height: 50.rh(context)),
 
                       Consumer(
                         builder: (context, ref, child) {
+                          final correctedanswerCount = ref.watch(
+                            quizAnswerCountProvider,
+                          );
+                          final questionNumber = ref.watch(quizQuestionNumber);
+                          final selectedOption = ref.watch(
+                            quizselectedAnswerProvider,
+                          );
+                          int correctAnswerIndex =
+                              widget.quizdata[questionNumber].correctIndex;
                           return CustomButtonWIdget(
+                            left: 20.rf(context),
                             onTap: () {
-                              final correctedanswerCount = ref.watch(
-                                quizAnswerCountProvider,
-                              );
-                              final questionNumber = ref.watch(
-                                quizQuestionNumber,
-                              );
-                              final selectedOption = ref.watch(
-                                quizselectedAnswerProvider,
-                              );
-                              int correctAnswerIndex =
-                                  widget.quizdata[questionNumber].correctIndex;
                               print(
                                 'correctanswrer count $correctedanswerCount',
                               );
@@ -250,9 +266,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                                 ///! scor showing screnn
                               } else {
                                 if (selectedOption == correctAnswerIndex) {
-                                  ++ref
+                                  ref
                                       .read(quizAnswerCountProvider.notifier)
-                                      .state;
+                                      .state++;
                                 }
                                 ref.invalidate(quizselectedAnswerProvider);
                                 ref.read(quizQuestionNumber.notifier).state++;

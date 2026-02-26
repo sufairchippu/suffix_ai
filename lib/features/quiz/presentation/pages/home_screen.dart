@@ -8,10 +8,11 @@ import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/authentication/presentation/widget/connect_with_widget.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
+import 'package:clean_architutre_learn/features/quiz/presentation/widget/topic_slide_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/widgets/custom_button_widget.dart';
+
 import '../widget/floating_action_item.dart';
 import '../widget/home_screen_section_widget.dart';
 
@@ -29,7 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     //   LocalServiceKeys.USER_NAME,
     // );
 
-    bool topic = true;
+    // bool topic = true;
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {},
@@ -127,35 +128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ],
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: CustomButtonWIdget(
-                              onTap: () {
-                                topic = true;
-                              },
-
-                              boxshadowColor: topic
-                                  ? context.primaryColor.withValues(alpha: .9)
-                                  : CupertinoColors.transparent,
-                              titile: 'Topic',
-                            ),
-                          ),
-                          SizedBox(width: 10.rw(context)),
-                          Expanded(
-                            child: CustomButtonWIdget(
-                              onTap: () {
-                                topic = false;
-                              },
-
-                              boxshadowColor: topic
-                                  ? CupertinoColors.transparent
-                                  : context.primaryColor.withValues(alpha: .9),
-                              titile: 'Topic',
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: AnimatedSegmentedControl(),
                     ),
                   ),
                 ),
@@ -192,7 +165,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 Uiutils.getTextWidget(
                   context,
-                  'Hi,  \n${'Guest'}',
+                  'Hi,  \n${''}',
                   textStyle: TextStyleType.mediumBold,
                 ),
                 const AppLogoWidget(),

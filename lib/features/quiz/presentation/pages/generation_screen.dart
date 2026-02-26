@@ -17,7 +17,6 @@ import 'package:clean_architutre_learn/features/chat/presentation/provider/ai_pr
 import 'package:clean_architutre_learn/features/drop_down/presentation/widget/custom_drop_down_widget.dart';
 import 'package:clean_architutre_learn/features/quiz/data/model/mcq_paper_model.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -142,6 +141,7 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                       "Make it & Solve it ",
                       textStyle: TextStyleType.largeBold,
                       color: context.blueTwo,
+                      fs: istestYourKnwoldge ? 26 : null,
                     ),
                   ],
                 ),
@@ -493,6 +493,13 @@ class _GenerationScreenState extends ConsumerState<GenerationScreen> {
                                 print(
                                   '${quizQuestions.length}. questions length>>>>>>>>>>>>>>>>',
                                 );
+                                if (!context.mounted) {
+                                  return Uiutils.cupertinoSnackBar(
+                                    context,
+                                    'Somthing Went wrong ,cant genrate qustions ',
+                                    true,
+                                  );
+                                }
                                 context.pushNamed(
                                   RouteNames.quiz,
                                   extra: quizQuestions,

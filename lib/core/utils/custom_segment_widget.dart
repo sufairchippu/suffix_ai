@@ -6,6 +6,7 @@ import 'package:clean_architutre_learn/core/theme/text/app_text.dart';
 import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 class CustomSegemtWidget extends ConsumerWidget {
   const CustomSegemtWidget({

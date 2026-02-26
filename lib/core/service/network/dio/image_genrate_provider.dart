@@ -3,6 +3,7 @@ import 'package:clean_architutre_learn/core/service/network/dio/dio_client_metho
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 final filterNumberNano = StateProvider<int>((ref) => 0);
 final dioClientImagineProvider = Provider<DioClientMethods>((ref) {

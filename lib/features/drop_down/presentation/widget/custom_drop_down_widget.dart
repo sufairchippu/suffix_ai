@@ -6,6 +6,7 @@ import 'package:clean_architutre_learn/core/utils/ui_utils.dart';
 import 'package:clean_architutre_learn/features/quiz/presentation/provider/quiz_sccren_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 // 🔹 Local search query provider
 

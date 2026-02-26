@@ -44,7 +44,27 @@ final dioProviderSuperbase = Provider<Dio>((ref) {
         // return handler.next(options);
       },
       onError: (e, handler) {
-        if (e.type == DioExceptionType.connectionTimeout ||
+        if (e.type == DioExceptionType.badResponse) {
+          // This is where you handle specific HTTP status codes
+          final statusCode = e.response?.statusCode;
+
+          switch (statusCode) {
+            case 401:
+              debugPrint("🔐 Unauthorized: Token expired or invalid.");
+              // Add logic to logout the user or refresh token here
+              break;
+            case 403:
+              debugPrint("🚫 Forbidden: You don't have permission.");
+              break;
+            case 500:
+              debugPrint(
+                "🔥 Server Error: Something went wrong on the backend.",
+              );
+              break;
+            default:
+              debugPrint("❓ Error: Received status code $statusCode");
+          }
+        } else if (e.type == DioExceptionType.connectionTimeout ||
             e.type == DioExceptionType.receiveTimeout ||
             e.type == DioExceptionType.sendTimeout) {
           debugPrint("⚠️ Network Error: Slow or No Internet Connection");

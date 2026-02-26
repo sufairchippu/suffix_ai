@@ -110,25 +110,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
 
           // Main content
-          SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.rw(context)),
-              child: Form(
-                key: _formKey,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.rw(context)),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
                 child: Column(
+                  spacing: 30.rh(context),
                   mainAxisAlignment: MainAxisAlignment.start,
-
+                
                   ///>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>,
                   children: [
-                    SizedBox(height: 90.rh(context)),
+                    SizedBox(height: 60.rh(context)),
                     _buildHeaderMethod(context, isCreateACState),
-                    SizedBox(height: 40.rh(context)),
+                    // SizedBox(height: 40.rh(context)),
                     // Email
                     _buildEmailField(context),
-
+                
                     // Password
                     _buildPasswordField(context, obscurePass),
-
+                
                     // Password
                     isCreateACState
                         ? _buildConfirmPassField(context, obscureConfirm)
@@ -153,19 +154,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           );
                         },
                       ),
-                    SizedBox(height: 10.rh(context)),
-                    _buildButtonMethode(isCreateACState, context, loginState),
-
-                    const Spacer(),
+                    // SizedBox(height: 10.rh(context)),
+                    _buildButtonMethode(
+                      isCreateACState,
+                      context,
+                      loginState,
+                    ),
+                    SizedBox(height: 5.rh(context)),
+                
+                    // const Spacer(),
                     _buildJoinChooseMethode(context, isCreateACState),
-                    SizedBox(height: 20.rw(context)),
-
-                    const ConnectWithWidget(),
-
-                    // SizedBox(height: 5.rh(context)),
+                    SizedBox(height: 20.rh(context)),
+                
+                    // const ConnectWithWidget(),
+                
                     // // Skip row
                     // _buildSkipButton(context),
-                    SizedBox(height: 20.rh(context)),
+                    const ConnectWithWidget(),
+                    SizedBox(height: 50.rh(context)),
+
+
                   ],
                 ),
               ),

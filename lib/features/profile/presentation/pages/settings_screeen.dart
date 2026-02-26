@@ -257,8 +257,8 @@ We are constantly improving the platform to deliver better tools and experiences
                   onTap: () {
                     Uiutils.showAlert(
                       context,
-                      () {
-                        ref.read(authNotifierProvider.notifier).logout();
+                      () async {
+                        await ref.read(authNotifierProvider.notifier).logout();
                         ref.invalidate(authErrorProvider);
                         context.pushReplacement(RouteNames.login);
                       },

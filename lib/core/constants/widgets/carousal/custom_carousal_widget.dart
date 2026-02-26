@@ -3,6 +3,7 @@ import 'package:clean_architutre_learn/core/mesurment/reponsive_size.dart';
 import 'package:clean_architutre_learn/core/theme/app_color/app_theme_genartor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 class CustomCarousalWidget extends ConsumerStatefulWidget {
   final List<Widget> widgets;

@@ -210,12 +210,12 @@ class _CameraResultScreenState extends ConsumerState<CameraResultScreen> {
 
                   CustomButtonWIdget(
                     onTap: () {
-                      if (imageState.valueOrNull != null) {
+                      if (imageState.value != null) {
                         ref
                             .read(aiMessgeNotifierProvider.notifier)
                             .getAiReply(
                               data: '',
-                              files: [File(imageState.valueOrNull!.path)],
+                              files: [File(imageState.value!.path)],
                             );
                       }
                     },

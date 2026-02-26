@@ -10,6 +10,7 @@ import 'package:clean_architutre_learn/features/authentication/business/usecases
 import 'package:clean_architutre_learn/features/authentication/data/data_sources/auth_data_souurce.dart';
 import 'package:clean_architutre_learn/features/authentication/data/repo/auth_repo_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final loginPasswordProvider = StateProvider<bool>((ref) {

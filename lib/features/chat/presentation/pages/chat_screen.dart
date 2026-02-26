@@ -84,14 +84,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        if (isdrawer || attachmentState) {
+        if (isdrawer) {
           ref.invalidate(chatHistoryProvider); //.state = false;
-          ref.invalidate(chatAttachmentProvider); //.state = false;
           return;
           // } else if (attachmentState) {
+        } else if (attachmentState) {
+          ref.invalidate(chatAttachmentProvider); //.state = false;
+        } else {
+          ref.invalidate(chatListNotifierProvider); //.clearChats();
+          context.goNamed(RouteNames.home);
         }
-        ref.invalidate(chatListNotifierProvider); //.clearChats();
-        context.pop();
       },
       child: CupertinoPageScaffold(
         child: Stack(
@@ -126,12 +128,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       const Spacer(),
                       GestureDetector(
                         onTap: () {
-                          ref.invalidate(chatHistoryProvider); //.state = false;
-                          ref.invalidate(
-                            chatAttachmentProvider,
-                          ); //.state = false;
-                          ref.invalidate(chatListNotifierProvider);
-                          context.pop();
+                          if (isdrawer) {
+                            ref.invalidate(
+                              chatHistoryProvider,
+                            ); //.state = false;
+                            // return;
+                            // } else if (attachmentState) {
+                            // } else if (attachmentState) {
+                            //.state = false;
+                          } else {
+                            ref.invalidate(chatAttachmentProvider);
+                            ref.invalidate(
+                              chatListNotifierProvider,
+                            ); //.clearChats();
+                            context.goNamed(RouteNames.home);
+                          }
                         },
                         child: Icon(
                           CupertinoIcons.xmark_circle,
